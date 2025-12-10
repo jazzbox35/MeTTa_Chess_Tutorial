@@ -1,13 +1,14 @@
 import time
+import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from hyperon import MeTTa
+#from hyperon import MeTTa
 
 app = Flask(__name__)
 CORS(app)
 
 # Persistent MeTTa session and code history
-metta_session = MeTTa()
+metta_session = []
 code_history = []  # List of dictionaries: [{"id": "code_id", "code": "metta_code"}, ...]
 
 
@@ -124,9 +125,22 @@ def reset_to_code():
 def reset_atomspace():
     """Complete reset of atomspace and code history"""
     global metta_session, code_history
-    metta_session = MeTTa()
+    metta_session = []
     code_history = []
-    return jsonify({"message": "AtomSpace and code history completely reset."})
+
+    url = "https://mettawamjam.onrender.com/metta"
+    headers = {"Content-Type": "text/plain; charset=utf-8" }
+    data = """
+
+    !(+ 1 1)
+                    
+    """
+
+    response = requests.post(url, headers=headers, data=data.encode("utf-8"))
+    response.encoding = "utf-8"
+    print("Status:", response.status_code)
+    print("Response:", response.text)
+    return jsonify({"message": response.text})
 
 
 @app.route('/get-history', methods=['GET'])
