@@ -12,6 +12,7 @@ import { useTheme } from "next-themes"
 
 // Import the custom MeTTa highlighter hook
 import { useMeTTaHighlighter } from "@/hooks/useMeTTaHighlighter"
+import { FRONTEND_BASE_URL } from "@/lib/constants"
 
 interface CodeEditorProps {
   code: string
@@ -61,7 +62,7 @@ export function CodeEditor({
   // Reset result output
  const handleResetCode = async () => {
   try {
-    const response = await fetch("https://pm-tutorial-2.onrender.com/reset-to-code", {
+    const response = await fetch(`${FRONTEND_BASE_URL}/reset-to-code`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -90,7 +91,7 @@ export function CodeEditor({
   // Reset result output
  const handleResetResult = async () => {
   try {
-    const response = await fetch("https://pm-tutorial-2.onrender.com/reset-to-code", {
+    const response = await fetch(`${FRONTEND_BASE_URL}/reset-to-code`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -135,7 +136,7 @@ export function CodeEditor({
 
     try {
       // Prepare the request to the MeTTa API
-      const response = await fetch("https://pm-tutorial-2.onrender.com/run-metta", {
+      const response = await fetch(`${FRONTEND_BASE_URL}/run-metta`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

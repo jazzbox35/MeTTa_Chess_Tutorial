@@ -4,6 +4,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 #from hyperon import MeTTa
 
+##########################################################
+MettaWamJam_url = "https://mettawamjam.onrender.com/metta"
+##########################################################
+
 app = Flask(__name__)
 CORS(app)
 
@@ -128,15 +132,13 @@ def reset_atomspace():
     metta_session = []
     code_history = []
 
-    url = "https://mettawamjam.onrender.com/metta"
-    headers = {"Content-Type": "text/plain; charset=utf-8" }
     data = """
 
     !(+ 1 1)
                     
     """
-
-    response = requests.post(url, headers=headers, data=data.encode("utf-8"))
+    headers = {"Content-Type": "text/plain; charset=utf-8" }
+    response = requests.post(MettaWamJam_url, headers=headers, data=data.encode("utf-8"))
     response.encoding = "utf-8"
     print("Status:", response.status_code)
     print("Response:", response.text)

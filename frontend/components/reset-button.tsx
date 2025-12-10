@@ -2,11 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
+import { FRONTEND_BASE_URL } from "@/lib/constants";
 
 export function ResetButton() {
   const handleReset = async () => {
     try {
-      const response = await fetch("http://localhost:5000/reset-atomspace", {
+      const response = await fetch(`${FRONTEND_BASE_URL}/reset-atomspace`, {
         method: "POST",
       });
       const data = await response.json();
