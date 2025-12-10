@@ -5,7 +5,8 @@ from flask_cors import CORS
 #from hyperon import MeTTa
 
 ##########################################################
-MettaWamJam_url = "https://mettawamjam.onrender.com/metta"
+MettaWamJam_url = "https://mettawamjam.onrender.com"
+#MettaWamJam_url = "http://localhost:5001"
 ##########################################################
 
 app = Flask(__name__)
@@ -138,7 +139,7 @@ def reset_atomspace():
                     
     """
     headers = {"Content-Type": "text/plain; charset=utf-8" }
-    response = requests.post(MettaWamJam_url, headers=headers, data=data.encode("utf-8"))
+    response = requests.post(MettaWamJam_url + "/metta", headers=headers, data=data.encode("utf-8"))
     response.encoding = "utf-8"
     print("Status:", response.status_code)
     print("Response:", response.text)
