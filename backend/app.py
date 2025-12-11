@@ -96,7 +96,7 @@ def reset_to_code():
             return jsonify({"error": f"Code ID '{target_code_id}' not found in history"}), 404
         
         # Reset the MeTTa session
-        metta_session = MeTTa()
+        metta_session = []
         
         # Keep only the code entries before the target index
         previous_code = code_history[:target_index]
@@ -185,7 +185,7 @@ def remove_code():
         removed_entries = code_history[target_index:]
         
         # Reset the MeTTa session
-        metta_session = MeTTa()
+        metta_session = []
         
         # Keep only the code entries before the target index
         code_history = code_history[:target_index]
