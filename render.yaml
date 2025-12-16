@@ -1,12 +1,5 @@
 services:
   - type: web
-    name: pm-backend
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python app.py
-    rootDir: backend
-
-  - type: web
     name: pm-frontend
     env: node
     rootDir: frontend 
