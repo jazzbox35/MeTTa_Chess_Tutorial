@@ -7,14 +7,16 @@ import { FRONTEND_BASE_URL } from "@/lib/constants";
 export function ResetButton() {
   const handleReset = async () => {
     try {
-      const response = await fetch(`${FRONTEND_BASE_URL}/reset-atomspace`, {
+      const response = await fetch(`${FRONTEND_BASE_URL}/stop`, {
         method: "POST",
       });
-      const data = await response.json();
-      alert(data.message);
+      if (!response.ok) {
+        throw new Error(`Stop API returned ${response.status}`);
+      }
+      alert("Backend stop request sent.");
     } catch (error) {
-      console.error("Failed to reset AtomSpace:", error);
-      alert("Failed to reset AtomSpace.");
+      console.error("Failed to stop backend:", error);
+      alert("Failed to send stop request.");
     }
   };
 
