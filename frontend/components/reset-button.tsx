@@ -7,16 +7,23 @@ import { FRONTEND_BASE_URL } from "@/lib/constants";
 export function ResetButton() {
   const handleReset = async () => {
     try {
-      const response = await fetch(`${FRONTEND_BASE_URL}/stop`, {
+      const response = await fetch(`${FRONTEND_BASE_URL}/metta`, {
         method: "POST",
+        headers: {
+          "Content-Type": "text/plain",
+        },
+        // Mirror the curl example payload
+        body: "!(+ 1 2)",
       });
       if (!response.ok) {
-        throw new Error(`Stop API returned ${response.status}`);
+        throw new Error(`Metta API returned ${response.status}`);
       }
-      alert("Backend stop request sent.");
+      // Display the backend response (e.g., [3])
+      const text = await response.text();
+      alert(text || "No response body");
     } catch (error) {
-      console.error("Failed to stop backend:", error);
-      alert("Failed to send stop request.");
+      console.error("Failed to call Metta backend:", error);
+      alert("Failed to call Metta backend.");
     }
   };
 
