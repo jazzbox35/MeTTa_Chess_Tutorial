@@ -7,7 +7,7 @@ import { FRONTEND_BASE_URL } from "@/lib/constants";
 export function ResetButton() {
   const handleReset = async () => {
     try {
-      const response = await fetch("https://frontend-gtl6.onrender.com/reset-atomspace", {
+      const response = await fetch(`${FRONTEND_BASE_URL}/reset-atomspace`, {
         method: "POST",
       });
       const data = await response.json();

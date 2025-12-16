@@ -5,8 +5,8 @@ from flask_cors import CORS
 #from hyperon import MeTTa
 
 ##########################################################
-MettaWamJam_url = "https://mettawamjam.onrender.com"
-#MettaWamJam_url = "http://localhost:5001"
+#MettaWamJam_url = "https://mettawamjam.onrender.com"
+MettaWamJam_url = "http://localhost:5001"
 ##########################################################
 
 app = Flask(__name__)
@@ -19,6 +19,18 @@ code_history = []  # List of dictionaries: [{"id": "code_id", "code": "metta_cod
 
 @app.route('/run-metta', methods=['POST'])
 def run_metta():
+
+    """ data = """
+
+    
+                    
+    """
+    headers = {"Content-Type": "text/plain; charset=utf-8" }
+    response = requests.post(MettaWamJam_url + "/metta", headers=headers, data=data.encode("utf-8"))
+    response.encoding = "utf-8"
+    print("Status:", response.status_code)
+    print("Response:", response.text) """
+
     global metta_session, code_history
 
     data = request.get_json()
@@ -132,18 +144,7 @@ def reset_atomspace():
     global metta_session, code_history
     metta_session = []
     code_history = []
-
-    data = """
-
-    !(+ 1 1)
-                    
-    """
-    headers = {"Content-Type": "text/plain; charset=utf-8" }
-    response = requests.post(MettaWamJam_url + "/metta", headers=headers, data=data.encode("utf-8"))
-    response.encoding = "utf-8"
-    print("Status:", response.status_code)
-    print("Response:", response.text)
-    return jsonify({"message": response.text})
+    return jsonify({"message": "Atomspace reset successfully"})
 
 
 @app.route('/get-history', methods=['GET'])
