@@ -135,29 +135,22 @@ export function CodeEditor({
     setError(null)
 
     try {
-      // Prepare the request to the MeTTa API
+      // Prepare the request to the MeTTa API (same shape as /metta_stateless)
       const response = await fetch(`${FRONTEND_BASE_URL}/metta`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "text/plain",
         },
-        body: JSON.stringify({
-          code: code,
-          language: "metta",
-          codeId: codeId,
-              }),
+        body: code,
       })
 
-      const data = await response.json()
-
-      // Format and display the response
-      if (data.output) {
-        setOutput(data.output)
-      } else if (data.result) {
-        setOutput(typeof data.result === "string" ? data.result : JSON.stringify(data.result, null, 2))
-      } else {
-        setOutput(JSON.stringify(data, null, 2))
+      if (!response.ok) {
+        throw new Error(`Metta API returned ${response.status}`)
       }
+
+      // Display raw response text (e.g., "[3]"), matching stateless call style
+      const text = await response.text()
+      setOutput(text || "")
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
       console.error("Execution error:", err)
