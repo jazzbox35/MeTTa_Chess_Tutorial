@@ -9,10 +9,10 @@ export default function HomePage() {
           <div className="flex flex-col items-center justify-center space-y-8 text-center">
             <div className="space-y-4">
               <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl md:text-7xl">
-                Hyperon Pattern Miner Tutorial
+                Create a Simple Chess Game in MeTTa
               </h1>
               <p className="max-w-[800px] mx-auto text-lg text-muted-foreground md:text-xl">
-                Explore our hyperon pattern miner core concepts , algorithms and way of implementations .
+                Explore how the MeTTa language makes it easy to handle vast possible game combinations!
               </p>
             </div>
             <div className="space-x-4 pt-6">

@@ -7,7 +7,7 @@ import { FRONTEND_BASE_URL } from "@/lib/constants";
 export function ResetButton() {
   const handleReset = async () => {
     try {
-      const response = await fetch(`${FRONTEND_BASE_URL}/metta`, {
+      const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain",

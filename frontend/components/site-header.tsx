@@ -17,8 +17,8 @@ export function SiteHeader() {
         <div className="flex gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
             <BookOpen className="hidden md:inline h-6 w-6" />
-            <span className="md:hidden font-bold">PM Tutorial</span>
-            <span className="hidden md:inline-block font-bold">Pattern Miner Tutorial</span>
+            <span className="md:hidden font-bold">MeTTa Chess Tutorial</span>
+            <span className="hidden md:inline-block font-bold">MeTTa Chess Tutorial</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center space-x-4 sm:justify-end">
