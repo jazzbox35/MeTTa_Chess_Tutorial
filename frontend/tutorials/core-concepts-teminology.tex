@@ -14,15 +14,19 @@
 
 \section{Core Concepts and Terminology}
 
-This section introduces the key notions you will encounter when using the Hyperon Pattern Miner.  We illustrate with actual MeTTa functions and modules from the \texttt{hyperon-miner} repository.
-
+2) Core Distinguishing Concepts. MeTTa has some unusual features. What are these? The defining
+features of MeTTa are the use of atomspace and the capacity of executing and filtering all possible
+paths in the code using the superpose/match/collapse paradigm. MeTTa is sort of a fusion of SQL and
+Turing completeness. This needs to be made plain at the outset. The developer should understand that
+MeTTa is not Lisp, Prolog, etc, but its own unique language. What makes MeTTa unique? Note: this
+tutorial is not yet aligned with the newer MeTTa4 conceptions but it is anticipated that the style of the
+chess program will work in future MeTTa versions with minor adjustments.
 \subsection{AtomSpace}
 
 The \textbf{AtomSpace} is Hyperon's persistent metagraph store.  Every node and link you mine lives there.  In MeTTa you typically create or bind an AtomSpace via:
 
 \begin{verbatim}
-!(import! &self hyperon-miner:match:MinerMatch)
-!(bind! &atom-space (new-space)) 
+!(+ 1 1)
 \end{verbatim}
 
 Atoms you insert may be of various types, such as

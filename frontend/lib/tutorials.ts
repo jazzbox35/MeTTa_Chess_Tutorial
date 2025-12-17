@@ -55,7 +55,7 @@ export async function getTutorialBySlug(slug: string): Promise<Tutorial | null> 
       slug,
       title: parsedContent.title || slug,
       order:parsedContent.order  ,
-      description: parsedContent.description || `A tutorial on ${slug}`,
+      description: parsedContent.description || `A tutorial on chess search`,
       category: parsedContent.category || "Uncategorized",
       tags: parsedContent.tags || [],
       date: parsedContent.date || new Date().toLocaleDateString(),

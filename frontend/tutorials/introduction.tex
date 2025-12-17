@@ -28,89 +28,13 @@
 
 \section{Introduction}
 
-The \textbf{Hyperon Pattern Miner} is a MeTTa-based system for automatically discovering  frequent and/or \textbf{interesting}  sub-metagraph patterns in Hyperon's AtomSpace metagraph.   And the definition of what is an \textbf{interesting} pattern is fairly flexibly configurable!
-
-The Pattern Miner inverts the logic of pattern-matching.   Instead of asking
-
-
-"Given a large collection of ground Atoms, and a small template query (a pattern) what portions of the collection match the pattern?"
-
-
-It asks:
-
-"Given a large collection of ground Atoms, what small template queries (patterns) will produce many matches and/or which ones give the most surprising or otherwise interesting answers?"
-
-
-This is in general an intractably hard problem and the current approach is to address it heuristically, using greedy heuristics that are crafted via experience to capture a lot of the relevant patterns that seem to arise in real-world contexts.   There is plenty of room to improve or replace these heuristics in future, including potentially to replace them by more fundamentally theoretically-grounded methods.   On the other hand, the heuristics in place now come from decades of practice in frequent pattern mining from relational databases, graphs and other structures, and it seems plausible they can take us a long way, maybe even to HLAGI and beyond (considered as one set of tools within a broader toolkit of methods enabling Atomspaces to evolve and grow toward greater and greater intelligence).
-
-
-
-Under the hood, the current Hyperon Pattern Miner implements a multi-stage pipeline as roughly shown  below (this is somewhat in depth and will be reviewed further later on in the tutorial, but we give the whole process here as a prelude so you'll get an idea of what sort of thing you're jumping into !!)
-
-\subsection{Pattern Mining Process}
-
-
-\begin{enumerate}
-  \item \textbf{Extract 1-Clause Templates (Abstract Patterns)}
-     \begin{itemize}
-        \item Scan every link atom in your AtomSpace (for example, \\
-          \verb|(eval (pred "drink") (list (concept "Alice") (concept "Coke")))|).
-          \item  For each such link, pick one position (predicate or one of the list elements)
-             and replace it with a fresh variable node, \verb|(var "$X")|.  This gives
-             a \emph{generic} 1-clause pattern like
-               \verb|(eval (pred "drink") (list (var "$X") (concept "Coke")))|.  
-         \item Internally this is done by the \texttt{get-links} routine.
-      \end{itemize}
-  \item \textbf{Generate Grounded Candidates (Specialize)}
-    \begin{itemize}
-    \item For each abstract 1-clause template, find all actual subgraphs in the AtomSpace
-    that match its fixed parts.  
-    \item For each match, record the concrete values that
-    fill the variable slots.  This produces a collection of \emph{specialized}
-    candidate patterns, each paired with its match count.  
-    \item The \texttt{specialize}
-    and \texttt{support} functions implement this step.
-      \end{itemize}
-  \item \textbf{Prune by Minimum Support}
-    \begin{itemize}
-    \item For each candidate pattern, compute its \emph{support} (how many groundings it has)
-    via \verb|(match-count pattern)|.  
-    \item Discard any pattern whose support is below
-    your user-specified threshold \verb|minsup|.  This ensures you only keep
-    frequently occurring subgraphs.
-      \end{itemize}
-  \item \textbf{Build Multi-Clause Patterns (Greedy Conjunction)}
-    \begin{itemize}
-    \item Take the surviving 1-clause patterns and form 2-clause patterns by pairing
-    any two that share at least one variable.  
-    \item Conjoin them as
-    \verb|(and <pattern1> <pattern2>)|. 
-    \item  Again compute support and prune by
-    \verb|minsup|. 
-    \item  Repeat this ''specialize + prune'' loop to grow 3-clause,
-    4-clause, ? up to your desired maximum depth.  
-    \item The \texttt{combine-with}
-    and recursive \texttt{get-candidate} calls manage this expansion.
-      \end{itemize}
-  \item \textbf{Rank by Desired "Interestness" measure, e.g. one is called I-Surprisingness}
-    \begin{itemize}
-    \item For each final pattern, if one is e.g. using the "I-Surprisingness" measure to gauge interestingness, then compute:
-    \[
-      P_{\mathrm{obs}} = \frac{\text{support}}{\text{universe-size}}
-      ,\quad
-      P_{\mathrm{exp}} = \prod_{i=1}^{n}P(c_i)
-      \quad(\text{assuming independence})\,,
-    \]
-    where each $P(c_i)$ is the single-clause probability of clause $i$.
-    \item Then
-    $$
-      I = \log\!\Bigl(\frac{P_{\mathrm{obs}}}{P_{\mathrm{exp}}}\Bigr)
-      \quad\text{(or a normalized deviation)}.
-    $$
-    \item Patterns with highest $I$ are the most ''surprising.''  
-    \item This scoring is performed by the \texttt{iSurprisingness} function.
-  \end{itemize}
-\end{enumerate}
+1) Introduction. Immediately make a clear case for why a developer would want to use MeTTa. We will
+highlight its advantages: accuracy, ability to create/read/update/delete in a space of high combinatorial
+explosion not subject to hallucinations. It can ultimately be used with an MCP interface as part of a
+broader system design. Then describe a minimum of prerequisites (referring to other tutorials such as
+the first couple on the Metta-Learn webpages). However, we will try to make the tutorial as
+prerequisite-free as possible. Some Lisp or other AI language experience is helpful but should not
+strictly be necessary.
 
 
 \section{Implementation Details}

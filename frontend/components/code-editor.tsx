@@ -136,7 +136,7 @@ export function CodeEditor({
 
     try {
       // Prepare the request to the MeTTa API
-      const response = await fetch(`${FRONTEND_BASE_URL}/run-metta`, {
+      const response = await fetch(`${FRONTEND_BASE_URL}/metta`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
