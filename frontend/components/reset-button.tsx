@@ -7,13 +7,13 @@ import { FRONTEND_BASE_URL } from "@/lib/constants";
 export function ResetButton() {
   const handleReset = async () => {
     try {
-      const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
+      const response = await fetch(`${FRONTEND_BASE_URL}/metta`, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain",
         },
         // Mirror the curl example payload
-        body: "!(+ 1 2)",
+        body: "!(R)",
       });
       if (!response.ok) {
         throw new Error(`Metta API returned ${response.status}`);
@@ -33,7 +33,7 @@ export function ResetButton() {
       <RefreshCcw className="h-4 w-4 md:hidden" />
 
       {/* Text for medium screens and up */}
-      <span className="hidden md:inline">Reset AtomSpace</span>
+      <span className="hidden md:inline">Reset Game</span>
     </Button>
   );
 }
