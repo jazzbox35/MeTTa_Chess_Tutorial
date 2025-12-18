@@ -6,6 +6,7 @@ import { BookOpen } from "lucide-react";
 import { SearchBar } from "@/components/search-bar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ResetButton } from "./reset-button";
+import { DisplayAtomspaceButton } from "./display-atomspace-button";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -34,6 +35,9 @@ export function SiteHeader() {
               <ResetButton />
             </div>
           )}
+          <div>
+            <DisplayAtomspaceButton />
+          </div>
           <div className="mx-auto">
             <ThemeToggle />
           </div>

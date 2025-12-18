@@ -136,7 +136,7 @@ export function CodeEditor({
 
     try {
       // Prepare the request to the MeTTa API (same shape as /metta_stateless)
-      const response = await fetch(`${FRONTEND_BASE_URL}/metta`, {
+      const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain",
@@ -148,9 +148,27 @@ export function CodeEditor({
         throw new Error(`Metta API returned ${response.status}`)
       }
 
-      // Display raw response text (e.g., "[3]"), matching stateless call style
-      const text = await response.text()
+      // Display only the first bracketed result if multiple are returned (e.g., "[first] [second]")
+      const fullText = await response.text()
+      const matches = fullText.match(/\[[^\]]*\]/g) || []
+      const text = matches[0] || fullText
       setOutput(text || "")
+
+      // Expose second result (if present) globally for app-wide use
+      const second = matches[1] || null
+      ;(globalThis as any).Atomspace_state = second
+      if (typeof window !== "undefined") {
+        try {
+          if (second !== null) {
+            window.localStorage.setItem("Atomspace_state", second)
+          } else {
+            window.localStorage.removeItem("Atomspace_state")
+          }
+        } catch {
+          // ignore storage errors
+        }
+        window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: second ?? "" }))
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
       console.error("Execution error:", err)
