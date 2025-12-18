@@ -10,6 +10,10 @@ import { ResetButton } from "./reset-button";
 export function SiteHeader() {
   const pathname = usePathname();
   const isTutorialPath = pathname.startsWith("/tutorials");
+  const showResetButton =
+    isTutorialPath &&
+    !pathname.startsWith("/tutorials/introduction") &&
+    !pathname.startsWith("/tutorials/surprisingness");
 
   return (
     <header className="fixed top-0 z-40 w-full border-b bg-background pr-5">
@@ -25,7 +29,7 @@ export function SiteHeader() {
           <div className="flex-1 max-w-3xl mx-auto sm:mx-1">
             <SearchBar />
           </div>
-          {isTutorialPath && (
+          {showResetButton && (
             <div>
               <ResetButton />
             </div>

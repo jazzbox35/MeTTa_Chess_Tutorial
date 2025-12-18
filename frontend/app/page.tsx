@@ -12,7 +12,7 @@ export default function HomePage() {
                 Create a Simple Chess Game in MeTTa
               </h1>
               <p className="max-w-[800px] mx-auto text-lg text-muted-foreground md:text-xl">
-                Explore how the MeTTa language makes it easy to handle vast possible game combinations!
+                Explore how the MeTTa language makes it easy to handle vast possible combinations!
               </p>
             </div>
             <div className="space-x-4 pt-6">
