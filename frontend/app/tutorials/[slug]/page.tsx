@@ -11,7 +11,7 @@ import { TableOfContents } from "@/components/table-of-contents"
 import { getAllTutorials, getTutorialBySlug } from "@/lib/tutorials"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { SidebarWithTutorials } from "@/components/sidebar"
-import { splitParenthesizedArray } from "@/lib/split-parenthesized-array"
+import { SplitDemo } from "@/components/split-demo"
 
 type Params = {
   params: {
@@ -31,7 +31,6 @@ export default async function TutorialPage({ params }: Params) {
     const currentIndex = allTutorials.findIndex((t) => t.slug === slug)
     const prevTutorial = currentIndex > 0 ? allTutorials[currentIndex - 1] : null
     const nextTutorial = currentIndex < allTutorials.length - 1 ? allTutorials[currentIndex + 1] : null
-    const sampleSplit = splitParenthesizedArray("[ (data...), (data2...), (data3...) ]")
 
     return (
       <div className=" py-8">
@@ -86,8 +85,8 @@ export default async function TutorialPage({ params }: Params) {
             
             {/* Example usage of splitParenthesizedArray helper */}
             <Card className="mb-6 p-4">
-              <h3 className="text-lg font-semibold mb-2">Example: Split Parenthesized Array</h3>
-              <pre className="text-sm whitespace-pre-wrap">{sampleSplit}</pre>
+              <h3 className="text-lg font-semibold mb-3">Example: Split Parenthesized Array</h3>
+              <SplitDemo />
             </Card>
 
             {/* Tutorial Content */}
