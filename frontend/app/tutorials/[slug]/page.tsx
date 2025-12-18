@@ -11,7 +11,6 @@ import { TableOfContents } from "@/components/table-of-contents"
 import { getAllTutorials, getTutorialBySlug } from "@/lib/tutorials"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { SidebarWithTutorials } from "@/components/sidebar"
-import { SplitDemo } from "@/components/split-demo"
 
 type Params = {
   params: {
@@ -83,12 +82,6 @@ export default async function TutorialPage({ params }: Params) {
 
             <Separator className="my-6" />
             
-            {/* Example usage of splitParenthesizedArray helper */}
-            <Card className="mb-6 p-4">
-              <h3 className="text-lg font-semibold mb-3">Example: Split Parenthesized Array</h3>
-              <SplitDemo />
-            </Card>
-
             {/* Tutorial Content */}
             <div className="prose prose-gray dark:prose-invert max-w-none">
               <LatexRenderer content={tutorial.content} />

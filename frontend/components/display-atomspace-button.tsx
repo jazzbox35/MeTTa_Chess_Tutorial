@@ -43,7 +43,8 @@ export function DisplayAtomspaceButton() {
   const handleClick = () => {
     const raw = atomspaceState ?? ""
     const processed = raw ? splitParenthesizedArray(raw) : ""
-    const msg = processed || "No Atomspace state available."
+    // Show the fully processed value; fall back to raw so nothing gets truncated
+    const msg = processed || raw || "Atomspace Empty"
     alert(msg)
   }
 
