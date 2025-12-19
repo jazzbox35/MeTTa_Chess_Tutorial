@@ -44,7 +44,7 @@ export function DisplayAtomspaceButton() {
     const raw = atomspaceState ?? ""
     const processed = raw ? splitParenthesizedArray(raw) : ""
     // Show the fully processed value; fall back to raw so nothing gets truncated
-    const msg = processed || raw || "Atomspace Empty"
+    const msg = processed || raw || "Atomspace empty."
     alert(msg)
   }
 
@@ -52,7 +52,7 @@ export function DisplayAtomspaceButton() {
     <Button
       variant="outline"
       size="sm"
-      className="text-xs px-2 py-1"
+      className="text-xs px-3 h-9 w-full"
       onClick={handleClick}
     >
       Display Atomspace
