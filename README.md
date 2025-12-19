@@ -1,6 +1,6 @@
 # MeTTa Chess Tutorial (Frontend)
 
-This repo hosts a Next.js frontend for a MeTTa-based chess tutorial. The app proxies API calls through Next.js rewrites (see `frontend/next.config.mjs`) to the MeTTaWamJam Prolog MeTTa server PeTTa.
+This repo hosts a Next.js frontend for a MeTTa-based chess tutorial. The app proxies API calls through Next.js rewrites (see `frontend/next.config.mjs`) to the MeTTaWamJam Prolog MeTTa backend server PeTTa. This server needs to be started independently.
 
 Start Server:
 1) `cd frontend`
