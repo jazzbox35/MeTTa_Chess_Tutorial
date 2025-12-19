@@ -9,4 +9,4 @@ Start Server:
 
 Notes:
 - API base is `/api` (set in `frontend/lib/constants.ts`), with rewrites defined in `frontend/next.config.mjs`.
-- User's browser retains all atomspace related state information. MettaWamJam is called using the /metta_stateless transaction and does not retain state.
+- User's browser retains all atomspace related state information. MettaWamJam is called using the "/metta_stateless" transaction and does not retain state.
