@@ -13,6 +13,7 @@ import { useTheme } from "next-themes"
 // Import the custom MeTTa highlighter hook
 import { useMeTTaHighlighter } from "@/hooks/useMeTTaHighlighter"
 import { FRONTEND_BASE_URL } from "@/lib/constants"
+import { splitParenthesizedArray } from "@/lib/split-parenthesized-array"
 
 interface CodeEditorProps {
   code: string
@@ -135,9 +136,18 @@ export function CodeEditor({
     setError(null)
 
     try {
-      const atomspaceState = (globalThis as any).Atomspace_state ?? ""
+      let atomspaceState = (globalThis as any).Atomspace_state ?? ""
+      if (atomspaceState) {
+        try {
+          atomspaceState = splitParenthesizedArray(atomspaceState)
+        } catch {
+          alert("Atomspace parsing failed; using raw value")
+          setIsExecuting(false)
+          setHasRun(true)
+          return
+        }
+      }
       const payload = atomspaceState ? `${atomspaceState}\n${code}` : code
-      alert(payload)
 
       // Prepare the request to the MeTTa API (same shape as /metta_stateless)
       const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
