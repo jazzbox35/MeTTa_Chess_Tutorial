@@ -8,8 +8,8 @@ import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Tutorial - Hyperon Pattern miner tutorial ",
-  description: "Learn the hyperon pattern miner core concepts and algorithms ",
+  title: "MeTTa Chess Tutorial",
+  description: "Learn the MeTTa chess tutorial",
 };
 
 export default function RootLayout({
