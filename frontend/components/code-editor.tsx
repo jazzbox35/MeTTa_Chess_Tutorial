@@ -135,13 +135,17 @@ export function CodeEditor({
     setError(null)
 
     try {
+      const atomspaceState = (globalThis as any).Atomspace_state ?? ""
+      const payload = atomspaceState ? `${atomspaceState}\n${code}` : code
+      alert(payload)
+
       // Prepare the request to the MeTTa API (same shape as /metta_stateless)
       const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain",
         },
-        body: code,
+        body: payload,
       })
 
       if (!response.ok) {
