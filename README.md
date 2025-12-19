@@ -9,4 +9,4 @@ Start Server:
 
 Notes:
 - API base is `/api` (set in `frontend/lib/constants.ts`), with rewrites defined in `frontend/next.config.mjs`.
-- Reset Atomspace button clears the shared `Atomspace_state` and alerts “Atomspace successfully reset.” The browser retains Atomspace state using the MettaWamJam server’s stateless mode.
+- Reset Atomspace button clears the shared `Atomspace_state` and alerts “Atomspace successfully reset.” User's browser retains all atomspace related state information. MettaWamJam is called using the /metta_stateless transaction and does not retain state.
