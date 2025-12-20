@@ -158,16 +158,21 @@ export function CodeEditor({
         body: payload,
       })
 
-      if (!response.ok) {
-        throw new Error(`Metta API returned ${response.status}`)
-      }
-
       // Display only the first bracketed result if multiple are returned (e.g., "[first] [second]")
       const fullText = await response.text()
       const matches = fullText.match(/\[[^\]]*\]/g) || []
       const text = matches[0] || fullText
       setOutput(text || "")
 
+      // Trap for bad response code or JSON with an error message.
+      if (response.status !== 200
+        || fullText.includes('{"error"'))
+      {
+        setError(`Metta query failed`)
+        setIsExecuting(false)
+        setHasRun(true)
+        return
+      }
       // Expose second result (if present) globally for app-wide use
       const second = matches[1] || null
       ;(globalThis as any).Atomspace_state = second
