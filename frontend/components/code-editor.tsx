@@ -147,9 +147,14 @@ export function CodeEditor({
           return
         }
       }
+
+      // THIS PROGRAM RETAINS THE USER'S ATOMSPACE. THE SERVER DOES NOT RETAIN ATOMSPACE.
+      // Attach the present query to the present atomspace for submission
       const payload = atomspaceState ? `${atomspaceState}\n${code}` : code
 
-      // Prepare the request to the MeTTa API (same shape as /metta_stateless)
+      // Submit the query along with atomspace. Server returns:
+      //  [ result of query ] [ updated atomspace ]
+      //
       const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
         method: "POST",
         headers: {
