@@ -111,12 +111,6 @@ In the example below, the "!("... construct calls the "(=" rewrite rule. When yo
 
 When you click the "Run" button below, given the example, MeTTa will add the "code" and "data" statements to atomspace. Then MeTTa executes !(hello-world).
 
-Importantly, note that both code and data are considered atoms and reside in atomspace together for manipulation.
-
-A red parenthesis is a tip-off that you have unbalanced parens somewhere in your expression.
-
-Note: it's possible to use different spaces inside atomspace, but for this tutorial we will only use &self.
-
 \begin{verbatim}
 ; "code" rewrite rule atom
 (= (hello-world) (Hello World))  
@@ -127,6 +121,12 @@ Note: it's possible to use different spaces inside atomspace, but for this tutor
 ; execute
 !(hello-world)
 \end{verbatim}
+
+Importantly, note that both code and data are considered atoms and reside in atomspace together for manipulation.
+
+A red parenthesis is a tip-off that you have unbalanced parens somewhere in your expression.
+
+Note: it's possible to use different spaces inside atomspace, but for this tutorial we will only use &self.
 
 \section{Tutorial Objectives}
 
