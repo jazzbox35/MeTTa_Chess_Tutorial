@@ -52,17 +52,27 @@ The single most defining characteristic of MeTTa is this: it insists on giving y
 
 Suppose you are creating a package delivery routing application. Given a starting point and a destination, let's say ten routes exist, each with many twists and turns, so your code has lots of constraints. MeTTa outputs all ten complete routes in one run, at once. 
 
-Now suppose you are creating a scheduling application. Given today's agenda, there are a ninety-nine possible schedules given available rooms, equipment, personnel, tasks, etc. Again, MeTTa outputs all ninety-nine schedules in one run.
+Now suppose you are creating a scheduling application. Given today's agenda, there are a ninety-nine possible schedules given available rooms, equipment, personnel, tasks, etc. Again, MeTTa outputs all ninety-nine schedules in a single result.
 
-If this sounds to you a bit like an SQL "return all rows" type of call, you'd be on the right track. In essence, MeTTa is a fusion of "return all rows" SQL type calls and ordinary code. Given some specific inputs, code written in MeTTa by default will return all possible output combinations using all possible paths applicable to the input through your code.
+If this sounds to you a bit like an SQL "return all rows" matching request, you'd be on the right track. In essence, MeTTa is a fusion of "return all rows" SQL type calls and basically ordinary code. Given some specific inputs, code written in MeTTa by default will return all possible output combinations that result from executing all possible paths in your code applicable to the input. You get everything.
 
 This might immediately raise the worrying prospect of having to deal with an avalanche of results. Well, don't worry, because there are ways of corralling MeTTa. Basically you only need about a dozen constructs to do everything you need in MeTTa.
 
-\subsection{Coralling the Combinatorial Explosion}
+\subsection{Corralling the Combinatorial Explosion}
 
-Reality is incredibly complex. AI is a distinct discipline within computer science because worldly complex problems can't be handled by conventional programming in which all possible combinations are accounted for and pre-coded in advance. Techniques were developed to reach goals without requiring the pre-coding of all sequences of all possible combinations. AI has to search for a path from start to goal state on its own. AI evolved into a trick bag for such situations. 
+Reality is incredibly complex. AI is a distinct discipline within computer science because worldly complex problems can't be handled by conventional programming in which all possible combinations are accounted for and pre-coded in advance. Techniques are developed to reach goals without requiring the specific pre-coding and foresight of all sequences of all possible combinations. AI evolved into a trick bag for handling such situations. AI, symbolic and neural, has to search for a path from start request to goal result without a predetermined route. 
 
-\subsubsection{AtomSpace}
+Historically it has been difficult to write conventional symbolic programs to handle problems characterized by real world complexity. The strategy MeTTa employs to meet the challenge of corralling combinatorial explosions is to add a small set of programming principles and constructs to enable conventional seeming programs to manage and tame a massive number of combinations, possible paths and "all the results." (You can get similar results with languages such as Prolog, but Prolog is a very unusual language for beginning and potential users to learn.)
+
+Thus creating conventional symbolic programs to handle huge combinations of possible cases is difficult or impossible. The fundamental strategy of MeTTa is to balance the use of more or less ordinary programs with a technique of managing the wild beast of combinatorial explosion. Using this technique: x y z.
+
+So we use chess as example...
+
+\section{How to Use the Tutorial}
+
+This whole process is implemented in MeTTa, so if one runs it within a fast MeTTa interpretation or compilation framework, it should scale to huge numbers  of Atoms.  (Different Atoms may have different sizes, but very roughly, in a server with terabytes of RAM one may be able to host Atomspaces with 100B or more Atoms.)   It also exposes a clean API so you can integrate pattern mining directly into larger learning or reasoning pipelines.
+
+\subsection{AtomSpace}
 
 The \textbf{AtomSpace} is Hyperon's persistent metagraph store.  Every node and link you mine lives there.  In MeTTa you typically create or bind an AtomSpace via:
 
@@ -71,31 +81,18 @@ The \textbf{AtomSpace} is Hyperon's persistent metagraph store.  Every node and 
 !(bind! &atom-space (new-space)) 
 \end{verbatim}
 
-
-
-\section{Implementation Details}
-
-This whole process is implemented in MeTTa, so if one runs it within a fast MeTTa interpretation or compilation framework, it should scale to huge numbers  of Atoms.  (Different Atoms may have different sizes, but very roughly, in a server with terabytes of RAM one may be able to host Atomspaces with 100B or more Atoms.)   It also exposes a clean API so you can integrate pattern mining directly into larger learning or reasoning pipelines.
-
-\subsection{Current Capabilities and Future Work}
-
-In its current form the Pattern Miner runs against an Atomspace in RAM on a single machine, however the underlying algorithms are well designed for extension to a distributed-processing setting, and we anticipate future Pattern Miner versions working effectlvely on distributed Atomspaces as well.   This further development will be done in conjunction with other existing tools like the Distributed Atomspace (DAS) XX and the Mettacycle decentralized infrastructure (XX).
-
-\subsection{The Atomspace You Will Be Working On}
-
 All of the live examples on this tutorial operate within a single AtomSpace. As you run each code example, or "cell," you are continuously adding new information to this space, building upon the results from all the cells you have already run. The "Reset Atomspace" button wipes the whole atomspace and lets you start on a clean slate whilst the "reset" button on the cells (code snippets) themselves  provide a way to start over from that specific point whilst maintaing the state of the atom upto that particular snippet. The most common use case for these buttons is if you happen to be facing an import issue at some point you could reset the whole atomspace or reset the snippet that executes the importing tasks so that subsequent cells can get the correct imports they need. 
+
+\subsection{Buttons}
 
 \section{Tutorial Objectives}
 
-In this tutorial you will learn to:
 
 \begin{enumerate}
-  \item \textbf{Ground yourself} in the core concepts (AtomSpace, patterns, frequency, and surprisingness).
-  \item \textbf{Step through} the full mining pipeline--from abstracting link-nodes to scoring surprisingness--using diagrams and MeTTa code.
-  \item \textbf{Run hands-on} MeTTa scripts to install, configure, and execute the Hyperon Pattern Miner on your own AtomSpace data.
-  \item \textbf{Explore advanced use cases} and performance-tuning strategies so you can apply pattern mining to real-world datasets.
+  \item \textbf{Why} in the core concepts (AtomSpace, patterns, frequency, and surprisingness).
+  \item \textbf{What} the full mining pipeline--from abstracting link-nodes to scoring surprisingness--using diagrams and MeTTa code.
+  \item \textbf{How} MeTTa scripts to install, configure, and execute the Hyperon Pattern Miner on your own AtomSpace data.
 \end{enumerate}
 
-By the end of this tutorial, you'll understand what the Hyperon Pattern Miner is, why it matters, and how it works--and be at least a little bit experienced with some hands-on examples.   You should then be prepared to work on some larger examples on your own if that's the direction your work or interest leads you!
-
+Conclude intro -- answer those first questions
 \end{document}
