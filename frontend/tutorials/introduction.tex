@@ -8,6 +8,7 @@
 \usepackage{listings}  % for code examples
 \usepackage{hyperref}  % clickable cross-refs; load last
 \usepackage{mdframed}  % for boxed content
+\usepackage{xcolor}    % for colored text/links
 
 % ----------- tables & arrays ------------
 \usepackage{array}     % extended column specifiers in tabular
@@ -43,6 +44,8 @@ You probably have some questions in mind such as:
   \item Somebody said it was too slow. Is that still true? (No)
 \end{itemize}
 
+{\itshape Beginning users might want to visit \href{https://metta-lang.dev/docs/learn/learn.html}{\textcolor{blue}{MeTTa Learn Docs}} for additional MeTTa background.}
+
 Well, if you have variations of these questions, you are on the right tutorial!
 
 
@@ -56,43 +59,79 @@ Now suppose you are creating a scheduling application. Given today's agenda, the
 
 If this sounds to you a bit like an SQL "return all rows" matching request, you'd be on the right track. In essence, MeTTa is a fusion of "return all rows" SQL type calls and basically ordinary code. Given some specific inputs, code written in MeTTa by default will return all possible output combinations that result from executing all possible paths in your code applicable to the input. You get everything.
 
-This might immediately raise the worrying prospect of having to deal with an avalanche of results. Well, don't worry, because there are ways of corralling MeTTa. Basically you only need about a dozen constructs to do everything you need in MeTTa.
+This might immediately raise the worrying prospect of having to deal with an avalanche of results. Well, don't worry, because there are ways of corralling such an avalanche with MeTTa. In fact that's the point of it. And you basically only need about a dozen constructs to do everything you need in MeTTa.
 
 \subsection{Corralling the Combinatorial Explosion}
 
 Reality is incredibly complex. AI is a distinct discipline within computer science because worldly complex problems can't be handled by conventional programming in which all possible combinations are accounted for and pre-coded in advance. Techniques are developed to reach goals without requiring the specific pre-coding and foresight of all sequences of all possible combinations. AI evolved into a trick bag for handling such situations. AI, symbolic and neural, has to search for a path from start request to goal result without a predetermined route. 
 
-Historically it has been difficult to write conventional symbolic programs to handle problems characterized by real world complexity. The strategy MeTTa employs to meet the challenge of corralling combinatorial explosions is to add a small set of programming principles and constructs to enable conventional seeming programs to manage and tame a massive number of combinations, possible paths and "all the results." (You can get similar results with languages such as Prolog, but Prolog is a very unusual language for beginning and potential users to learn.)
+Historically it has been difficult to write conventional symbolic programs to handle problems characterized by real world complexity. The strategy MeTTa employs to meet the challenge of subduing combinatorial explosions is to add a small set of programming principles and constructs to enable conventional seeming programs to tame a massive number of combinations and "all possible results." (You can get similar results with languages such as Prolog, but Prolog is a very unusual language for beginning and potential users to learn.)
 
-Thus creating conventional symbolic programs to handle huge combinations of possible cases is difficult or impossible. The fundamental strategy of MeTTa is to balance the use of more or less ordinary programs with a technique of managing the wild beast of combinatorial explosion. Using this technique: x y z.
+\subsection{Superpose Match Collapse}
 
-So we use chess as example...
+There are three defining programming constructs in MeTTa to manage combinatorial explosion, covered in detail later along with a few other supporting constructs:
+
+\begin{enumerate}
+  \item \textbf{superpose}. Specify a set of cases to evaluate,
+  \item \textbf{match}. Determine all results for specified cases,
+  \item \textbf{collapse}. Return all results for filtering/processing.
+\end{enumerate}
+
+Basically the combinatorial explosion happens as a result of the first two steps, but \textbf{collapse} sets an important boundary. If you forget to terminate this sequence with \textbf{collapse,} beware that MeTTa might insist on backing up later in your code and recomputing other variations you may not have thought of, much to your surprise and possible annoyance. 
+
+In order to avoid this potential "gotcha" (MeTTa unexpectedly backing up, retrying your match) all you need to do is use \textbf{collapse}. MeTTa will then proceed forward and not dwell on other possible cases. \textbf{collapse} is your primary tool for managing the combinatorial explosion, and can be used basically anywhere in MeTTa code in which multiple results are possible.
+
+BENFITS OF METTA, DISADVANTAGES
+
+LLM ADVANTAGES/DIS-
+and HOW THEY CAN REPOSE TOGETHER
+
 
 \section{How to Use the Tutorial}
 
-This whole process is implemented in MeTTa, so if one runs it within a fast MeTTa interpretation or compilation framework, it should scale to huge numbers  of Atoms.  (Different Atoms may have different sizes, but very roughly, in a server with terabytes of RAM one may be able to host Atomspaces with 100B or more Atoms.)   It also exposes a clean API so you can integrate pattern mining directly into larger learning or reasoning pipelines.
+\subsection{Chess}
+
+Chess has a high degree of combinatorial explosion. After a crash course in a few basic MeTTa constructs, we will code a chess game. After we have created a basic game, you can then make a major modification to it. You can click the button above to play chess using your developed game, or reset to the default program code that is supplied with the tutorial and play using that code.
 
 \subsection{AtomSpace}
 
-The \textbf{AtomSpace} is Hyperon's persistent metagraph store.  Every node and link you mine lives there.  In MeTTa you typically create or bind an AtomSpace via:
+Your program and data (eg., chessboard) reside together in atomspace. For this tutorial you can use the handy boxes appearing throughout to try out segments of code. You can display and reset your atomspace using the buttons on the far upper right of the tutorial at any time.
+
+In MeTTa, the "code" is essentially rewrite rules and is stored in atomspace. Rewrite rules start with "(=". Given some input pattern, it executes. The input pattern below is just (hello-world).
+
+Your "data," is stored in atomspace enclosed in balanced parenthesis. 
+
+If you start your MeTTa input with "!(..." you trigger an immediate execution. 
+
+In the example below, the "!("... construct calls the "(=" rewrite rule. When you run the example, (Hello World) is returned. 
+
+When you click the "Run" button below, given the example, MeTTa will add the "code" and "data" statements to atomspace. Then MeTTa executes !(hello-world).
+
+Importantly, note that both code and data are considered atoms and reside in atomspace together for manipulation.
+
+A red parenthesis is a tip-off that you have unbalanced parens somewhere in your expression.
 
 \begin{verbatim}
-!(import! &self hyperon-miner:match:MinerMatch)
-!(bind! &atom-space (new-space)) 
+; "code" rewrite rule atom
+(= (hello-world) (Hello World))  
+
+; "data," another type of atom
+(MeTTa is fun!)
+
+; execute
+!(hello-world)
 \end{verbatim}
 
-All of the live examples on this tutorial operate within a single AtomSpace. As you run each code example, or "cell," you are continuously adding new information to this space, building upon the results from all the cells you have already run. The "Reset Atomspace" button wipes the whole atomspace and lets you start on a clean slate whilst the "reset" button on the cells (code snippets) themselves  provide a way to start over from that specific point whilst maintaing the state of the atom upto that particular snippet. The most common use case for these buttons is if you happen to be facing an import issue at some point you could reset the whole atomspace or reset the snippet that executes the importing tasks so that subsequent cells can get the correct imports they need. 
-
-\subsection{Buttons}
+Absolute newbies might want to visit \href{https://metta-lang.dev/docs/learn/learn.html}{MeTTa Learn Docs} for additional MeTTa background.
 
 \section{Tutorial Objectives}
 
 
 \begin{enumerate}
-  \item \textbf{Why} in the core concepts (AtomSpace, patterns, frequency, and surprisingness).
-  \item \textbf{What} the full mining pipeline--from abstracting link-nodes to scoring surprisingness--using diagrams and MeTTa code.
-  \item \textbf{How} MeTTa scripts to install, configure, and execute the Hyperon Pattern Miner on your own AtomSpace data.
+  \item \textbf{Why} Understand the potential of MeTTa in an age of LLMs. 
+  \item \textbf{What} Gain a basic understanding of STRUCTURE MEANS
+  \item \textbf{How} CODING ABLE TO SET UP SERVER
 \end{enumerate}
 
-Conclude intro -- answer those first questions
+
 \end{document}
