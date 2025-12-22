@@ -44,8 +44,6 @@ You probably have some questions in mind such as:
   \item Somebody said it was too slow. Is that still true? (No)
 \end{itemize}
 
-{\itshape Beginning users might want to visit \href{https://metta-lang.dev/docs/learn/learn.html}{\textcolor{blue}{MeTTa Learn Docs}} for additional MeTTa background.}
-
 Well, if you have variations of these questions, you are on the right tutorial!
 
 
@@ -81,11 +79,17 @@ Basically the combinatorial explosion happens as a result of the first two steps
 
 In order to avoid this potential "gotcha" (MeTTa unexpectedly backing up, retrying your match) all you need to do is use \textbf{collapse}. MeTTa will then proceed forward and not dwell on other possible cases. \textbf{collapse} is your primary tool for managing the combinatorial explosion, and can be used basically anywhere in MeTTa code in which multiple results are possible.
 
-BENFITS OF METTA, DISADVANTAGES
+\subsection{Advantages of MeTTa}
 
-LLM ADVANTAGES/DIS-
-and HOW THEY CAN REPOSE TOGETHER
+The world is presently on fire with LLMs, so you might be wondering what the advantage of MeTTa, a symbolic language, might be for AI. 
 
+LLMs are, of course, incredible AI technology and a bona fide breakthrough. LLMs have a sort of common sense facility coupled with a regularly astonishing wide breadth of generalization. 
+
+Their weaknesses are well known, and while improving, still present. Hallucinations remain a regular problem. Their ability to store memories and other data long term, reliably, is problematic. Dynamic learning is weak or non-existent. 
+
+MeTTa, on the other hand, can be used as a knowledge graph, allowing create, read, update, and delete (CRUD) processing. MeTTa is reliable as long term memory. It can process problems dependably with significant combinatorial variations, such as chess. The type of intelligence MeTTa exemplifies is arguably deep, not necessarily wide in breadth like an LLM. However, MeTTa has no intrinsic approximation of a common sense facility comparable to an LLM and as a symbolic engine, may be brittle. (Although it is possible to incorporate embeddings in MeTTa code.)
+
+The question of whether or not, and to what extent, MeTTa can synergize with LLMs is an open and tantalizing one. MeTTa in a RAG type of role can potentially add a deep and reliable component to the broader, more common sense infused intelligence of an LLM. If you have an application with combinatorial complexity, the need to update memory reliably, and predictable inference, MeTTa can help.
 
 \section{How to Use the Tutorial}
 
@@ -99,7 +103,7 @@ Chess has a high degree of combinatorial explosion. After a crash course in a fe
 
 \subsection{AtomSpace}
 
-Your program and data (eg., chessboard) reside together in atomspace. For this tutorial you can use the handy boxes appearing throughout to try out segments of code. You can display and reset your atomspace using the buttons on the far upper right of the tutorial at any time.
+Your program and data (eg., chessboard) reside together in atomspace. For this tutorial you can use the handy boxes appearing throughout to try out segments of code. You can display and reset your atomspace using the buttons above at any time.
 
 In MeTTa, the "code" is essentially rewrite rules and is stored in atomspace. Rewrite rules start with "(=". Given some input pattern, it executes. The input pattern below is just (hello-world).
 
@@ -128,13 +132,13 @@ A red parenthesis is a tip-off that you have unbalanced parens somewhere in your
 
 Note: it's possible to use different spaces inside atomspace, but for this tutorial we will only use &self.
 
-\section{Tutorial Objectives}
+\section{Main Tutorial Questions and Objectives}
 
 
 \begin{enumerate}
-  \item \textbf{Why} Understand the potential of MeTTa in an age of LLMs. 
-  \item \textbf{What} Gain a basic understanding of STRUCTURE MEANS
-  \item \textbf{How} CODING ABLE TO SET UP SERVER
+  \item \textbf{Why Use Metta?} Consider the advantages of MeTTa in an age of LLMs, and how MeTTa can add depth and reliability to your AI/AGI. 
+  \item \textbf{What Does it Do?} Gain an understanding of the overall paradigm MeTTa uses of producing and managing maximal results.
+  \item \textbf{How Can MeTTa be Used?} Get some hands on experience with core MeTTa constructs in a real game application. Be able to start a MeTTa server on your own machine.
 \end{enumerate}
 
 
