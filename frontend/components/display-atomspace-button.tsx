@@ -43,9 +43,28 @@ export function DisplayAtomspaceButton() {
   const handleClick = () => {
     const raw = atomspaceState ?? ""
     const processed = raw ? splitParenthesizedArray(raw) : ""
-    // Show the fully processed value; fall back to raw so nothing gets truncated
     const msg = processed || raw || "Atomspace empty."
-    alert(msg)
+    const win = window.open("", "_blank")
+    if (win) {
+      win.document.write(`
+        <html>
+          <head>
+            <title>Atomspace State</title>
+            <style>
+              body { font-family: sans-serif; padding: 16px; }
+              pre { white-space: pre-wrap; word-break: break-word; }
+            </style>
+          </head>
+          <body>
+            <h3>Atomspace State</h3>
+            <pre>${msg}</pre>
+          </body>
+        </html>
+      `)
+      win.document.close()
+    } else {
+      alert(msg)
+    }
   }
 
   return (
