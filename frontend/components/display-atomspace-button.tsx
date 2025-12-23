@@ -97,42 +97,59 @@ export function DisplayAtomspaceButton() {
     }
   }, [])
 
+  // Render helper
+  const renderAtomspaceWindow = (win: Window, raw: string) => {
+    const trimmed = (raw || "").trim()
+    // treat empty, null, undefined, or literal [] as empty
+    const normalized = trimmed && trimmed !== "[]" ? trimmed : "Atomspace empty"
+    let msg = normalized
+    if (/[()]/.test(normalized)) {
+      try {
+        const split = splitParenthesizedArray(normalized)
+        msg = split ? prettyPrintSexpr(split) : normalized
+      } catch {
+        msg = normalized
+      }
+    }
+    const escaped = msg
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+    win.document.open()
+    win.document.write(`
+      <html>
+        <head>
+          <title>Atomspace State</title>
+          <style>
+            body { font-family: sans-serif; padding: 16px; }
+            pre { white-space: pre-wrap; word-break: break-word; }
+          </style>
+        </head>
+        <body>
+          <pre>${escaped}</pre>
+        </body>
+      </html>
+    `)
+    win.document.close()
+  }
+
+  // Update the atomspace window automatically when global atomspace changes
+  useEffect(() => {
+    const win = atomspaceWindow
+    if (win && !win.closed) {
+      renderAtomspaceWindow(win, atomspaceState ?? "")
+    }
+  }, [atomspaceState, atomspaceWindow])
+
   const handleClick = () => {
     const raw = atomspaceState ?? ""
-    const processed = raw ? splitParenthesizedArray(raw) : ""
-    const base = processed || raw || "Atomspace empty."
-    let msg = base
-    try {
-      msg = prettyPrintSexpr(base)
-    } catch {
-      msg = base
-    }
     // Always (re)open/update the same named window to bring it to front
     const win = window.open("about:blank", "atomspace_state")
     setAtomspaceWindow(win)
     if (win) {
-      const escaped = msg
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-      win.document.open()
-      win.document.write(`
-        <html>
-          <head>
-            <title>Atomspace State</title>
-            <style>
-              body { font-family: sans-serif; padding: 16px; }
-              pre { white-space: pre-wrap; word-break: break-word; }
-            </style>
-          </head>
-          <body>
-            <pre>${escaped}</pre>
-          </body>
-        </html>
-      `)
-      win.document.close()
+      renderAtomspaceWindow(win, raw)
     } else {
-      alert(msg)
+      alert(raw || "Atomspace empty.")
     }
   }
 

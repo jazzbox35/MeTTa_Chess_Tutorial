@@ -155,6 +155,7 @@ export function CodeEditor({
       // Submit the query along with atomspace. Server returns:
       //  [ result of query ] [ updated atomspace ]
       //
+      alert(`Payload to /metta_stateless:\n${payload}`)
       const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
         method: "POST",
         headers: {
