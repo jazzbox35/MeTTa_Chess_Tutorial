@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, Menu } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchBar } from "@/components/search-bar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ResetButton } from "./reset-button";
@@ -15,6 +15,21 @@ export function SiteHeader() {
   // Show header actions on all sections/pages
   const showResetButton = true;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [atomspaceEmpty, setAtomspaceEmpty] = useState<boolean>(() => {
+    const val = (globalThis as any).Atomspace_state ?? ""
+    const trimmed = (val || "").trim()
+    return !trimmed || trimmed === "[]" || trimmed === "()"
+  });
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail ?? ""
+      const trimmed = (detail || "").trim()
+      setAtomspaceEmpty(!trimmed || trimmed === "[]" || trimmed === "()")
+    }
+    window.addEventListener("atomspace_state_updated", handler as EventListener)
+    return () => window.removeEventListener("atomspace_state_updated", handler as EventListener)
+  }, [])
 
   return (
     <header className="fixed top-0 z-40 w-full border-b bg-background pr-5">
@@ -45,6 +60,7 @@ export function SiteHeader() {
               variant="outline"
               size="sm"
               className="text-xs px-3 h-9 min-w-[140px]"
+              disabled={atomspaceEmpty}
               onClick={() => {
                 ;(globalThis as any).Atomspace_state = ""
                 try {
@@ -55,7 +71,7 @@ export function SiteHeader() {
                 if (typeof window !== "undefined") {
                   window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: "" }))
                 }
-                alert("Atomspace successfully reset.")
+                setAtomspaceEmpty(true)
               }}
             >
               Reset Atomspace
@@ -89,6 +105,7 @@ export function SiteHeader() {
                   variant="outline"
                   size="sm"
                   className="text-xs w-full h-9"
+                  disabled={atomspaceEmpty}
                   onClick={() => {
                     ;(globalThis as any).Atomspace_state = ""
                     try {
@@ -99,7 +116,7 @@ export function SiteHeader() {
                     if (typeof window !== "undefined") {
                       window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: "" }))
                     }
-                    alert("Atomspace successfully reset.")
+                    setAtomspaceEmpty(true)
                   }}
                 >
                   Reset Atomspace
