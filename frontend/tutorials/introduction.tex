@@ -77,7 +77,7 @@ There are three defining programming constructs in MeTTa to manage combinatorial
 
 Basically the combinatorial explosion happens as a result of the first two steps, but \textbf{collapse} sets an important boundary. If you forget to terminate this sequence with \textbf{collapse,} beware that MeTTa might insist on backing up later in your code and recomputing other variations you may not have thought of, much to your surprise and possible annoyance. 
 
-In order to avoid this potential "gotcha" (MeTTa unexpectedly backing up, retrying your match) all you need to do is use \textbf{collapse}. MeTTa will then proceed forward and not dwell on other possible cases. \textbf{collapse} is your primary tool for curtailing a combinatorial explosion, and can be used basically anywhere in MeTTa code in which multiple results are possible.
+In order to avoid this potential "gotcha" (MeTTa unexpectedly backing up, retrying your match) all you need to do is use \textbf{collapse}. MeTTa will then proceed forward and not dwell on other possible cases. \textbf{collapse} is your primary tool for curtailing a combinatorial explosion, and can be used basically anywhere that you suspect MeTTa code blocks might generate multiple results.
 
 \subsection{Advantages of MeTTa}
 
