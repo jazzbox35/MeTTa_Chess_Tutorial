@@ -46,9 +46,14 @@ function prettyPrintSexpr(input: string): string {
       else line += " )"
       pushLine()
     } else {
-      if (line.trim().length === 0) line = "    ".repeat(indent) + tok
-      else line += " " + tok
-      if (tokens[idx + 1] === "(") pushLine()
+      // If previous token was "(" and current is "=", keep on same line: "(="
+      if (line.trim().endsWith("(") && tok === "=") {
+        line += "="
+      } else {
+        if (line.trim().length === 0) line = "    ".repeat(indent) + tok
+        else line += " " + tok
+      }
+      if (tokens[idx + 1] === "(" && !line.trim().endsWith("(=")) pushLine()
     }
   })
   pushLine()
