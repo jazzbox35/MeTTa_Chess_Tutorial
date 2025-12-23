@@ -4,6 +4,57 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { splitParenthesizedArray } from "@/lib/split-parenthesized-array"
 
+// Lightweight s-expression pretty printer (for display only)
+function prettyPrintSexpr(input: string): string {
+  let indent = 0
+  const tokens: string[] = []
+  let current = ""
+
+  const flush = () => {
+    if (current.trim()) tokens.push(current.trim())
+    current = ""
+  }
+
+  for (let i = 0; i < input.length; i++) {
+    const ch = input[i]
+    if (ch === "(" || ch === ")") {
+      flush()
+      tokens.push(ch)
+    } else if (/\s/.test(ch)) {
+      flush()
+    } else {
+      current += ch
+    }
+  }
+  flush()
+
+  const lines: string[] = []
+  let line = ""
+  const pushLine = () => {
+    if (line.trim().length) lines.push(line.trimEnd())
+    line = ""
+  }
+
+  tokens.forEach((tok, idx) => {
+    if (tok === "(") {
+      if (line.trim().length === 0) line = "  ".repeat(indent) + "("
+      else line += " ("
+      indent++
+    } else if (tok === ")") {
+      indent = Math.max(indent - 1, 0)
+      if (line.trim().length === 0) line = "  ".repeat(indent) + ")"
+      else line += " )"
+      pushLine()
+    } else {
+      if (line.trim().length === 0) line = "  ".repeat(indent) + tok
+      else line += " " + tok
+      if (tokens[idx + 1] === "(") pushLine()
+    }
+  })
+  pushLine()
+  return lines.join("\n")
+}
+
 export function DisplayAtomspaceButton() {
   const [atomspaceState, setAtomspaceState] = useState<string | null>(null)
   const [atomspaceWindow, setAtomspaceWindow] = useState<Window | null>(null)
@@ -44,7 +95,13 @@ export function DisplayAtomspaceButton() {
   const handleClick = () => {
     const raw = atomspaceState ?? ""
     const processed = raw ? splitParenthesizedArray(raw) : ""
-    const msg = processed || raw || "Atomspace empty."
+    const base = processed || raw || "Atomspace empty."
+    let msg = base
+    try {
+      msg = prettyPrintSexpr(base)
+    } catch {
+      msg = base
+    }
     // Always (re)open/update the same named window to bring it to front
     const win = window.open("about:blank", "atomspace_state")
     setAtomspaceWindow(win)
