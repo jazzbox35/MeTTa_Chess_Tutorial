@@ -126,7 +126,6 @@ export function DisplayAtomspaceButton() {
             </style>
           </head>
           <body>
-            <h3>Atomspace State</h3>
             <pre>${escaped}</pre>
           </body>
         </html>
