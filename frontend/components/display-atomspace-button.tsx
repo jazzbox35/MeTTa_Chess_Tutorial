@@ -37,16 +37,16 @@ function prettyPrintSexpr(input: string): string {
 
   tokens.forEach((tok, idx) => {
     if (tok === "(") {
-      if (line.trim().length === 0) line = "  ".repeat(indent) + "("
+      if (line.trim().length === 0) line = "    ".repeat(indent) + "("
       else line += " ("
       indent++
     } else if (tok === ")") {
       indent = Math.max(indent - 1, 0)
-      if (line.trim().length === 0) line = "  ".repeat(indent) + ")"
+      if (line.trim().length === 0) line = "    ".repeat(indent) + ")"
       else line += " )"
       pushLine()
     } else {
-      if (line.trim().length === 0) line = "  ".repeat(indent) + tok
+      if (line.trim().length === 0) line = "    ".repeat(indent) + tok
       else line += " " + tok
       if (tokens[idx + 1] === "(") pushLine()
     }
