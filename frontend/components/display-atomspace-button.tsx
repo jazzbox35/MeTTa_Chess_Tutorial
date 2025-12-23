@@ -6,6 +6,7 @@ import { splitParenthesizedArray } from "@/lib/split-parenthesized-array"
 
 export function DisplayAtomspaceButton() {
   const [atomspaceState, setAtomspaceState] = useState<string | null>(null)
+  const [atomspaceWindow, setAtomspaceWindow] = useState<Window | null>(null)
 
   useEffect(() => {
     // Initialize from global or localStorage
@@ -44,8 +45,15 @@ export function DisplayAtomspaceButton() {
     const raw = atomspaceState ?? ""
     const processed = raw ? splitParenthesizedArray(raw) : ""
     const msg = processed || raw || "Atomspace empty."
-    const win = window.open("", "_blank")
+    // Always (re)open/update the same named window to bring it to front
+    const win = window.open("about:blank", "atomspace_state")
+    setAtomspaceWindow(win)
     if (win) {
+      const escaped = msg
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+      win.document.open()
       win.document.write(`
         <html>
           <head>
@@ -57,7 +65,7 @@ export function DisplayAtomspaceButton() {
           </head>
           <body>
             <h3>Atomspace State</h3>
-            <pre>${msg}</pre>
+            <pre>${escaped}</pre>
           </body>
         </html>
       `)
