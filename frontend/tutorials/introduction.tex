@@ -77,7 +77,7 @@ There are three defining programming constructs in MeTTa to manage combinatorial
 
 Basically the combinatorial explosion happens as a result of the first two steps, but \textbf{collapse} sets an important boundary. If you forget to terminate this sequence with \textbf{collapse,} beware that MeTTa might insist on backing up later in your code and recomputing other variations you may not have thought of, much to your surprise and possible annoyance. 
 
-In order to avoid this potential "gotcha" (MeTTa unexpectedly backing up, retrying your match) all you need to do is use \textbf{collapse}. MeTTa will then proceed forward and not dwell on other possible cases. \textbf{collapse} is your primary tool for managing the combinatorial explosion, and can be used basically anywhere in MeTTa code in which multiple results are possible.
+In order to avoid this potential "gotcha" (MeTTa unexpectedly backing up, retrying your match) all you need to do is use \textbf{collapse}. MeTTa will then proceed forward and not dwell on other possible cases. \textbf{collapse} is your primary tool for curtailing a combinatorial explosion, and can be used basically anywhere in MeTTa code in which multiple results are possible.
 
 \subsection{Advantages of MeTTa}
 
@@ -87,7 +87,7 @@ LLMs are, of course, incredible AI technology and a bona fide breakthrough. LLMs
 
 Yet their weaknesses are well known, and while improving, still present. Hallucinations remain a regular problem. Their ability to store memories and other data long term, reliably, is problematic. Dynamic learning is weak or non-existent. 
 
-MeTTa, on the other hand, can be used as a knowledge graph, allowing create, read, update, and delete (CRUD) processing. MeTTa is reliable as long term memory. It can process problems dependably with significant combinatorial variations, such as chess. The type of intelligence MeTTa exemplifies is arguably deep, not necessarily wide in breadth like an LLM. However, MeTTa has no intrinsic approximation of a common sense facility comparable to an LLM and as a symbolic engine, may be brittle. (Although it is possible to incorporate embeddings in MeTTa code.)
+MeTTa is reliable as long term memory. It can be used as a knowledge graph, allowing create, read, update, and delete (CRUD) processing. It can process problems dependably with significant combinatorial variations, such as chess. The type of intelligence MeTTa exemplifies is arguably deep, not necessarily wide in breadth like an LLM. However, MeTTa has no intrinsic approximation of a common sense facility comparable to an LLM and as a symbolic engine, may be brittle. (Although it is possible to incorporate embeddings in MeTTa code.)
 
 The question of whether or not, and to what extent, MeTTa can synergize with LLMs is an open and tantalizing one. MeTTa in a RAG type of role can potentially add a deep and reliable component to the broader, more common sense infused intelligence of an LLM. If you have an application with combinatorial complexity, the need to update memory reliably, and predictable inference, MeTTa can help.
 
@@ -128,9 +128,9 @@ When you click the "Run" button below, given the example, MeTTa will add the "co
 
 Importantly, note that both code and data are considered atoms and reside in atomspace together for manipulation.
 
-A red parenthesis is a tip-off that you have unbalanced parens somewhere in your expression.
+A red parenthesis is often a tip-off that you have unbalanced parens somewhere in your expression.
 
-Note: it's possible to use different spaces inside atomspace, but for this tutorial we will only use &self.
+It's possible to subdivide atomspace into different spaces. The default space inside atomspace is designated as &self. For this tutorial we will only use &self. MeTTa also has typing functionality and constructs, however we will omit typing from this tutorial as it is not strictly required for our application.
 
 \section{Main Tutorial Questions and Objectives}
 
