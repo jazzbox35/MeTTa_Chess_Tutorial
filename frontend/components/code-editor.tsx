@@ -183,7 +183,7 @@ export function CodeEditor({
               headers: { "Content-Type": "text/plain" },
               body: null,
               }) 
-        ;(globalThis as any).Atomspace_state = null
+        // Don't delete atomspace on query fail, just exit.
         setError(`Metta query failed`)
         setIsExecuting(false)
         setHasRun(true)
