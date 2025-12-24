@@ -136,32 +136,26 @@ export function CodeEditor({
     setError(null)
 
     try {
-      let atomspaceState = (globalThis as any).Atomspace_state ?? ""
-      if (atomspaceState) {
-        try {
-          atomspaceState = splitParenthesizedArray(atomspaceState)
-        } catch {
-          alert("Atomspace parsing failed; using raw value")
-          setIsExecuting(false)
-          setHasRun(true)
-          return
-        }
-      }
-
+      const atomspaceState = (globalThis as any).Atomspace_state ?? ""
       // THIS PROGRAM RETAINS THE USER'S ATOMSPACE. THE SERVER DOES NOT RETAIN ATOMSPACE.
       // Attach the present query to the present atomspace for submission
-      const payload = atomspaceState ? `${atomspaceState}\n${code}` : code
+      let payload
+      if (!atomspaceState) {
+        payload = code
+      } else {
+        payload = `${atomspaceState}\n${code}`
+      }
 
       // DEBUG TEMP: dump payload (sent to /metta_stateless) to file before calling API
-      //try {
-      //  await fetch("/api/dump-atomspace", {
-      //    method: "POST",
-      //    headers: { "Content-Type": "text/plain" },
-      //    body: payload,
-      //  })
-      //} catch (e) {
-      //  console.error("Failed to dump payload", e)
-      //}
+      try {
+        await fetch("/api/dump-atomspace", {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: payload,
+        })
+      } catch (e) {
+        console.error("Failed to dump debug payload", e)
+      }
 
       // Submit the query along with atomspace. Server returns:
       //  [ result of query ] [ updated atomspace ]
@@ -184,6 +178,12 @@ export function CodeEditor({
       if (response.status !== 200
         || fullText.includes('{"error"'))
       {
+        await fetch("/api/dump-after", {
+              method: "POST",
+              headers: { "Content-Type": "text/plain" },
+              body: null,
+              }) 
+        ;(globalThis as any).Atomspace_state = null
         setError(`Metta query failed`)
         setIsExecuting(false)
         setHasRun(true)
@@ -191,16 +191,25 @@ export function CodeEditor({
       }
       // Expose second result (if present) globally for app-wide use
       const second = matches[1] || null
-      ;(globalThis as any).Atomspace_state = second
+      
       if (typeof window !== "undefined") {
         try {
           if (second !== null) {
-            window.localStorage.setItem("Atomspace_state", second)
+            const normalizedAtomspaceState = splitParenthesizedArray(second)
+            ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
+      
+            await fetch("/api/dump-after", {
+              method: "POST",
+              headers: { "Content-Type": "text/plain" },
+              body: normalizedAtomspaceState,
+              }) 
+
           } else {
-            window.localStorage.removeItem("Atomspace_state")
+            ;(globalThis as any).Atomspace_state = null
           }
         } catch {
-          // ignore storage errors
+          alert("Unable to assign atomspace")
+          ;(globalThis as any).Atomspace_state = null
         }
         window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: second ?? "" }))
       }
