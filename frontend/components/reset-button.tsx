@@ -6,7 +6,27 @@ import { FRONTEND_BASE_URL } from "@/lib/constants";
 
 export function ResetButton() {
   const handleReset = async () => {
-    alert("Now running default MeTTa chess program.");
+    try {
+      const res = await fetch("/api/default-program")
+      if (!res.ok) {
+        throw new Error(`Failed to load default program (${res.status})`)
+      }
+      const program = (await res.text()).trim()
+
+      ;(globalThis as any).Atomspace_state = program
+      if (typeof window !== "undefined") {
+        try {
+          window.localStorage.setItem("Atomspace_state", program)
+        } catch {
+          // ignore storage errors
+        }
+        window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: program }))
+      }
+      alert("Now running default MeTTa chess program.")
+    } catch (err) {
+      console.error(err)
+      alert("Failed to load default program.")
+    }
   };
 
   return (

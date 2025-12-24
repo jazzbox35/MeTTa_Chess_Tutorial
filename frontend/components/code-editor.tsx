@@ -152,10 +152,20 @@ export function CodeEditor({
       // Attach the present query to the present atomspace for submission
       const payload = atomspaceState ? `${atomspaceState}\n${code}` : code
 
+      // DEBUG TEMP: dump payload (sent to /metta_stateless) to file before calling API
+      //try {
+      //  await fetch("/api/dump-atomspace", {
+      //    method: "POST",
+      //    headers: { "Content-Type": "text/plain" },
+      //    body: payload,
+      //  })
+      //} catch (e) {
+      //  console.error("Failed to dump payload", e)
+      //}
+
       // Submit the query along with atomspace. Server returns:
       //  [ result of query ] [ updated atomspace ]
       //
-      alert(`Payload to /metta_stateless:\n${payload}`)
       const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
         method: "POST",
         headers: {
