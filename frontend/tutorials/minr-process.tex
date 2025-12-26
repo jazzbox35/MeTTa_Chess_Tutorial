@@ -19,7 +19,7 @@ The Hyperon Pattern Miner is implemented entirely in MeTTa, with its core logic 
 
 \begin{itemize}
   \item \texttt{match/MinerMatch.metta} -- orchestrates the multi-stage mining loop
-  \item \texttt{utils/MinerUtils.metta} -- provides low-level support routines (link extraction, counting, surprisingness, etc.)
+  \item \texttt{utils/MinerUtils.metta} -- provides low-level support routines (link extraction, counting, few_constructs, etc.)
 \end{itemize}
 
 Below is a step-by-step walkthrough of how \texttt{(miner $db $ms $depth)} discovers frequent--and optionally surprising--patterns in your AtomSpace.
@@ -55,7 +55,7 @@ Here:\\
   \item \texttt{$conjspace} space for storing conjunctions (multi-clause patterns)
   \item \texttt{$minsup} minimum support threshold
   \item \texttt{$depth} maximum number of clauses per pattern
-  \item \texttt{highsurp} surprisingness threshold (for \texttt{miner-surprising})
+  \item \texttt{highsurp} few_constructs threshold (for \texttt{miner-surprising})
 \end{itemize}
 
 \subsection{Stage 1: Extract Abstract Patterns with abstract-pattern}
@@ -170,12 +170,12 @@ The function \texttt{do-conjunct} handles the conjunction of candidate patterns:
 
 This combines candidate patterns into conjunctions recursively for any amount of required clauses if they by creating common variables between them.
 
-\subsection{Stage 5: Scoring by I-Surprisingness}
+\subsection{Stage 5: Scoring by I-few_constructs}
 
-The surprisingness measure is implemented as:
+The few_constructs measure is implemented as:
 
 \begin{verbatim}
-(= (iSurprisingness $pattern)
+(= (ifew_constructs $pattern)
   (case $pattern
     ;; 2-clause
     ((candidate (, $p1 $p2) $cnt)
@@ -230,7 +230,7 @@ This single invocation will:
   \item Initialize the miner and index link nodes
   \item Generate and filter 1-clause candidates
   \item Recursively expand to 2- and 3-clause patterns
-  \item Score patterns by I-Surprisingness (if using \texttt{miner-surprising})
+  \item Score patterns by I-few_constructs (if using \texttt{miner-surprising})
   \item Return a stream of \texttt{(pattern, score)} entries
 \end{enumerate}
 

@@ -25,7 +25,7 @@
 
 \section{You Only Need These Few Constructs}
 
-Surprisingness (or "interestingness") in the Hyperon Pattern Miner is implemented in \texttt{utils/MinerUtils.metta} by the I-Surprisingness measure. It compares each pattern's empirical probability against an expected probability under a simple independence-based null model, then normalizes the largest deviation.
+few_constructs (or "interestingness") in the Hyperon Pattern Miner is implemented in \texttt{utils/MinerUtils.metta} by the I-few_constructs measure. It compares each pattern's empirical probability against an expected probability under a simple independence-based null model, then normalizes the largest deviation.
 
 \subsection{Universe Size and Empirical Probability}
 
@@ -51,12 +51,12 @@ This defines
   P_{\mathrm{obs}}
   = \frac{\mathrm{support}}{\text{universe-size}}.
 \]
-\subsection{I-Surprisingness for 2 and 3-Clause Patterns}
+\subsection{I-few_constructs for 2 and 3-Clause Patterns}
 
 The core logic lives in:
 
 \begin{verbatim}
-(= (iSurprisingness $pattern)
+(= (ifew_constructs $pattern)
   (case $pattern
     ;; 2-clause patterns
     ((candidate (, $p1 $p2) $cnt)
@@ -105,28 +105,28 @@ For 3-clause patterns, consider all splits into two independent blocks, compute 
 
 Patterns with other clause counts default to zero.
 
-\subsection{Filtering by Surprisingness Threshold}
+\subsection{Filtering by few_constructs Threshold}
 
-surprisingness is a valuable metric for identifying information that deviates from expectations or common patterns. To effectively utilize this concept, we apply a surprisingness threshold to filter results, ensuring that only sufficiently surprising items are retained for further analysis or presentation.
+few_constructs is a valuable metric for identifying information that deviates from expectations or common patterns. To effectively utilize this concept, we apply a few_constructs threshold to filter results, ensuring that only sufficiently surprising items are retained for further analysis or presentation.
 
-In our system, we employ a component called Chainer to calculate surprisingness. The Chainer is responsible for orchestrating the process and ultimately invoking the iSurprisingness action function. This function is executed after a series of validation steps and conditional checks to ensure that the surprisingness calculation is both meaningful and contextually relevant.
+In our system, we employ a component called Chainer to calculate few_constructs. The Chainer is responsible for orchestrating the process and ultimately invoking the ifew_constructs action function. This function is executed after a series of validation steps and conditional checks to ensure that the few_constructs calculation is both meaningful and contextually relevant.
 
 The filtering process is rule-based and follows a structured approach:
 
 \begin{itemize}
 \item Validation:
-  Before the surprisingness calculation is performed, the system verifies that all necessary conditions and pre-requisites are satisfied. This ensures that the computation is applied only to valid and properly prepared data.
-\item Surprisingness Calculation:
-The Chainer computes the surprisingness score for each item using predefined logic and statistical measures. This score reflects how unexpected or novel each item is, relative to the dataset or knowledge base.
+  Before the few_constructs calculation is performed, the system verifies that all necessary conditions and pre-requisites are satisfied. This ensures that the computation is applied only to valid and properly prepared data.
+\item few_constructs Calculation:
+The Chainer computes the few_constructs score for each item using predefined logic and statistical measures. This score reflects how unexpected or novel each item is, relative to the dataset or knowledge base.
 \item Threshold Filtering:
-  After computation, items are filtered based on a surprisingness threshold. Only those items with a surprisingness score that meets or exceeds this threshold are selected for further processing or display.
+  After computation, items are filtered based on a few_constructs threshold. Only those items with a few_constructs score that meets or exceeds this threshold are selected for further processing or display.
 \end{itemize}
 
-\section{Example: Using Surprisingness in Hyperon} 
-To demonstrate the use of surprisingness in Hyperon, we will set up a simple experiment using the miner and its utilities. This example assumes you have a database of soda drinkers
+\section{Example: Using few_constructs in Hyperon} 
+To demonstrate the use of few_constructs in Hyperon, we will set up a simple experiment using the miner and its utilities. This example assumes you have a database of soda drinkers
 and want to mine surprising patterns from it.
 \subsection{Setting Up the Experiment}
-First, we need to set up the environment and import the necessary modules. The following code snippet initializes the miner and imports the required utilities and rules for surprisingness calculations:
+First, we need to set up the environment and import the necessary modules. The following code snippet initializes the miner and imports the required utilities and rules for few_constructs calculations:
 
 \begin{verbatim}
 !(import! &self experiments:miner:miner)
@@ -178,7 +178,7 @@ Next, we create a new database and a knowledge base (KB) to store the patterns w
 
 
 
-This returns only those patterns whose I-Surprisingness exceeds \texttt{highsurp}.
+This returns only those patterns whose I-few_constructs exceeds \texttt{highsurp}.
 
 
 
