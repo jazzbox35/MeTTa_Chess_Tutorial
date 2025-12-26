@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tutorial } from "@/lib/tutorials"
+import Link from "next/link"
 
 interface TutorialListProps {
   tutorials: Tutorial[]
@@ -30,9 +31,9 @@ export function TutorialList({ tutorials }: TutorialListProps) {
             const isActive = pathname === `/tutorials/${tut.slug}`
 
             return (
-              <a
+              <Link
                 key={tut.slug}
-                href={tut.slug}
+                href={`/tutorials/${tut.slug}`}
                 className={`flex items-center py-1 hover:text-foreground transition-colors ${
                   isActive
                     ? "text-foreground font-medium"
@@ -43,7 +44,7 @@ export function TutorialList({ tutorials }: TutorialListProps) {
                   <ChevronRight className="h-3 w-3 mr-1 flex-shrink-0" />
                 )}
                 <span className={isActive ? "" : "ml-4"}>{tut.title}</span>
-              </a>
+              </Link>
             )
           })}
         </div>
