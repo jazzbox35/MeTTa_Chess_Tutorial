@@ -1,5 +1,3 @@
-(= (What is MeTTa?) (match &self (MeTTa is fun) fun))
-(MeTTa is fun)
 ; "code" rewrite rule atom
 (= (What is MeTTa?) (match &self (MeTTa is fun) fun))
 

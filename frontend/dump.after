@@ -1,4 +1,2 @@
 (= (What is MeTTa?) (match &self (MeTTa is fun) fun))
 (MeTTa is fun)
-(= (What is MeTTa?) (match &self (MeTTa is fun) fun))
-(MeTTa is fun)
