@@ -53,7 +53,7 @@ The single most defining characteristic of MeTTa is this: it insists on giving y
 
 Suppose you are creating a package delivery routing application. Given a starting point and a destination, let's say ten routes exist, each with many twists and turns, so your code has lots of constraints. MeTTa outputs all ten complete routes in one run, at once. 
 
-Now suppose you are creating a scheduling application. Given today's agenda, there are a ninety-nine possible schedules given available rooms, equipment, personnel, tasks, etc. Again, MeTTa outputs all ninety-nine schedules in a single result.
+Now suppose you are creating a scheduling application. Given today's agenda, there are ninety-nine possible schedules given available rooms, equipment, personnel, tasks, etc. Again, MeTTa outputs all ninety-nine schedules in a single result.
 
 If this sounds to you a bit like an SQL "return all rows" matching request, you'd be on the right track. In essence, MeTTa is a fusion of "return all rows" SQL type calls and basically ordinary code. Given some specific inputs, code written in MeTTa by default will return all possible output combinations that result from executing all possible paths in your code applicable to the input. You get everything.
 
@@ -113,7 +113,7 @@ Your "data" is stored in atomspace enclosed in balanced parenthesis.
 
 If you start your MeTTa statement with "!" you trigger an immediate execution of what follows the exclamation point.
 
-When you click the "Run" button below MeTTa will add the "code" and "data" statements to atomspace. Then MeTTa executes the "!" statement which results in "(What is MeTTa?)" being matched with "(What is MeTTa?)" in the "(=" rewrite rule. The right side of the "(=" rewrite matches "(MeTTa is fun!)" described below as the data. The result "fun" is returned to you but not added to atomspace.
+When you click the "Run" button below MeTTa will add the "code" and "data" statements to atomspace. Then MeTTa executes the "!" statement which results in "(What is MeTTa?)" being matched with "(What is MeTTa?)" in the left side of the "(=" rewrite rule. The right side of the "(=" rewrite fires. It matches "(MeTTa is fun)" added in the second step. The result "fun" is returned by the rewrite rule, displayed as your output of the "!" statement, but not added to atomspace.
 
 After running the code segment below click to display your updated atomspace. 
 
