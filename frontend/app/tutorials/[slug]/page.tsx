@@ -30,6 +30,20 @@ export default async function TutorialPage({ params }: Params) {
     const currentIndex = allTutorials.findIndex((t) => t.slug === slug)
     const prevTutorial = currentIndex > 0 ? allTutorials[currentIndex - 1] : null
     const nextTutorial = currentIndex < allTutorials.length - 1 ? allTutorials[currentIndex + 1] : null
+    const normalizedTitle = tutorial.title.trim().toLowerCase()
+    let skippedTitleHeading = false
+    const filteredContent = tutorial.content.filter((item) => {
+      if (
+        item.type === "heading" &&
+        item.content &&
+        item.content.trim().toLowerCase() === normalizedTitle &&
+        !skippedTitleHeading
+      ) {
+        skippedTitleHeading = true
+        return false
+      }
+      return true
+    })
 
     return (
       <div className=" py-8">
@@ -84,7 +98,7 @@ export default async function TutorialPage({ params }: Params) {
             
             {/* Tutorial Content */}
             <div className="prose prose-gray dark:prose-invert max-w-none">
-              <LatexRenderer content={tutorial.content} />
+              <LatexRenderer content={filteredContent} />
             </div>
 
             {/* Navigation: Previous/Next */}
@@ -131,7 +145,7 @@ export default async function TutorialPage({ params }: Params) {
               <Card className="p-4">
                 <h3 className="text-lg font-semibold mb-3">On This Page</h3>
                 <ScrollArea className="h-[calc(100vh-12rem)] pr-4">
-                  <TableOfContents content={tutorial.content} />
+                  <TableOfContents content={filteredContent} />
                 </ScrollArea>
               </Card>
             </div>
