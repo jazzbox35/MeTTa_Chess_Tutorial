@@ -353,7 +353,7 @@ export function CodeEditor({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Prefill a cheat snippet</p>
+                    <p>Display answer</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

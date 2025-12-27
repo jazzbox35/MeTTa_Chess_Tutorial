@@ -48,16 +48,39 @@ Another way of adding atoms is by using "add-atom" as in the following example. 
 
 \begin{verbatim}
 !(add-atom &self (my second declared atom))
+;; cheat: (add-atom &self (my second declared atom))
 \end{verbatim}
 
 
-The basic format for removing atoms from atomspace is identical to "add-atom" except we use "remove-atom". The following example adds and then removes an atom. After you run the following code, check to see if "(my third atom)" is in atomspace. Then simply change "add-atom" to "remove-atom" in the code block to delete "(my third atom)" from atomspace, run, and display atomspace.
+The basic format for removing atoms from atomspace is identical to "add-atom" except we use "remove-atom". The following example first adds an atom. After you run the following code, check to see if "(my third atom)" is in atomspace. Then simply change "add-atom" to "remove-atom" in the code block (or click "Cheat") to delete "(my third atom)" from atomspace.  Run the changed code and then click to display atomspace. The "(my third atom)" atom will be removed. 
 
 \begin{verbatim}
 !(add-atom &self (my third atom))
 ;; cheat: !(remove-atom &self (my third atom))
 \end{verbatim}
 
+\subsection{Variables}
+
+All variables in MeTTa are prefixed with the dollar sign. The "let" construct is useful for assigning values to variables. The first argument to "let" is the variable to be assigned a value, and the second argument its value. Lastly the third argument can make use of the variable. In the example below, the value of "$var1" is returned by the "let" statement.
+ 
+\begin{verbatim}
+!(let $var1 Lighthouse $var1)
+\end{verbatim}
+
+Expressions in the second and third arguments of "let" are evaluated, or "reduced," if MeTTa can find a way to further execute. In the above example the symbol "Lighthouse" was returned from the "let" construct since there was nothing left to evaluate or execute with just "Lighthouse" assigned to our variable. 
+
+In the example below the second argument's expression simply adds 1 and 1. The result 2 is assigned to "$var1", and then the third argument uses the variable (now with value 2) inside a small list atom. The value assigned to the variable is available to the third argument. The third argument is the result of the "let" construct.
+
+\begin{verbatim}
+!(let $var1 (+ 1 1) (result $var1))
+\end{verbatim}
+
+Challenge: modify the below code example so that "(result $var1)" is added to atomspace.
+
+\begin{verbatim}
+!(let $var1 (+ 1 1) ???)
+;; cheat: !(let $var1 (+ 1 1) (add-atom &self (result $var1)))
+\end{verbatim}
 
 
 \end{document}
