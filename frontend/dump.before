@@ -1,8 +1,8 @@
 ; "code" rewrite rule atom
-(= (hello-world) (Hello World))  
+(= (What is MeTTa?) (match &self (MeTTa is fun) fun))
 
 ; "data," another type of atom
-(MeTTa is fun!)
+(MeTTa is fun)
 
 ; execute
-!(hello-world)
+!(What is MeTTa?)
