@@ -159,7 +159,8 @@ export function LatexRenderer({ content }: LatexRendererProps) {
               <CodeEditor
                code={item?.content ?? ""}
                language={item.language || "text"}
-               codeId={codeId}  
+               codeId={codeId}
+               cheatContent={item.cheatContent}
       />
     </div>
         );

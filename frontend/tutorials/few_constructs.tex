@@ -33,7 +33,7 @@ We'll use these to create the chess game in the next section.
 
 Atomspace, where all MeTTa code and data reside, can be subdivided into sub-spaces. The default sub-space is known as "&self". For this tutorial we'll just use "&self" although it is possible to create arbitrary spaces (eg., "&myatoms"). 
 
-After you run the examples in this tutorial you can check your atomspace by clicking the button to display atomspace on top of each tutorial page. To tidy things up as you work through the examples click the button to reset atomspace. Refreshing your browser page will reset the examples and clear atomspace.
+After you run the examples in this tutorial you can check your atomspace by clicking the button to display atomspace on top of each tutorial page. To tidy things up as you work through the examples click the button to reset atomspace. Refreshing your browser page will reset the examples and clear atomspace. Code boxes can also be reset individually and those with a challenge question will have a "Cheat" button if you just feel like displaying the answer.
 
 \subsection{Add and Manipulate Atoms}
 
@@ -51,16 +51,12 @@ Another way of adding atoms is by using "add-atom" as in the following example. 
 \end{verbatim}
 
 
-The basic format for removing atoms from atomspace is identical to "add-atom" except we use "remove-atom". The following example adds and then removes an atom. After you run the following code, check to see if "(my third atom)" is in atomspace. Then simply change "add-atom" to "remove-atom" in the code block to delete "(my third atom)" from atomspace. 
+The basic format for removing atoms from atomspace is identical to "add-atom" except we use "remove-atom". The following example adds and then removes an atom. After you run the following code, check to see if "(my third atom)" is in atomspace. Then simply change "add-atom" to "remove-atom" in the code block to delete "(my third atom)" from atomspace, run, and display atomspace.
 
 \begin{verbatim}
 !(add-atom &self (my third atom))
+;; cheat: !(remove-atom &self (my third atom))
 \end{verbatim}
-
-
-
-
-
 
 
 

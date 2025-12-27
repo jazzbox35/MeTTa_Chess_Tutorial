@@ -17,7 +17,7 @@ export type LatexContent =
   | { type: "heading"; level: number; content: string }
   | { type: "paragraph"; content: string }
   | { type: "math"; content: string }
-  | { type: "code"; language: string; content: string }
+  | { type: "code"; language: string; content: string; cheatContent?: string }
   | { type: "list"; ordered: boolean; items: ListItem[] }
   | { type: "bibliography"; items: BibliographyItem[] }
   | { type: "pseudocode"; content: string };
@@ -268,6 +268,7 @@ function processSectionContent(content: string, result: LatexContent[]): void {
 function extractCodeContent(content: string, result: LatexContent[]): void {
   let codeContent = "";
   let language = "text";
+  let cheatContent = "";
 
   if (content.includes("\\begin{verbatim}")) {
     const match = content.match(
@@ -296,10 +297,24 @@ function extractCodeContent(content: string, result: LatexContent[]): void {
   }
 
   if (codeContent) {
+    const lines = codeContent.split("\n");
+    const codeLines: string[] = [];
+    for (const line of lines) {
+      const cheatMatch = line.match(/^(?:;;|\/\/|#)\s*cheat:\s*(.*)$/i);
+      if (cheatMatch) {
+        cheatContent = cheatContent
+          ? `${cheatContent}\n${cheatMatch[1]}`
+          : cheatMatch[1];
+        continue;
+      }
+      codeLines.push(line);
+    }
+
     result.push({
       type: "code",
       language,
-      content: codeContent,
+      content: codeLines.join("\n"),
+      cheatContent: cheatContent || undefined,
     });
   }
 }

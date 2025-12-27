@@ -22,6 +22,8 @@ interface CodeEditorProps {
   showLineNumbers?: boolean
   className?: string
   codeId:number
+  cheatContent?: string
+  cheatLabel?: string
 }
 
 export function CodeEditor({
@@ -31,6 +33,8 @@ export function CodeEditor({
   readOnly: initialReadOnly = false,
   showLineNumbers = true,
   className = "",
+  cheatContent,
+  cheatLabel = "Cheat",
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode)
   const [readOnly, setReadOnly] = useState(initialReadOnly)
@@ -61,56 +65,20 @@ export function CodeEditor({
 
   // Reset code to initial value . only when explicitly called
   // Reset result output
- const handleResetCode = async () => {
-  try {
-    const response = await fetch(`${FRONTEND_BASE_URL}/reset-to-code`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ codeId }),
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Reset API returned status ${response.status}: ${response.statusText}`
-      );
-    }
-      setCode(initialCode);
-      setOutput("");
-      setError(null);
-      setHasRun(false);
-    
-  } catch (err) {
-    console.error("Reset code failed:", err);
-    setError(err instanceof Error ? err.message : String(err));
-  } finally {
-    setIsExecuting(false);
-  }
-}
-
-  // Reset result output
- const handleResetResult = async () => {
-  try {
-    const response = await fetch(`${FRONTEND_BASE_URL}/reset-to-code`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ codeId }),
-    });
-
-
+ const handleResetCode = () => {
+    setCode(initialCode)
     setOutput("")
     setError(null)
     setHasRun(false)
-    
-  } catch (err) {
-    console.error("Reset code failed:", err);
-    setError(err instanceof Error ? err.message : String(err));
-  } finally {
-    setIsExecuting(false);
-  }
+    setIsExecuting(false)
+}
+
+  // Reset result output
+ const handleResetResult = () => {
+    setOutput("")
+    setError(null)
+    setHasRun(false)
+    setIsExecuting(false)
 }
 
   // Toggle read-only mode
@@ -365,6 +333,31 @@ export function CodeEditor({
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+
+            {cheatContent && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="px-2"
+                      onClick={() => {
+                        setCode(cheatContent)
+                        setOutput("")
+                        setError(null)
+                        setHasRun(false)
+                      }}
+                    >
+                      {cheatLabel}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Prefill a cheat snippet</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
         </div>
 
