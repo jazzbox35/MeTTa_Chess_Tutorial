@@ -1,8 +1,1 @@
-; "code" rewrite rule atom
-(= (What is MeTTa?) (match &self (MeTTa is fun) fun))
-
-; "data," another type of atom
-(MeTTa is fun)
-
-; execute
-!(What is MeTTa?)
+(add-atom &self (my second declared atom))

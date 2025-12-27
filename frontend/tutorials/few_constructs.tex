@@ -25,22 +25,31 @@
 
 \section{You Only Need These Few Constructs}
 
-First some good news! Solid and potent MeTTa code can be built with only about a dozen fairly simple programming constructs. The possible downside though is that MeTTa, while a unique language, does look somewhat like LISP with nested, balanced parenthesis to mind. However, with a bit of practice and an IDE that tracks parenthesis nesting with colors you'll do fine.
+First some good news! Solid and potent MeTTa code can be built with only about a dozen fairly simple programming constructs. The possible downside though is that MeTTa, while a unique language, does look somewhat like LISP with nested, balanced parenthesis to mind. However, a bit of practice and an IDE that tracks parenthesis nesting with colors works wonders.
 
-In this section we will examine code constructs to add and manipulate atoms, assign variables, define rewrite rules, handle conditional execution, run a sequence of statements, loop, and manage the combinatorial explosion with the superpose, match, and collapse functions. 
+Below is a crash course covering a few code constructs to add and manipulate atoms, assign variables, define rewrite rules, handle conditional execution, run a sequence of statements, loop, and manage the combinatorial explosion with the superpose, match, and collapse functions. 
 
-We'll use these construct types to create the chess game in the next section.
+We'll use these to create the chess game in the next section.
+
+Atomspace, where all MeTTa code and data reside, can be subdivided into sub-spaces. The default sub-space is known as "&self". For this tutorial we'll just use "&self" although it is possible to create arbitrary spaces (eg., "&myatoms"). 
+
+After you run the examples in this tutorial you can check your atomspace by clicking the button to display atomspace on top of each tutorial page. To tidy things up as you work through the examples click the button to reset atomspace.
 
 \subsection{Add and Manipulate Atoms}
 
-First, the miner computes the total number of ground atoms:
+The quickest way to add atoms to atomspace is by declaration in your program. The following example will add "(my declared atom)" to the "&self" sub-space. Note that if you declare atoms using this simple approach such atoms are placed in the "&self" sub-space only. When using this style to add atoms, simple declaration is enough -- there is no need to prefix the expression with "!".
 
 \begin{verbatim}
-;; Count every atom in the database
-(= (universe-size)
-   (let $u (collapse (match $dbspace $x 1))
-       (tuple-count $u)))
+(my declared atom)
 \end{verbatim}
+
+Another way of adding atoms is by using "add-atom" as in the following example. When you use "add-atom" it is necessary to specify the sub-space within atomspace ("&self" for the tutorial). In this example we need to prefix the statement with "!" to force MeTTa to execute the expression, to actually add "(my second declared atom)" to atomspace. Try running the code example both with and without the "!" prefix. By displaying and resetting atomspace after each run you can observe the difference. As a general rule, prefixing with "!" will trigger immediate execution of the expression. Omission of the "!" prefix will add the entire expression to atomspace without execution. This is a subtle but important difference but easy to see by checking atomspace.
+
+
+\begin{verbatim}
+!(add-atom &self (my second declared atom))
+\end{verbatim}
+
 
 
 
