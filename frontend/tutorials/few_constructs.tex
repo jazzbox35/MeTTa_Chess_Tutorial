@@ -25,11 +25,13 @@
 
 \section{You Only Need These Few Constructs}
 
-First some good news! Solid MeTTa code can be built with only about a dozen fairly simple programming constructs. The possible downside though is that MeTTa, while a unique language, does look somewhat like LISP with nested, balanced parenthesis to mind. However, with a bit of practice and an IDE that tracks parenthesis nesting with colors you'll do fine.
+First some good news! Solid and potent MeTTa code can be built with only about a dozen fairly simple programming constructs. The possible downside though is that MeTTa, while a unique language, does look somewhat like LISP with nested, balanced parenthesis to mind. However, with a bit of practice and an IDE that tracks parenthesis nesting with colors you'll do fine.
 
-In this section we will examine code constructs to add and manipulate atoms, assign variables, define rewrite rules, handle conditional execution, run a sequence of statements, loop, and manage the combinatorial explosion with the superpose, match, and collapse functions.
+In this section we will examine code constructs to add and manipulate atoms, assign variables, define rewrite rules, handle conditional execution, run a sequence of statements, loop, and manage the combinatorial explosion with the superpose, match, and collapse functions. 
 
-\subsection{Manipulating Atoms}
+We'll use these construct types to create the chess game in the next section.
+
+\subsection{Add and Manipulate Atoms}
 
 First, the miner computes the total number of ground atoms:
 
@@ -40,147 +42,6 @@ First, the miner computes the total number of ground atoms:
        (tuple-count $u)))
 \end{verbatim}
 
-Given a pattern's support count, its empirical probability is computed as:
-
-\begin{verbatim}
-;; P_obs = support / universe-size
-(= (prob $count)
-   (// $count (universe-size)))
-\end{verbatim}
-
-This defines
-\[
-  P_{\mathrm{obs}}
-  = \frac{\mathrm{support}}{\text{universe-size}}.
-\]
-\subsection{I-few_constructs for 2 and 3-Clause Patterns}
-
-The core logic lives in:
-
-\begin{verbatim}
-(= (ifew_constructs $pattern)
-  (case $pattern
-    ;; 2-clause patterns
-    ((candidate (, $p1 $p2) $cnt)
-     (let* (($pp1   (prob (count $p1)))
-            ($pp2   (prob (count $p2)))
-            ($exp   (* $pp1 $pp2))
-            ($obs   (prob $cnt)))
-       (// (max (- $obs $exp)
-                (- $exp $obs))
-           $obs)))
-    ;; 3-clause patterns
-    ((candidate (, $p1 $p2 $p3) $cnt)
-     (let* (($pp1    (prob (count $p1)))
-            ($pp2    (prob (count $p2)))
-            ($pp3    (prob (count $p3)))
-            ($pp1p2  (prob (count (, $p1 $p2))))
-            ($pp1p3  (prob (count (, $p1 $p3))))
-            ($pp2p3  (prob (count (, $p2 $p3))))
-            ($maxP   (max (* $pp1p2 $pp3)
-                          (max (* $pp1p3 $pp2)
-                               (max (* $pp2p3 $pp1)
-                                    (* $pp1 (* $pp2 $pp3))))))
-            ($minP   (min (* $pp1p2 $pp3)
-                          (min (* $pp1p3 $pp2)
-                               (min (* $pp2p3 $pp1)
-                                    (* $pp1 (* $pp2 $pp3))))))
-            ($obs    (prob $cnt)))
-       (// (max (- $obs $maxP)
-                (- $minP $obs))
-           $obs)))
-    ;; fallback
-    ($_ 0)))
-\end{verbatim}
-
-For 2-clause patterns:
-\[
-  I = \frac{\max\{\,P_{\mathrm{obs}}-P_{\mathrm{exp}},\;P_{\mathrm{exp}}-P_{\mathrm{obs}}\}}{P_{\mathrm{obs}}},
-  \quad
-  P_{\mathrm{exp}} = P(c_{1})\,P(c_{2}).
-\]
-
-For 3-clause patterns, consider all splits into two independent blocks, compute each block's product probability, take the maximum and minimum of those four values, and then:
-\[
-  I = \frac{\max\{\,P_{\mathrm{obs}}-P_{\mathrm{max}},\;P_{\mathrm{min}}-P_{\mathrm{obs}}\}}{P_{\mathrm{obs}}}.
-\]
-
-Patterns with other clause counts default to zero.
-
-\subsection{Filtering by few_constructs Threshold}
-
-few_constructs is a valuable metric for identifying information that deviates from expectations or common patterns. To effectively utilize this concept, we apply a few_constructs threshold to filter results, ensuring that only sufficiently surprising items are retained for further analysis or presentation.
-
-In our system, we employ a component called Chainer to calculate few_constructs. The Chainer is responsible for orchestrating the process and ultimately invoking the ifew_constructs action function. This function is executed after a series of validation steps and conditional checks to ensure that the few_constructs calculation is both meaningful and contextually relevant.
-
-The filtering process is rule-based and follows a structured approach:
-
-\begin{itemize}
-\item Validation:
-  Before the few_constructs calculation is performed, the system verifies that all necessary conditions and pre-requisites are satisfied. This ensures that the computation is applied only to valid and properly prepared data.
-\item few_constructs Calculation:
-The Chainer computes the few_constructs score for each item using predefined logic and statistical measures. This score reflects how unexpected or novel each item is, relative to the dataset or knowledge base.
-\item Threshold Filtering:
-  After computation, items are filtered based on a few_constructs threshold. Only those items with a few_constructs score that meets or exceeds this threshold are selected for further processing or display.
-\end{itemize}
-
-\section{Example: Using few_constructs in Hyperon} 
-To demonstrate the use of few_constructs in Hyperon, we will set up a simple experiment using the miner and its utilities. This example assumes you have a database of soda drinkers
-and want to mine surprising patterns from it.
-\subsection{Setting Up the Experiment}
-First, we need to set up the environment and import the necessary modules. The following code snippet initializes the miner and imports the required utilities and rules for few_constructs calculations:
-
-\begin{verbatim}
-!(import! &self experiments:miner:miner)
-!(import! &self experiments:miner:miner-utils)
-;; import utils and rules files 
-! (import! &self experiments:rules:isurp)
-! (import! &self experiments:rules:isurp-old)
-! (import! &self experiments:utils:beta-dist)
-! (import! &self experiments:utils:constants)
-! (import! &self experiments:utils:TruthValue)
-! (import! &self experiments:utils:surp-utils)
-! (import! &self experiments:utils:miner-utils)
-! (import! &self experiments:utils:gen_partition)
-! (import! &self experiments:rules:est-tv)
-! (import! &self experiments:rules:emp-tv)
-! (import! &self experiments:rules:emp-prob)
-! (import! &self experiments:rules:jsd)
-! (import! &self experiments:utils:emp-tv-bs)
-! (import! &self experiments:utils:bs-utils)
-! (import! &self experiments:utils:util-jsd)
-! (import! &self experiments:utils:binomialMetta)
-! (import! &db experiments:data:ugly_man_sodaDrinker)
-;; config kb : load the chainer , rules , system-proofs ....
-!(import! &self  chaining:dtl:backward:curried)
-!(import! &temp   experiments:miner:miner-rules)
-!(import! &self  experiments:miner:system-proofs)
-\end{verbatim}
-
-
-\subsection{Creating the Database and Knowledge Base}
-Next, we create a new database and a knowledge base (KB) to store the patterns we will mine. The following code snippet initializes the database and KB, and sets up the parameters for the mining process:
-
-\begin{verbatim}
-;;create new space for kb
-!(bind! &kb (new-space))
-;;copy atoms from temp space to kb to remove unnecessary atoms from the space
-!(let $atoms  (get-atoms &temp) (add-atom &kb $atoms) )
-;!(chain (get-atoms &temp) $atoms (add-atom &kb $atoms))
-;; define parameters 
-(=(min-sup) 6)
-(=(surp-mode ) isurp-old)
-(=(db-ratio) 0.5)
-;; test the cog-miner
-;; without sorting 
-! (cog-mine &db &kb (min-sup) (surp-mode) (db-ratio))
-\end{verbatim}
-
-
-
-
-
-This returns only those patterns whose I-few_constructs exceeds \texttt{highsurp}.
 
 
 
