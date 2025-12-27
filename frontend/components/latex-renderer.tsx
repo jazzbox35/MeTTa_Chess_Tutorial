@@ -110,7 +110,12 @@ export function LatexRenderer({ content }: LatexRendererProps) {
     switch (item.type) {
       case "heading":
         const HeadingTag = `h${item.level}` as keyof JSX.IntrinsicElements;
-        const headingId = item.content?.toLowerCase().replace(/\s+/g, "-");
+        const headingId = item.content
+          ?.toLowerCase()
+          .replace(/[^\w\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
 
         return (
           <HeadingTag
