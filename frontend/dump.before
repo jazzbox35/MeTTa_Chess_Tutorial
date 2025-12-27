@@ -1,1 +1,2 @@
-(add-atom &self (my second declared atom))
+(my third atom)
+!(remove-atom &self (my third atom))
