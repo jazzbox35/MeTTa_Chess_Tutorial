@@ -168,7 +168,7 @@ Challenge: Create a function that rewrites the input pattern "(onions carrots ha
 
 \subsubsection{if}
 
-With \textbf{if} statements MeTTa uses the functional style for boolean tests. Instead of coding "if \$a > 5..." as you would in a language like Python, place the test operator first, eg "(if (> \$a 5)...)" in MeTTa.  Multiple conditions result in expressions looking like the following example. The true expression immediately follows the conditional test and the false expression is second.
+With \textbf{if} statements MeTTa uses the functional style for boolean tests. Instead of coding "if \$a > 5..." as in a language like Python, place the test operator first, eg "(if (> \$a 5)...)" in MeTTa.  Multiple conditions result in expressions looking like the following example. The true execution path immediately follows the conditional test and the false second.
 
 \begin{verbatim}
 (= (WeekendTest $day $time)
@@ -193,8 +193,6 @@ Challenge: modify the test so that if it is cloudy, one stays in bed regardless 
 ;;cheat: (get up)))
 ;;cheat: !(WeekendTest Sunday 0900 cloudy)
 \end{verbatim}
-
-
 
 \subsubsection{case}
 
