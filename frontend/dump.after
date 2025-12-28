@@ -1,5 +1,5 @@
-(= (find_tool_match $_26332) (match &self (tool $_26332) found))
-(= (find_tool_match_recursion $_26164 $_26170) (if (== $_26170 ()) missing (if (== $_26164 (car-atom $_26170)) found (find_tool_match_recursion $_26164 (cdr-atom $_26170)))))
+(= (find_tool_match $_28470) (match &self (tool $_28470) found))
+(= (find_tool_match_recursion $_28296 $_28302) (if (== $_28302 ()) (empty) (if (== $_28296 (car-atom $_28302)) found (find_tool_match_recursion $_28296 (cdr-atom $_28302)))))
 (tool hammer)
 (tool screwdriver)
 (tool saw)

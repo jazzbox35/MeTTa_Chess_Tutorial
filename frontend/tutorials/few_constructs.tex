@@ -37,9 +37,9 @@ Atomspace, where all MeTTa code and data reside, can be subdivided into sub-spac
 
 After you run any example in this tutorial you can check your atomspace by clicking the button to display atomspace on top of each tutorial page. To tidy things up as you work through the examples click the button to reset atomspace. Refreshing your browser page will reset the examples and clear atomspace. Code boxes can also be reset individually and those with a challenge question will have a "Cheat" button if you just feel like displaying the answer.
 
-\subsection{!}
+\subsection{Exclamation !}
 
-The exclamation point will kick MeTTa into action. Think of it like the ignition on a car. If you submit an expression to MeTTa without a preceding exclamation point, MeTTa simply adds the expression to atomspace. But if you precede the expression with a "!", MeTTa executes the expression. Submit your entire program without an exclamation point and it is loaded into atomspace, ready to run. When you want to run it, submit to MeTTa something like "!(MainLoop)". Assuming you have a function like "(= (MainLoop) (action))" in your program, it runs. If you submit "(MainLoop)" without the "!" prefix MeTTa just adds "(MainLoop)" to atomspace and not much happens. Examples below should clarify this.
+The exclamation point \textbf{!} will kick MeTTa into action. Think of it like the ignition on a car. If you submit an expression to MeTTa without a preceding exclamation point, MeTTa simply adds the expression to atomspace. But if you precede the expression with a "!", MeTTa executes the expression. Submit your entire program without an exclamation point and it is loaded into atomspace, ready to run. When you want to run it, submit to MeTTa something like "!(MainLoop)". Assuming you have a function like "(= (MainLoop) (action))" in your program, it runs. If you submit "(MainLoop)" without the "!" prefix MeTTa just adds "(MainLoop)" to atomspace and not much happens. Examples below should clarify this.
 
 \subsection{Atoms}
 
@@ -349,7 +349,7 @@ Atoms and \textbf{match} are defining features of MeTTa. MeTTa is not LISP altho
 ;avoid searching through lists which is confusing looking and less efficient
 (= (find_tool_match_recursion $tool $list)
     (if (== $list ())
-        missing
+        (empty)
         (if (== $tool (car-atom $list))
             found
             (find_tool_match_recursion $tool (cdr-atom $list)))))

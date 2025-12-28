@@ -6,14 +6,14 @@
 ;random access lookup for small atoms, easy and fast!
 (= (find_tool_match $tool) (match &self (tool $tool) found))
 
-;!(find_tool_match nail)
+!(find_tool_match nail)
 
 ;----------------------------------
 
 ;avoid searching through lists which is confusing looking and less efficient
 (= (find_tool_match_recursion $tool $list)
     (if (== $list ())
-        missing
+        (empty)
         (if (== $tool (car-atom $list))
             found
             (find_tool_match_recursion $tool (cdr-atom $list)))))
