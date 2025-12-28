@@ -318,7 +318,59 @@ Challenge: Cloning the above code, input all days of the week and filter out wee
 
 \subsubsection{loops}
 
+Looping can often be done with old school LISP-ish tail recursion. This function adds a list of passed numbers. MeTTa provides \textbf{car-atom}, \textbf{cdr-atom}, and \textbf{cons-atom} for manipulating lists.
+
+\begin{verbatim}
+(= (addit_list $integer_list)
+    (if (== $integer_list ())
+        0
+        (+ (car-atom $integer_list) (addit_list (cdr-atom $integer_list)))))
+!(addit_list (4 6 3))
+\end{verbatim}
+
+If at all possible, make your data structures simple one dimensional atom expressions in atomspace. Small atoms can be retrieved with random access using \textbf{match}.  If you use long lists and search with LISP-ish tail recursion in multiple dimensions MeTTa will have to perform sequential searches. Sequential search is slower than random access. Also, most people don't find tail recursion particularly easy to read. 
+
+Atoms and \textbf{match} are defining features of MeTTa. MeTTa is not LISP although it shares some similarities. Both versions below work but the first is preferable in MeTTa.
+
+\begin{verbatim}
+
+;small atoms for tools
+(tool hammer)
+(tool screwdriver)
+(tool saw)
+
+;random access lookup for small atoms, easy and fast!
+(= (find_tool_match $tool) (match &self (tool $tool) found))
+
+!(find_tool_match hammer)
+
+;----------------------------------
+
+;avoid searching through lists which is confusing looking and less efficient
+(= (find_tool_match_recursion $tool $list)
+    (if (== $list ())
+        missing
+        (if (== $tool (car-atom $list))
+            found
+            (find_tool_match_recursion $tool (cdr-atom $list)))))
+
+;don't use a list of tools: you'll have to search through it sequentially
+!(find_tool_match_recursion saw (hammer screwdriver saw))
+\end{verbatim}
+
+
 \subsubsection{sequences}
 
+Eventually every programmer needs to run a sequence of statements. \textbf{progn} is used to execute statements for side effects. The value returned is the result of the last expression.
+
+\begin{verbatim}
+(= (PrognTest)
+   (progn
+      (add-atom &self (progn test))   ;add a test atom
+      (match &self (progn $t) $t)     ;retrieve the atom and return "test"
+   )
+)
+!(PrognTest)
+\end{verbatim}
 
 \end{document}

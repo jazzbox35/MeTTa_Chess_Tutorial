@@ -1,2 +1,5 @@
-(= (DayCheck $_12312) (if (??? (== $_12312 Saturday) (== $_12312 Sunday)) ??? $_12312))
-(= (DayCheck $_12192) (if (or (== $_12192 Saturday) (== $_12192 Sunday)) (empty) $_12192))
+(= (find_tool_match $_26332) (match &self (tool $_26332) found))
+(= (find_tool_match_recursion $_26164 $_26170) (if (== $_26170 ()) missing (if (== $_26164 (car-atom $_26170)) found (find_tool_match_recursion $_26164 (cdr-atom $_26170)))))
+(tool hammer)
+(tool screwdriver)
+(tool saw)
