@@ -1,10 +1,13 @@
-(= (Run_state $state)
-   (case $state
+(= (SpeedFunction) (1st Plan))
+(= (CostFunction) (2nd Plan))
+(= (EfficiencyFunction) (3rd Plan))
+
+(= (DevisePlan $strategy)
+   (case $strategy
           (
-          (start  (StartGame))             ; start game
-          (move   (MakeMove))              ; AI move
-          (reset  (Reset))                 ; Reset game
-          (quit   (Quit))                  ; Exit game
-          ($_     (Invalid))               ; OTHERWISE
+          (Speed      (SpeedFunction))      
+          (LowCost    (CostFunction))       
+          (Efficiency (EfficiencyFunction)) 
+          ($_         (Invalid))               ; OTHERWISE
           )))
-!(Run_state move)
+!(DevisePlan (superpose (Speed LowCost Efficiency)))

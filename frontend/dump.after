@@ -1,1 +1,4 @@
-(= (Run_state $_14388) (case $_14388 ((start (StartGame)) (move (MakeMove)) (reset (Reset)) (quit (Quit)) ($_14520 (Invalid)))))
+(= (SpeedFunction) (1st Plan))
+(= (CostFunction) (2nd Plan))
+(= (EfficiencyFunction) (3rd Plan))
+(= (DevisePlan $_19962) (case $_19962 ((Speed (SpeedFunction)) (LowCost (CostFunction)) (Efficiency (EfficiencyFunction)) ($_20070 (Invalid)))))

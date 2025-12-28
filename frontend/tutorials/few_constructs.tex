@@ -213,10 +213,27 @@ The \textbf{case} statement is fairly standard. The example below selects cases 
 
 \subsection{Combinations}
 
-The real power in MeTTa is its ability to sift and search through a massive number of possible combinations of code and data given some input. By default MeTTa insists on executing every possible path through your code, returning all possible results in no particular order. It might sound like a mess but it's actually easy to manage this situation with some simple techniques that enable you, in general, to control a combinatorial explosion.
+So far we have looked at basically ordinary programming techniques, but the real power in MeTTa is its ability to sift and search through a massive number of possible combinations of code and data given some input. By default MeTTa insists on executing every possible path through your code. It returns all possible results in no particular order. It might sound like a mess but it's actually easy to manage this situation with some simple techniques that enable you, in general, to control a combinatorial explosion.
 
 \subsubsection{superpose}
 
+Suppose you have a function called "DevisePlan" which inputs a single argument, \$strategy. The possible values for \$strategy are Speed, LowCost, and Efficiency. Each of these strategies has a unique function, here made simple. Using \textbf{superpose} allows you overload the DevisePlan function and return all plans in one call. 
+
+\begin{verbatim}
+(= (SpeedFunction) (1st Plan))
+(= (CostFunction) (2nd Plan))
+(= (EfficiencyFunction) (3rd Plan))
+
+(= (DevisePlan $strategy)
+   (case $strategy
+          (
+          (Speed      (SpeedFunction))      
+          (LowCost    (CostFunction))       
+          (Efficiency (EfficiencyFunction)) 
+          ($_         (Invalid))               ; OTHERWISE
+          )))
+!(DevisePlan (superpose (Speed LowCost Efficiency)))
+\end{verbatim}
 
 \subsubsection{matching}
 
