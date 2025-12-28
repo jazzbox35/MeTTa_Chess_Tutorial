@@ -140,16 +140,24 @@ Challenge: Run the first code box below to add "(Leavenworth is a small city)" t
 
 \subsection{Functions}
 
-Functions, also referred to as rewrite rules and equalities, have the distinct form of:
+Functions, also referred to as rewrite rules and equalities, also use variables, and have the distinct form of:
 
 \textbf{(= (pattern) (result))}
 
-The following example matches two variations of a light switch pattern. If called with the pattern of switch on, it returns the result off, and vice versa.
+The following example matches two variations of a light switch pattern. If called with the pattern of switch on, it returns the result off, and vice versa. Note that when the function is submitted to MeTTa, it is added to atomspace, so if resubmitted, another version of the function is added. 
 
 \begin{verbatim}
-(= (switch on) off)
-(= (switch off) on)
+(= (switch $state) (if (== $state on) off on))
 !(switch on)
+\end{verbatim}
+
+Challenge: Create a function that rewrites the input pattern "(onions carrots halibut)" with the output result "(light meal)". Then invoke the function and return the result.
+
+\begin{verbatim}
+(= ??? ???)
+!(onions carrots halibut)
+;;cheat: (= (onions carrots halibut) (light meal))
+;;cheat: !(onions carrots halibut)
 \end{verbatim}
 
 
