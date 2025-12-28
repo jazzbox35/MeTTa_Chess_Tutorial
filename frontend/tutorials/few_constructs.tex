@@ -33,13 +33,13 @@ Below is a crash course covering a few code constructs to add and manipulate ato
 
 We'll use these to create the chess game in the next section.
 
-Atomspace, where all MeTTa code and data reside, can be subdivided into sub-spaces. The default sub-space is known as "&self". For this tutorial we'll just use "&self" although it is possible to create arbitrary spaces (eg., "&myatoms"). 
+Atomspace, where all MeTTa code and data reside, can be subdivided into sub-spaces. The default sub-space is known as \textbf{&self}. For this tutorial we'll just use \textbf{&self} although it is possible to create arbitrary spaces (eg., \textbf{&fancyatoms}). 
 
-After you run the examples in this tutorial you can check your atomspace by clicking the button to display atomspace on top of each tutorial page. To tidy things up as you work through the examples click the button to reset atomspace. Refreshing your browser page will reset the examples and clear atomspace. Code boxes can also be reset individually and those with a challenge question will have a "Cheat" button if you just feel like displaying the answer.
+After you run any example in this tutorial you can check your atomspace by clicking the button to display atomspace on top of each tutorial page. To tidy things up as you work through the examples click the button to reset atomspace. Refreshing your browser page will reset the examples and clear atomspace. Code boxes can also be reset individually and those with a challenge question will have a "Cheat" button if you just feel like displaying the answer.
 
 \subsection{Add and Manipulate Atoms}
 
-The quickest way to add atoms to atomspace is by declaration in your program. The following example will add "(my declared atom)" to the "&self" sub-space. Note that if you declare atoms using this simple approach such atoms are placed in the "&self" sub-space only. When using this style to add atoms, simple declaration is enough -- there is no need to prefix the expression with "!".
+The quickest way to add atoms to atomspace is by declaration in your program. The following example will add "(my declared atom)" to the \textbf{&self} sub-space. Note that if you declare atoms using this simple approach such atoms are placed in the \textbf{&self} sub-space only. When using this style to add atoms, simple declaration is enough -- there is no need to prefix the expression with "!".
 
 \begin{verbatim}
 (my declared atom)
@@ -47,7 +47,9 @@ The quickest way to add atoms to atomspace is by declaration in your program. Th
 
 \subsubsection{add-atom}
 
-Another way of adding atoms is by using "add-atom" as in the following example. When you use "add-atom" it is necessary to specify the sub-space within atomspace ("&self" for the tutorial). In this example we need to prefix the statement with "!" to force MeTTa to execute the expression, to actually add "(my second declared atom)" to atomspace. Try running the code example both with and without the "!" prefix. By displaying and resetting atomspace after each run you can observe the difference. As a general rule, prefixing with "!" will trigger immediate execution of the expression. Omission of the "!" prefix will add the entire expression to atomspace without execution. This is a subtle but important difference but easy to see by checking atomspace.
+Another way of adding atoms is by using \textbf{add-atom} as in the following example. When you use \textbf{add-atom} it is necessary to specify the sub-space within atomspace (\textbf{&self} for the tutorial). In this example we need to prefix the statement with "!" to force MeTTa to execute the expression, to actually add "(my second declared atom)" to atomspace. 
+
+Try running the code example below both with and without the "!" prefix. By displaying and resetting atomspace after each run you can observe the difference. As a general rule, prefixing with "!" will trigger immediate execution of the expression. Omission of the "!" prefix will add the entire expression to atomspace without execution. This is a subtle but important difference but easy to see by checking atomspace.
 
 
 \begin{verbatim}
@@ -57,7 +59,7 @@ Another way of adding atoms is by using "add-atom" as in the following example. 
 
 \subsubsection{remove-atom}
 
-The basic format for removing atoms from atomspace is identical to "add-atom" except we use "remove-atom". The following example first adds an atom. After you run the following code, check to see if "(my third atom)" is in atomspace. Then simply change "add-atom" to "remove-atom" in the code block (or click "Cheat") to delete "(my third atom)" from atomspace.  Run the changed code and then click to display atomspace. The "(my third atom)" atom will be removed. 
+The basic format for removing atoms from atomspace is identical to \textbf{add-atom} except we use \textbf{remove-atom}. The following example first adds an atom. After you run the following code, check to see if "(my third atom)" is in atomspace. Then simply change "add-atom" to \textbf{remove-atom} in the code block (or click "Cheat") to delete "(my third atom)" from atomspace.  Run the changed code and then click to display atomspace. The "(my third atom)" atom will be removed. 
 
 \begin{verbatim}
 !(add-atom &self (my third atom))
@@ -69,37 +71,41 @@ The basic format for removing atoms from atomspace is identical to "add-atom" ex
 
 \subsubsection{let and let*}
 
-All variables in MeTTa are prefixed with the dollar sign. The "let" construct is useful for assigning values to variables. The first argument to "let" is the variable to be assigned a value, and the second argument its value. Lastly the third argument can make use of the variable. In the example below, the value of \$var1 is returned by the "let" statement.
+All variables in MeTTa are prefixed with the dollar sign. The \textbf{let} construct is useful for assigning values to variables and further computing. The first argument to \textbf{let} is the variable to be assigned a value, and the second argument its value. Lastly the third argument can make use of the variable. In the example below, the value of \$var1 is returned by the \textbf{let} statement.
  
 \begin{verbatim}
 !(let $var1 Lighthouse $var1)
 \end{verbatim}
 
-Expressions in the second and third arguments of "let" are evaluated, or "reduced," if MeTTa can find a way to further execute. In the above example the symbol "Lighthouse" was returned from the "let" construct since there was nothing left to evaluate or execute with just "Lighthouse" assigned to our variable. 
+Expressions in the second and third arguments of \textbf{let} are evaluated, or "reduced," if MeTTa can find a way to further execute. In the above example the symbol "Lighthouse" was returned from the \textbf{let} construct since there was nothing left to evaluate or execute with just "Lighthouse" assigned to our variable. 
 
-In the example below the second argument's expression simply adds 1 and 1. The result 2 is assigned to \$var1, and then the third argument uses the variable (now with value 2) inside a small list atom. The value assigned to the variable is available to the third argument. The third argument is the result of the "let" construct.
+In the example below the second argument's expression simply adds 1 and 1. The result 2 is assigned to \$var1, and then the third argument uses the variable (now with value 2) inside a small list atom. The value assigned to the variable is available to the third argument. The third argument is the result of the \textbf{let} construct.
 
 \begin{verbatim}
 !(let $var1 (+ 1 1) (result $var1))
 \end{verbatim}
 
-Challenge: modify the below code example so that "(result \$var1)" is added to atomspace.
+Challenge: modify the below code example so that "(result 2)" is added to atomspace.
 
 \begin{verbatim}
 !(let $var1 (+ 1 1) ???)
 ;; cheat: !(let $var1 (+ 1 1) (add-atom &self (result $var1)))
 \end{verbatim}
 
-A fancier variation of the "let" construct is "let*". The first argument to "let*" is a list of variables and their assignments. The second argument allows you to compute with any of the variables created in the first argument. In the example below two variables are assigned values in the first argument list and then added together in the second argument to "let*". The second argument is the result returned by the "let*" construct.
+A fancier variation of the \textbf{let} construct is \textbf{let*}. The first argument to \textbf{let*} is a list of variables and their assignments. The second argument allows you to compute with any of the variables created in the first argument. In the example below two variables are each assigned their own values in the first argument list and then added together in the second argument to \textbf{let*}. The second argument is the result returned by the \textbf{let*} construct.
+
+It's important to note that in the \textbf{let*} construct you can reference variables anywhere inside the same \textbf{let*} after they are declared.
 
 \begin{verbatim}
 !(let*
+   ; first argument is a list of variables with their assigned values
    ( ($var1  (+ 1 1))  ($var2  (+ 1 $var1) )  )
+   ; second argument is the result to be returned by let*
    (+ $var1 $var2)
    )  
 \end{verbatim}
 
-Challenge: create another variable \$var3 with a value of 2. Return the result of \$var2 less \$var3.
+Challenge: modify the code block below to create another variable \$var3 with a value of 2. Return the result of \$var2 less \$var3.
 
 \begin{verbatim}
 !(let*
