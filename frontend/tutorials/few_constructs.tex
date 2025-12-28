@@ -37,7 +37,7 @@ Atomspace, where all MeTTa code and data reside, can be subdivided into sub-spac
 
 After you run any example in this tutorial you can check your atomspace by clicking the button to display atomspace on top of each tutorial page. To tidy things up as you work through the examples click the button to reset atomspace. Refreshing your browser page will reset the examples and clear atomspace. Code boxes can also be reset individually and those with a challenge question will have a "Cheat" button if you just feel like displaying the answer.
 
-\subsection{Add and Manipulate Atoms}
+\subsection{Atoms}
 
 The quickest way to add atoms to atomspace is by declaration in your program. The following example will add "(my declared atom)" to the \textbf{&self} sub-space. Note that if you declare atoms using this simple approach such atoms are placed in the \textbf{&self} sub-space only. When using this style to add atoms, simple declaration is enough -- there is no need to prefix the expression with "!".
 
@@ -67,7 +67,6 @@ The basic format for removing atoms from atomspace is identical to \textbf{add-a
 \end{verbatim}
 
 \subsection{Variables}
-
 
 \subsubsection{let and let*}
 
@@ -118,6 +117,40 @@ Challenge: modify the code block below to create another variable \$var3 with a 
 ;;cheat:    )  
 \end{verbatim}
 
+\subsubsection{match}
+
+You can use the \textbf{match} construct mixing variables and symbols to search for patterns in atomspace. The following example adds atoms "(Seattle is a large city)" and "(Ellensburg is a medium-sized city)" to atomspace. Then a \textbf{match} statement uses a variable named \$city to match the large city atom. The last argument, \$city, is returned as the result.
+ 
+\begin{verbatim}
+(Seattle is a large city)
+(Ellensburg is a medium-sized city)
+!(match &self ($city is a large city) $city)
+\end{verbatim}
+
+Challenge: Run the first code box below to add "(Leavenworth is a small city)" to atomspace. Verify that it is in atomspace. Modify the second code box below to find and then remove "(Leavenworth is a small city)" from atomspace. Check to verify it has been removed.
+
+\begin{verbatim}
+(Leavenworth is a small city)
+\end{verbatim}
+
+\begin{verbatim}
+!(match &self ???? ????)
+;;cheat: !(match &self (Leavenworth is a small city) (remove-atom &self (Leavenworth is a small city)))
+\end{verbatim}
+
+\subsection{Functions}
+
+Functions, also referred to as rewrite rules and equalities, have the distinct form of:
+
+\textbf{(= (pattern) (result))}
+
+The following example matches two variations of a light switch pattern. If called with the pattern of switch on, it returns the result off, and vice versa.
+
+\begin{verbatim}
+(= (switch on) off)
+(= (switch off) on)
+!(switch on)
+\end{verbatim}
 
 
 \end{document}
