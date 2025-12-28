@@ -168,7 +168,7 @@ Challenge: Create a function that rewrites the input pattern "(onions carrots ha
 
 \subsubsection{if}
 
-With \textbf{if} statements MeTTa uses the functional style for boolean tests. Instead of coding "if \$a > 5..." as in a language like Python, place the test operator first, eg "(if (> \$a 5)...)" in MeTTa.  Multiple conditions result in expressions looking like the following example. The true execution path immediately follows the conditional test and the false second.
+With \textbf{if} statements MeTTa uses the functional style for boolean tests. Instead of coding "if \$a > 5..." as in a language like Python, place the test operator first, eg "(if (> \$a 5)...)" in MeTTa.  Multiple conditions result in expressions looking like the following example. The true execution path immediately follows the conditional test expression and the false second.
 
 \begin{verbatim}
 (= (WeekendTest $day $time)
@@ -196,13 +196,27 @@ Challenge: modify the test so that if it is cloudy, one stays in bed regardless 
 
 \subsubsection{case}
 
+The \textbf{case} statement is fairly standard. The example below selects cases depending upon what state a game is in. If there is no match the "otherwise" condition is \$_ and will run "(Invalid)"
+
 \begin{verbatim}
-(my declared atom)
+(= (Run_state $state)
+   (case $state
+          (
+          (start  (StartGame))             ; start game
+          (move   (MakeMove))              ; AI move
+          (reset  (Reset))                 ; Reset game
+          (quit   (Quit))                  ; Exit game
+          ($_     (Invalid))               ; OTHERWISE
+          )))
+!(Run_state move)
 \end{verbatim}
 
 \subsection{Combinations}
 
+The real power in MeTTa is its ability to sift and search through a massive number of possible combinations of code and data given some input. By default MeTTa insists on executing every possible path through your code, returning all possible results in no particular order. It might sound like a mess but it's actually easy to manage this situation with some simple techniques that enable you, in general, to control a combinatorial explosion.
+
 \subsubsection{superpose}
+
 
 \subsubsection{matching}
 

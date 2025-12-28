@@ -1,1 +1,1 @@
-(= (WeekendTest $_6656 $_6662 $_6668) (if (or (and (== $_6656 Sunday) (< $_6662 1000)) (== $_6668 cloudy)) (stay in bed) (get up)))
+(= (Run_state $_14388) (case $_14388 ((start (StartGame)) (move (MakeMove)) (reset (Reset)) (quit (Quit)) ($_14520 (Invalid)))))
