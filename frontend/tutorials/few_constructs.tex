@@ -25,7 +25,7 @@
 
 \section{You Only Need These Few Constructs}
 
-\subsection{Some Good News}
+\subsection{Minimalism}
 
 First some good news! Solid and potent MeTTa code can be built with only about a dozen fairly simple programming constructs. The possible downside though is that MeTTa, while a unique language, does look somewhat like LISP with nested, balanced parenthesis to mind. However, a bit of practice and an IDE that tracks parenthesis nesting with colors works wonders.
 
@@ -144,7 +144,7 @@ Functions, also referred to as rewrite rules and equalities, also use variables,
 
 \textbf{(= (pattern) (result))}
 
-The following example matches two variations of a light switch pattern. If called with the pattern of switch on, it returns the result off, and vice versa. Note that when the function is submitted to MeTTa, it is added to atomspace, so if resubmitted, another version of the function is added. 
+The following example matches two variations of a light switch pattern. If called with the pattern of switch on, it returns the result off, and vice versa. Note that when the function is submitted to MeTTa, the function is added to atomspace, so if resubmitted, another copy of the function is added. If you run the code box twice the function will be in atomspace twice and be executed twice. You can use \textbf{remove-atom} to remove the function from the \&self space.
 
 \begin{verbatim}
 (= (switch $state) (if (== $state on) off on))
@@ -159,6 +159,34 @@ Challenge: Create a function that rewrites the input pattern "(onions carrots ha
 ;;cheat: (= (onions carrots halibut) (light meal))
 ;;cheat: !(onions carrots halibut)
 \end{verbatim}
+
+\subsection{Conditionals}
+
+\subsubsection{if}
+
+\begin{verbatim}
+(my declared atom)
+\end{verbatim}
+
+\subsubsection{case}
+
+\begin{verbatim}
+(my declared atom)
+\end{verbatim}
+
+\subsection{Combinations}
+
+\subsubsection{superpose}
+
+\subsubsection{matching}
+
+\subsubsection{collapse}
+
+\subsection{Control}
+
+\subsubsection{loops}
+
+\subsubsection{sequences}
 
 
 \end{document}

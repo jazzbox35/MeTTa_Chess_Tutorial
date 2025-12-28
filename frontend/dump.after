@@ -1,3 +1,0 @@
-(= (switch $_6964) (if (== $_6964 on) off on))
-(= (switch $_6886) (if (== $_6886 on) off on))
-(= (onions carrots halibut) (light meal))

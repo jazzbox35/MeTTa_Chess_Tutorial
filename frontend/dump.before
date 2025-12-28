@@ -1,4 +1,3 @@
-(= (switch $_3400) (if (== $_3400 on) off on))
-(= (switch $_3322) (if (== $_3322 on) off on))
-(= (onions carrots halibut) (light meal))
-!(onions carrots halibut)
+(= (switch $_3396) (if (== $_3396 on) off on))
+(= (switch $_3318) (if (== $_3318 on) off on))
+!(remove-atom &self (= (switch $state) (if (== $state on) off on)))
