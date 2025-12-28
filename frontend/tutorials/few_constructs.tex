@@ -69,7 +69,7 @@ The basic format for removing atoms from atomspace is identical to "add-atom" ex
 
 \subsubsection{let and let*}
 
-All variables in MeTTa are prefixed with the dollar sign. The "let" construct is useful for assigning values to variables. The first argument to "let" is the variable to be assigned a value, and the second argument its value. Lastly the third argument can make use of the variable. In the example below, the value of "$var1" is returned by the "let" statement.
+All variables in MeTTa are prefixed with the dollar sign. The "let" construct is useful for assigning values to variables. The first argument to "let" is the variable to be assigned a value, and the second argument its value. Lastly the third argument can make use of the variable. In the example below, the value of \$var1 is returned by the "let" statement.
  
 \begin{verbatim}
 !(let $var1 Lighthouse $var1)
@@ -77,13 +77,13 @@ All variables in MeTTa are prefixed with the dollar sign. The "let" construct is
 
 Expressions in the second and third arguments of "let" are evaluated, or "reduced," if MeTTa can find a way to further execute. In the above example the symbol "Lighthouse" was returned from the "let" construct since there was nothing left to evaluate or execute with just "Lighthouse" assigned to our variable. 
 
-In the example below the second argument's expression simply adds 1 and 1. The result 2 is assigned to "$var1", and then the third argument uses the variable (now with value 2) inside a small list atom. The value assigned to the variable is available to the third argument. The third argument is the result of the "let" construct.
+In the example below the second argument's expression simply adds 1 and 1. The result 2 is assigned to \$var1, and then the third argument uses the variable (now with value 2) inside a small list atom. The value assigned to the variable is available to the third argument. The third argument is the result of the "let" construct.
 
 \begin{verbatim}
 !(let $var1 (+ 1 1) (result $var1))
 \end{verbatim}
 
-Challenge: modify the below code example so that "(result $var1)" is added to atomspace.
+Challenge: modify the below code example so that "(result \$var1)" is added to atomspace.
 
 \begin{verbatim}
 !(let $var1 (+ 1 1) ???)
@@ -99,7 +99,7 @@ A fancier variation of the "let" construct is "let*". The first argument to "let
    )  
 \end{verbatim}
 
-Challenge: create another variable "$var3" with a value of 2. Return the result of var2 less var3.
+Challenge: create another variable \$var3 with a value of 2. Return the result of \$var2 less \$var3.
 
 \begin{verbatim}
 !(let*
