@@ -1,3 +1,5 @@
-(= (onions carrots halibut) (light meal))
-(= (onions carrots halibut) (light meal))
-!(onions carrots halibut)
+(= (WeekendTest $day $time $conditions)
+(if (or (and (== $day Sunday) (< $time 1000)) (== $conditions cloudy))
+(stay in bed)
+(get up)))
+!(WeekendTest Sunday 0900 cloudy)

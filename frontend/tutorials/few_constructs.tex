@@ -37,6 +37,10 @@ Atomspace, where all MeTTa code and data reside, can be subdivided into sub-spac
 
 After you run any example in this tutorial you can check your atomspace by clicking the button to display atomspace on top of each tutorial page. To tidy things up as you work through the examples click the button to reset atomspace. Refreshing your browser page will reset the examples and clear atomspace. Code boxes can also be reset individually and those with a challenge question will have a "Cheat" button if you just feel like displaying the answer.
 
+\subsection{!}
+
+The exclamation point will kick MeTTa into action. Think of it like the ignition on a car. If you submit an expression to MeTTa without a preceding exclamation point, MeTTa simply adds the expression to atomspace. But if you precede the expression with a "!", MeTTa executes the expression. Submit your entire program without an exclamation point and it is loaded into atomspace, ready to run. When you want to run it, submit to MeTTa something like "!(MainLoop)". Assuming you have a function like "(= (MainLoop) (action))" in your program, it runs. If you submit "(MainLoop)" without the "!" prefix MeTTa just adds "(MainLoop)" to atomspace and not much happens. Examples below should clarify this.
+
 \subsection{Atoms}
 
 The quickest way to add atoms to atomspace is by declaration in your program. The following example will add "(my declared atom)" to the \textbf{&self} sub-space. Note that if you declare atoms using this simple approach such atoms are placed in the \textbf{&self} sub-space only. When using this style to add atoms, simple declaration is enough -- there is no need to prefix the expression with "!".
@@ -49,7 +53,7 @@ The quickest way to add atoms to atomspace is by declaration in your program. Th
 
 Another way of adding atoms is by using \textbf{add-atom} as in the following example. When you use \textbf{add-atom} it is necessary to specify the sub-space within atomspace (\textbf{&self} for the tutorial). In this example we need to prefix the statement with "!" to force MeTTa to execute the expression, to actually add "(my second declared atom)" to atomspace. 
 
-Try running the code example below both with and without the "!" prefix. By displaying and resetting atomspace after each run you can observe the difference. As a general rule, prefixing with "!" will trigger immediate execution of the expression. Omission of the "!" prefix will add the entire expression to atomspace without execution. This is a subtle but important difference but easy to see by checking atomspace.
+Try running the code example below both with and without the "!" prefix. By displaying and resetting atomspace after each run you can observe the difference. Again, prefixing with "!" will trigger immediate execution of the expression. Omission of the "!" prefix will add the entire expression to atomspace without execution. This is a subtle but important difference but easy to see by checking atomspace.
 
 
 \begin{verbatim}
@@ -164,9 +168,33 @@ Challenge: Create a function that rewrites the input pattern "(onions carrots ha
 
 \subsubsection{if}
 
+With \textbf{if} statements MeTTa uses the functional style for boolean tests. Instead of coding "if \$a > 5..." as you would in a language like Python, place the test operator first, eg "(if (> \$a 5)...)" in MeTTa.  Multiple conditions result in expressions looking like the following example. The true expression immediately follows the conditional test and the false expression is second.
+
 \begin{verbatim}
-(my declared atom)
+(= (WeekendTest $day $time)
+   (if (and (== $day Sunday) (< $time 1000))
+      (stay in bed)
+      (get up)))
+!(WeekendTest Sunday 0900)
 \end{verbatim}
+
+Challenge: modify the test so that if it is cloudy, one stays in bed regardless of day or time.
+
+
+\begin{verbatim}
+(= (WeekendTest $day $time $conditions)
+   (if ??? (and (== $day Sunday) (< $time 1000) ???)
+      (stay in bed)
+      (get up)))
+!(WeekendTest Sunday 0900 cloudy)
+;;cheat: (= (WeekendTest $day $time $conditions)
+;;cheat: (if (or (and (== $day Sunday) (< $time 1000)) (== $conditions cloudy))
+;;cheat: (stay in bed)
+;;cheat: (get up)))
+;;cheat: !(WeekendTest Sunday 0900 cloudy)
+\end{verbatim}
+
+
 
 \subsubsection{case}
 
