@@ -63,7 +63,7 @@ Try running the code example below both with and without the "!" prefix. By disp
 
 \subsubsection{remove-atom}
 
-The basic format for removing atoms from atomspace is identical to \textbf{add-atom} except we use \textbf{remove-atom}. The following example first adds an atom. After you run the following code, check to see if "(my third atom)" is in atomspace. Then simply change "add-atom" to \textbf{remove-atom} in the code block (or click "Cheat") to delete "(my third atom)" from atomspace.  Run the changed code and then click to display atomspace. The "(my third atom)" atom will be removed. 
+The basic format for removing atoms from atomspace is identical to \textbf{add-atom} except we use \textbf{remove-atom}. The following example first adds an atom. After you run the following code, check to see if "(my third atom)" is in atomspace. Then simply change \textbf{add-atom} to \textbf{remove-atom} in the code block (or click "Cheat") to delete "(my third atom)" from atomspace.  Run the changed code and then click to display atomspace. The "(my third atom)" atom will be removed. 
 
 \begin{verbatim}
 !(add-atom &self (my third atom))
@@ -215,29 +215,85 @@ The \textbf{case} statement is fairly standard. The example below selects cases 
 
 So far we have looked at basically ordinary programming techniques, but the real power in MeTTa is its ability to sift and search through a massive number of possible combinations of code and data given some input. By default MeTTa insists on executing every possible path through your code. It returns all possible results in no particular order. It might sound like a mess but it's actually easy to manage this situation with some simple techniques that enable you, in general, to control a combinatorial explosion.
 
+A typical strategy with MeTTa is to use \textbf{superpose} to generate lots of possibilities, filter the results using \textbf{match} and conditional checks, and then \textbf{collapse} to halt the process and return the results in parenthesis. If you neglect to end the process with a \textbf{collapse} call, MeTTa might back up later in your code unexpectedly.
+
 \subsubsection{superpose}
 
-Suppose you have a function called "DevisePlan" which inputs a single argument, \$strategy. The possible values for \$strategy are Speed, LowCost, and Efficiency. Each of these strategies has a unique function, here made simple. Using \textbf{superpose} allows you overload the DevisePlan function and return all plans in one call. 
+Suppose you have a function called "DevisePlan" which inputs a single argument, \$strategy. The possible values for \$strategy are "Speed," "LowCost," and "Efficiency." Each of these strategies has a unique function, here made simple. Using \textbf{superpose} allows you overload the "DevisePlan" function and return all three plans in one call -- it runs three times. Notice that "DevisePlan" is called with a \textbf{superpose} of all possible arguments, not with a single argument.
 
 \begin{verbatim}
-(= (SpeedFunction) (1st Plan))
-(= (CostFunction) (2nd Plan))
-(= (EfficiencyFunction) (3rd Plan))
+(= (SpeedPlan) (1st Plan Complete))
+(= (CostPlan) (2nd Plan Complete))
+(= (EfficiencyPlan) (3rd Plan Complete))
 
 (= (DevisePlan $strategy)
    (case $strategy
           (
-          (Speed      (SpeedFunction))      
-          (LowCost    (CostFunction))       
-          (Efficiency (EfficiencyFunction)) 
+          (Speed      (SpeedPlan))             ; call SpeedPlan function above
+          (LowCost    (CostPlan))              ; call CostPlan
+          (Efficiency (EfficiencyPlan))        ; call EfficiencyPlan
           ($_         (Invalid))               ; OTHERWISE
           )))
 !(DevisePlan (superpose (Speed LowCost Efficiency)))
 \end{verbatim}
 
-\subsubsection{matching}
+\subsubsection{filtering}
+
+Using \textbf{superpose} can generate lots of results. Real world problems likely require filtering, often using the \textbf{match} construct and other constraints, for context. MeTTa has a special expression \textbf{(empty)} which helps you discontinue results by particular context. 
+
+In the example below, the "EfficiencyPlan" function finds the atom "(efficiency not available)" using \textbf{match}. The execution argument in \textbf{match} below is the special \textbf{(empty)}. That means that nothing is returned from the first "EfficiencyPlan" and this option is filtered out of the results. The second definition of "EfficiencyPlan" (you can define a function more than once) will match and execute if you alter the first statement to "(efficiency available)" and rerun the code box.
+
+\begin{verbatim}
+(efficiency not available)      
+
+(= (SpeedPlan) (1st Plan Complete))
+(= (CostPlan) (2nd Plan Complete))
+(= (EfficiencyPlan) 
+   (match &self (efficiency not available) (empty)))
+(= (EfficiencyPlan) 
+   (match &self (efficiency available) (3rd Plan Complete)))
+
+
+(= (DevisePlan $strategy)
+   (case $strategy
+          (
+          (Speed      (SpeedPlan))      
+          (LowCost    (CostPlan))       
+          (Efficiency (EfficiencyPlan)) 
+          ($_         (Invalid))               ; OTHERWISE
+          )))
+!(DevisePlan (superpose (Speed LowCost Efficiency)))
+\end{verbatim}
+
+Any time you execute \textbf{(empty)} within a function execution will immediately stop and nothing is returned for the particular case at hand. \textbf{(empty)} is a quick filtering technique. The following function filters numbers, returning those passed less than 10. If a number fails the test condition \textbf{(empty)} halts execution for that particular call to "NumberCheck".
+
+\begin{verbatim}
+(= (NumberCheck $number)
+   (if (< $number 10)
+      $number
+      (empty)
+   )
+)
+!(NumberCheck (superpose (10 2 15 3 5 1 0 25)))
+\end{verbatim}
+
 
 \subsubsection{collapse}
+
+\textbf{superpose} will return results in a format with values separated by commas. For example, "[2,3,5,1,0]" is returned from the example above. This format with values divided by commas is not easy for us to deal with programmatically in MeTTa, so we use \textbf{collapse} with eg "[2,3,5,1,0]" as the argument. This formats the results in an ordinary MeTTa expression in parenthesis "(2 3 5 1 0)". 
+
+Use of  \textbf{collapse} also prevents MeTTa from surreptitiously backing up and trying other variations in your code. As has been emphasized, MeTTa insists on executing all possible paths through your code. However if you use \textbf{collapse} you stop any such backing up behavior!
+
+\begin{verbatim}
+(= (NumberCheck $number)
+   (if (< $number 10)
+      $number
+      (empty)
+   )
+)
+!(collapse (NumberCheck (superpose (10 2 15 3 5 1 0 25))))
+\end{verbatim}
+
 
 \subsection{Control}
 

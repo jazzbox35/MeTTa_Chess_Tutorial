@@ -1,4 +1,1 @@
-(= (SpeedFunction) (1st Plan))
-(= (CostFunction) (2nd Plan))
-(= (EfficiencyFunction) (3rd Plan))
-(= (DevisePlan $_19962) (case $_19962 ((Speed (SpeedFunction)) (LowCost (CostFunction)) (Efficiency (EfficiencyFunction)) ($_20070 (Invalid)))))
+(= (NumberCheck $_4540) (if (< $_4540 10) $_4540 (empty)))

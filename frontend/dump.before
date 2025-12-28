@@ -1,13 +1,7 @@
-(= (SpeedFunction) (1st Plan))
-(= (CostFunction) (2nd Plan))
-(= (EfficiencyFunction) (3rd Plan))
-
-(= (DevisePlan $strategy)
-   (case $strategy
-          (
-          (Speed      (SpeedFunction))      
-          (LowCost    (CostFunction))       
-          (Efficiency (EfficiencyFunction)) 
-          ($_         (Invalid))               ; OTHERWISE
-          )))
-!(DevisePlan (superpose (Speed LowCost Efficiency)))
+(= (NumberCheck $number)
+   (if (< $number 10)
+      $number
+      (empty)
+   )
+)
+!(collapse (NumberCheck (superpose (10 2 15 3 5 1 0 25))))
