@@ -282,8 +282,6 @@ Any time you execute \textbf{(empty)} within a function execution will immediate
 
 \textbf{superpose} will return results in a format with values separated by commas. For example, "[2,3,5,1,0]" is returned from the example above. This format with values divided by commas is not easy for us to deal with programmatically in MeTTa, so we use \textbf{collapse} with eg "[2,3,5,1,0]" as the argument. This formats the results in an ordinary MeTTa expression in parenthesis "(2 3 5 1 0)". 
 
-Use of  \textbf{collapse} also prevents MeTTa from surreptitiously backing up and trying other variations in your code. As has been emphasized, MeTTa insists on executing all possible paths through your code. However if you use \textbf{collapse} you stop any such backing up behavior!
-
 \begin{verbatim}
 (= (NumberCheck $number)
    (if (< $number 10)
@@ -294,6 +292,27 @@ Use of  \textbf{collapse} also prevents MeTTa from surreptitiously backing up an
 !(collapse (NumberCheck (superpose (10 2 15 3 5 1 0 25))))
 \end{verbatim}
 
+Use of  \textbf{collapse} also prevents MeTTa from surreptitiously backing up and trying other variations in your code. As has been emphasized, MeTTa insists on executing all possible paths through your code. However if you use \textbf{collapse} you create a boundary -- after evaluation MeTTa will not back up and try some other avenue through your code!
+
+
+Challenge: Cloning the above code, input all days of the week and filter out weekend days, returning a list with Monday through Friday.
+
+\begin{verbatim}
+(= (DayCheck $day)
+   (if (??? (== $day Saturday) (== $day Sunday))
+      ???
+      $day
+   )
+)
+!(??? (DayCheck (??? (Monday Tuesday Wednesday Thursday Friday Saturday Sunday))))
+;;cheat: (= (DayCheck $day)
+;;cheat:   (if (or (== $day Saturday) (== $day Sunday))
+;;cheat:     (empty)
+;;cheat:     $day
+;;cheat:   )
+;;cheat: )
+;;cheat: !(collapse (DayCheck (superpose (Monday Tuesday Wednesday Thursday Friday Saturday Sunday))))
+\end{verbatim}
 
 \subsection{Control}
 

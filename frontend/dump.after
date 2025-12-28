@@ -1,1 +1,2 @@
-(= (NumberCheck $_4540) (if (< $_4540 10) $_4540 (empty)))
+(= (DayCheck $_12312) (if (??? (== $_12312 Saturday) (== $_12312 Sunday)) ??? $_12312))
+(= (DayCheck $_12192) (if (or (== $_12192 Saturday) (== $_12192 Sunday)) (empty) $_12192))
