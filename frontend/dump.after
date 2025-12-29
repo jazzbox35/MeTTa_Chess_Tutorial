@@ -1,5 +1,1 @@
-(= (find_tool_match $_28470) (match &self (tool $_28470) found))
-(= (find_tool_match_recursion $_28296 $_28302) (if (== $_28302 ()) (empty) (if (== $_28296 (car-atom $_28302)) found (find_tool_match_recursion $_28296 (cdr-atom $_28302)))))
-(tool hammer)
-(tool screwdriver)
-(tool saw)
+(= (WeekendTest $_6656 $_6662 $_6668) (if (or (and (== $_6656 Sunday) (< $_6662 1000)) (== $_6668 cloudy)) (stay in bed) (get up)))

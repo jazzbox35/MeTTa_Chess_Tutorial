@@ -1,22 +1,5 @@
-;small atoms for tools
-(tool hammer)
-(tool screwdriver)
-(tool saw)
-
-;random access lookup for small atoms, easy and fast!
-(= (find_tool_match $tool) (match &self (tool $tool) found))
-
-!(find_tool_match nail)
-
-;----------------------------------
-
-;avoid searching through lists which is confusing looking and less efficient
-(= (find_tool_match_recursion $tool $list)
-    (if (== $list ())
-        (empty)
-        (if (== $tool (car-atom $list))
-            found
-            (find_tool_match_recursion $tool (cdr-atom $list)))))
-
-;don't use a list of tools: you'll have to search through it sequentially
-!(find_tool_match_recursion nail (hammer screwdriver saw))
+(= (WeekendTest $day $time $conditions)
+(if (or (and (== $day Sunday) (< $time 1000)) (== $conditions cloudy))
+(stay in bed)
+(get up)))
+!(WeekendTest Sunday 0900 cloudy)
