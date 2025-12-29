@@ -44,24 +44,47 @@ export function CodeEditor({
   const [isCopied, setIsCopied] = useState(false)
   const [hasRun, setHasRun] = useState(false)
   useEffect(() => {
-    const handleTestAddition = (token: string | null) => {
+    const handleTestAddition = async (token: string | null) => {
       if (!token) return
-      const result = (1 + 1).toString()
-      const payload = JSON.stringify({ token, result })
       try {
-        window.localStorage.setItem("test_add_response", payload)
-      } catch {
-        // ignore storage errors
+        const code = "!(chess)"
+        const atomspaceState = (globalThis as any).Atomspace_state ?? ""
+        //let payload
+        //if (!atomspaceState) {
+        //  payload = code
+        //} else {
+        //  payload = `${atomspaceState}\n${code}`
+        //}
+        const payloadstart = `${atomspaceState}\n${code}`
+        
+        const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: payloadstart,
+        })
+        const fullText = await response.text()
+        const result = fullText
+        const payload = JSON.stringify({ token, result })
+        try {
+          window.localStorage.setItem("test_add_response", payload)
+        } catch {
+          // ignore storage errors
+        }
+        window.dispatchEvent(new CustomEvent("test_add_response", { detail: { token, result } }))
+      } catch (err) {
+        const result = `error: ${err instanceof Error ? err.message : String(err)}`
+        window.dispatchEvent(new CustomEvent("test_add_response", { detail: { token, result } }))
       }
-      window.dispatchEvent(new CustomEvent("test_add_response", { detail: { token, result } }))
     }
 
     const customHandler = (event: CustomEvent<{ token?: string }>) => {
-      handleTestAddition(event.detail?.token ?? null)
+      void handleTestAddition(event.detail?.token ?? null)
     }
     const storageHandler = (event: StorageEvent) => {
       if (event.key === "test_add_request" && event.newValue) {
-        handleTestAddition(event.newValue)
+        void handleTestAddition(event.newValue)
       }
     }
 
