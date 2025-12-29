@@ -10,6 +10,8 @@ import { ResetButton } from "./reset-button";
 import { DisplayAtomspaceButton } from "./display-atomspace-button";
 import { Button } from "@/components/ui/button";
 
+let chessWindow: Window | null = null;
+
 export function SiteHeader() {
   const pathname = usePathname();
   // Show header actions on all sections/pages
@@ -31,6 +33,38 @@ export function SiteHeader() {
     return () => window.removeEventListener("atomspace_state_updated", handler as EventListener)
   }, [])
 
+  const handlePlayChess = () => {
+    if (typeof window === "undefined") return
+    const existing =
+      chessWindow && !chessWindow.closed ? chessWindow : window.open("", "metta-chess-tab")
+    if (existing) {
+      chessWindow = existing
+      try {
+        if (existing.location.pathname !== "/chess") {
+          existing.location.href = "/chess"
+        } else {
+          existing.focus()
+        }
+        return
+      } catch {
+        // if cross-window access fails, fall through to open a fresh tab
+      }
+    }
+    const newWindow = window.open("/chess", "metta-chess-tab")
+    if (newWindow) {
+      chessWindow = newWindow
+      try {
+        newWindow.focus()
+      } catch {
+        // ignore focus errors
+      }
+    }
+  }
+
+  if (pathname?.startsWith("/chess")) {
+    return null
+  }
+
   return (
     <header className="fixed top-0 z-40 w-full border-b bg-background pr-5">
       <div className="flex h-16 items-center space-x-4 sm:justify-between sm:space-x-6">
@@ -47,7 +81,7 @@ export function SiteHeader() {
           </div>
           {/* Desktop actions */}
           <div className="hidden md:flex items-center space-x-1">
-            <Button variant="outline" size="sm" className="text-xs px-3 h-9 min-w-[140px]">
+            <Button variant="outline" size="sm" className="text-xs px-3 h-9 min-w-[140px]" onClick={handlePlayChess}>
               Play Chess
             </Button>
             <div className="min-w-[140px] h-9">
@@ -90,7 +124,7 @@ export function SiteHeader() {
             </Button>
             {mobileMenuOpen && (
               <div className="absolute right-4 top-16 z-50 w-64 rounded-md border bg-background p-3 shadow-lg space-y-2">
-                <Button variant="outline" size="sm" className="text-xs w-full h-9">
+                <Button variant="outline" size="sm" className="text-xs w-full h-9" onClick={handlePlayChess}>
                   Play Chess
                 </Button>
                 {showResetButton && (
