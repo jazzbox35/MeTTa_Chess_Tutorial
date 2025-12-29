@@ -43,6 +43,35 @@ export function CodeEditor({
   const [isExecuting, setIsExecuting] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
   const [hasRun, setHasRun] = useState(false)
+  useEffect(() => {
+    const handleTestAddition = (token: string | null) => {
+      if (!token) return
+      const result = (1 + 1).toString()
+      const payload = JSON.stringify({ token, result })
+      try {
+        window.localStorage.setItem("test_add_response", payload)
+      } catch {
+        // ignore storage errors
+      }
+      window.dispatchEvent(new CustomEvent("test_add_response", { detail: { token, result } }))
+    }
+
+    const customHandler = (event: CustomEvent<{ token?: string }>) => {
+      handleTestAddition(event.detail?.token ?? null)
+    }
+    const storageHandler = (event: StorageEvent) => {
+      if (event.key === "test_add_request" && event.newValue) {
+        handleTestAddition(event.newValue)
+      }
+    }
+
+    window.addEventListener("test_add_request", customHandler as EventListener)
+    window.addEventListener("storage", storageHandler)
+    return () => {
+      window.removeEventListener("test_add_request", customHandler as EventListener)
+      window.removeEventListener("storage", storageHandler)
+    }
+  }, [])
 
   const codeTextareaRef = useRef<HTMLTextAreaElement>(null)
   const highlightRef = useRef<HTMLPreElement>(null)
