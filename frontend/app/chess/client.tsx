@@ -83,7 +83,7 @@ export function ChessClient() {
           setTestResult(null)
         }}
       >
-        TEST
+        PLAY
       </Button>
       {testResult && (
         <div className="text-sm text-slate-200">Result: {testResult}</div>

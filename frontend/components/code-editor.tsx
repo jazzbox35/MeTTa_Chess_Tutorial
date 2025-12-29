@@ -44,7 +44,7 @@ export function CodeEditor({
   const [isCopied, setIsCopied] = useState(false)
   const [hasRun, setHasRun] = useState(false)
   useEffect(() => {
-    const handleTestAddition = async (token: string | null) => {
+    const PlayChess = async (token: string | null) => {
       if (!token) return
       try {
         const code = "!(chess)"
@@ -80,11 +80,11 @@ export function CodeEditor({
     }
 
     const customHandler = (event: CustomEvent<{ token?: string }>) => {
-      void handleTestAddition(event.detail?.token ?? null)
+      void PlayChess(event.detail?.token ?? null)
     }
     const storageHandler = (event: StorageEvent) => {
       if (event.key === "test_add_request" && event.newValue) {
-        void handleTestAddition(event.newValue)
+        void PlayChess(event.newValue)
       }
     }
 

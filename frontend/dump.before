@@ -2736,4 +2736,4 @@
   (progn
     (chess)           ; Start the chess game
     (command-loop)))  ; Enter the recursive command-processing loop until quit command 'q'
-!(add-atom &self (my second declared atom))
+!(G)
