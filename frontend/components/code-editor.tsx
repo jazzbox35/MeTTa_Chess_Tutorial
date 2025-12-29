@@ -46,17 +46,18 @@ export function CodeEditor({
   useEffect(() => {
     const PlayChess = async (token: string | null) => {
       if (!token) return
+
       try {
         const code = "!(chess)"
         const atomspaceState = (globalThis as any).Atomspace_state ?? ""
-        //let payload
-        //if (!atomspaceState) {
-        //  payload = code
-        //} else {
-        //  payload = `${atomspaceState}\n${code}`
-        //}
+        // let payload
+        // if (!atomspaceState) {
+        //   payload = code
+        // } else {
+        //   payload = `${atomspaceState}\n${code}`
+        // }
         const payloadstart = `${atomspaceState}\n${code}`
-        
+
         const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
           method: "POST",
           headers: {
@@ -65,17 +66,25 @@ export function CodeEditor({
           body: payloadstart,
         })
         const fullText = await response.text()
-        const result = fullText
-        const payload = JSON.stringify({ token, result })
+        const matches = fullText.match(/\[[^\]]*\]/g) || []
+        const text = matches[0] || fullText
+        //const text = fullText
+        alert("response>" + text)
+
+        const second = matches[1] || null
+        await handleAtomspaceUpdate(second)
+        alert("response>" + second)
+
+        const payload = JSON.stringify({ token, text })
         try {
-          window.localStorage.setItem("test_add_response", payload)
+          window.localStorage.setItem("play_chess_response", payload)
         } catch {
           // ignore storage errors
         }
-        window.dispatchEvent(new CustomEvent("test_add_response", { detail: { token, result } }))
+        window.dispatchEvent(new CustomEvent("play_chess_response", { detail: { token, text } }))
       } catch (err) {
         const result = `error: ${err instanceof Error ? err.message : String(err)}`
-        window.dispatchEvent(new CustomEvent("test_add_response", { detail: { token, result } }))
+        window.dispatchEvent(new CustomEvent("play_chess_response", { detail: { token, result } }))
       }
     }
 
@@ -88,10 +97,10 @@ export function CodeEditor({
       }
     }
 
-    window.addEventListener("test_add_request", customHandler as EventListener)
+    window.addEventListener("PlayChess", customHandler as EventListener)
     window.addEventListener("storage", storageHandler)
     return () => {
-      window.removeEventListener("test_add_request", customHandler as EventListener)
+      window.removeEventListener("PlayChess", customHandler as EventListener)
       window.removeEventListener("storage", storageHandler)
     }
   }, [])

@@ -46,7 +46,7 @@ export function ChessClient() {
     }
 
     const storageHandler = (event: StorageEvent) => {
-      if (event.key === "test_add_response" && event.newValue) {
+      if (event.key === "play_chess_response" && event.newValue) {
         try {
           const parsed = JSON.parse(event.newValue) as { token?: string; result?: string }
           handleResult(parsed.token ?? null, parsed.result ?? null)
@@ -56,10 +56,10 @@ export function ChessClient() {
       }
     }
 
-    window.addEventListener("test_add_response", customHandler as EventListener)
+    window.addEventListener("play_chess_response", customHandler as EventListener)
     window.addEventListener("storage", storageHandler)
     return () => {
-      window.removeEventListener("test_add_response", customHandler as EventListener)
+      window.removeEventListener("play_chess_response", customHandler as EventListener)
       window.removeEventListener("storage", storageHandler)
     }
   }, [])
