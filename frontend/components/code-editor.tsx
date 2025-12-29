@@ -149,6 +149,32 @@ export function CodeEditor({
     }
   }
 
+  const handleAtomspaceUpdate = async (second: string | null) => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    try {
+      if (second !== null) {
+        const normalizedAtomspaceState = splitParenthesizedArray(second)
+        ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
+
+        await fetch("/api/dump-after", {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: normalizedAtomspaceState,
+        }) 
+
+      } else {
+        ;(globalThis as any).Atomspace_state = null
+      }
+    } catch {
+      alert("Unable to assign atomspace")
+      ;(globalThis as any).Atomspace_state = null
+    }
+    window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: second ?? "" }))
+  }
+
   // Execute code by sending to MeTTa API
   const executeCode = async () => {
     setIsExecuting(true)
@@ -211,28 +237,7 @@ export function CodeEditor({
       }
       // Expose second result (if present) globally for app-wide use
       const second = matches[1] || null
-      
-      if (typeof window !== "undefined") {
-        try {
-          if (second !== null) {
-            const normalizedAtomspaceState = splitParenthesizedArray(second)
-            ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
-      
-            await fetch("/api/dump-after", {
-              method: "POST",
-              headers: { "Content-Type": "text/plain" },
-              body: normalizedAtomspaceState,
-              }) 
-
-          } else {
-            ;(globalThis as any).Atomspace_state = null
-          }
-        } catch {
-          alert("Unable to assign atomspace")
-          ;(globalThis as any).Atomspace_state = null
-        }
-        window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: second ?? "" }))
-      }
+      await handleAtomspaceUpdate(second)
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
       console.error("Execution error:", err)
