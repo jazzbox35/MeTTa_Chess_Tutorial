@@ -22,6 +22,30 @@ export function SiteHeader() {
     const trimmed = (val || "").trim()
     return !trimmed || trimmed === "[]" || trimmed === "()"
   });
+  const runDefaultProgram = async () => {
+    try {
+      const res = await fetch("/api/default-program")
+      if (!res.ok) {
+        throw new Error(`Failed to load default program (${res.status})`)
+      }
+      const program = (await res.text()).trim()
+
+      ;(globalThis as any).Atomspace_state = program
+      if (typeof window !== "undefined") {
+        try {
+          window.localStorage.setItem("Atomspace_state", program)
+        } catch {
+          // ignore storage errors
+        }
+        window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: program }))
+      }
+      alert("Now running default MeTTa chess program.")
+      setAtomspaceEmpty(false)
+    } catch (err) {
+      console.error(err)
+      alert("Failed to load default program.")
+    }
+  }
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -33,8 +57,11 @@ export function SiteHeader() {
     return () => window.removeEventListener("atomspace_state_updated", handler as EventListener)
   }, [])
 
-  const handlePlayChess = () => {
+  const handlePlayChess = async () => {
     if (typeof window === "undefined") return
+    if (atomspaceEmpty) {
+      await runDefaultProgram()
+    }
     const existing =
       chessWindow && !chessWindow.closed ? chessWindow : window.open("", "metta-chess-tab")
     if (existing) {

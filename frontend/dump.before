@@ -1,5 +1,1 @@
-(= (WeekendTest $day $time $conditions)
-(if (or (and (== $day Sunday) (< $time 1000)) (== $conditions cloudy))
-(stay in bed)
-(get up)))
-!(WeekendTest Sunday 0900 cloudy)
+(my declared atom)
