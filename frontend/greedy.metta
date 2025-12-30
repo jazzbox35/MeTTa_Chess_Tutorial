@@ -2497,92 +2497,84 @@
     (; else if
         empty))))) 
 
-;(: M (-> command))
-(= (M)  
+(= (M $f $g)  
   (if (== (game-still-playing) False)
     (println "Game over. Please reset to play again (enter r).")
     ; else keep playing
     (progn 
-    ; prompt for x/y location
-    ; temporary change for PeTTa test, enter eg ((1 2) (1 3))
-    ;(let $coord (prompt-for-move) ())
-    (let $coord (readln!) ())
-    (let $f (nth 1 $coord) ())
-    (let $g (nth 2 $coord) ())
-    ; get the current board
-    (match &self (board-state $starting_board) $starting_board)
-    ; reset, then add each piece to atomspace to work with individually with form eq '(square 1 1 s r)'
-    (reset-pieces $starting_board)
-    (let $entire_source (return_entire_box $f) ())
-    ; check if source location and destination are not the same, and if there is piece to move.
-    (if (and (not (== $f $g)) (== (size-atom $entire_source) 4))                            
-     ; check if destination is empty or destination has opponent's piece  
-      (progn 
-      ; Retrieve the source box details.
-      (let $h (return_entire_box $f) ())
-      ; Get source box color, assign NIL if no piece
-      (let $source_color (if (== (size-atom $h) 4) (nth 3 $h) NIL) ())
-      ; Retrieve the destination box details.
-      (let $i (return_entire_box $g) ()) 
-      (let $dest_color (if (== (size-atom $i) 4) 
-                           (nth 3 $i)
-                            NIL) ())
-      ; Check there is a human piece to move.
-      (if (and (== $source_color s)                                    
-               (or  
-               ; OK to move to open square size 2...
-               (== (size-atom $i) 2)     
-               ; OK to take another piece, check color is not the same...
-               (and (== (size-atom $i) 4) (not (== (nth 3 $h) $dest_color)))))
-        ; Validate the path for the piece.
-        (if (== (clear_route $h $i) True)               
-          ; Try moving piece provisionally
-          (let* ( 
-              ; Try the move and envision the board state.   
-              ($MoveBool  (move_piece $h $g))   
-              ; Ensure the human player's king (s) is not in check from gold (g) if moved.   
-              ($KingCompromised (checkking s))
-                  ) 
-              ; If move valid, proceed to create new board atom with move.
-              (if (== $KingCompromised True)
-                  (println "Can't move there, your king would be in check.")
-                  ;else
-                  (progn 
-                  ; re-create a new board 
-                  (println "Moving your piece...")
-                  (let $provisional_board (move_piece_on_board $h $i $starting_board)
-                       (add-atom &self (board-state $provisional_board)))
-                  ; remove the old chess board
-                  (remove-atom &self (board-state $starting_board))
-                  ; display
-                  (D) 
-                  ; announce CHECK or CHECKMATE of gold player (AI)
-                  (let $Check (checkking g)
-                      (if (== $Check True)
-                          ; if the AI is in check, see if AI has any moves whatsoever left to escape
-                          (let $any_moves_left_whatsoever (collapse (any_moves_to_escape g))
-                            (if (== $any_moves_left_whatsoever ()) ;an empty list means no moves!
-                                ; if no moves possible for AI
-                                (progn
-                                  (println "Checkmate! You win!")
-                                  (println "Winner!  Winner!  Winner!")
-                                  (println "")
-                                  (change-game-state checkmate)
-                                )
-                                (println "Check! Enter g for Greedy Chess move.")))
-                          (println "Enter g for Greedy Chess move.")  ))
+      ; get the current board
+      (match &self (board-state $starting_board) $starting_board)
+      ; reset, then add each piece to atomspace to work with individually with form eq '(square 1 1 s r)'
+      (reset-pieces $starting_board)
+      (let $entire_source (return_entire_box $f) ())
+      ; check if source location and destination are not the same, and if there is piece to move.
+      (if (and (not (== $f $g)) (== (size-atom $entire_source) 4))                            
+        ; check if destination is empty or destination has opponent's piece  
+        (progn 
+          ; Retrieve the source box details.
+          (let $h (return_entire_box $f) ())
+          ; Get source box color, assign NIL if no piece
+          (let $source_color (if (== (size-atom $h) 4) (nth 3 $h) NIL) ())
+          ; Retrieve the destination box details.
+          (let $i (return_entire_box $g) ()) 
+          (let $dest_color (if (== (size-atom $i) 4) 
+                               (nth 3 $i)
+                                NIL) ())
+          ; Check there is a human piece to move.
+          (if (and (== $source_color s)                                    
+                   (or  
+                   ; OK to move to open square size 2...
+                   (== (size-atom $i) 2)     
+                   ; OK to take another piece, check color is not the same...
+                   (and (== (size-atom $i) 4) (not (== (nth 3 $h) $dest_color)))))
+            ; Validate the path for the piece.
+            (if (== (clear_route $h $i) True)               
+              ; Try moving piece provisionally
+              (let* ( 
+                  ; Try the move and envision the board state.   
+                  ($MoveBool  (move_piece $h $g))   
+                  ; Ensure the human player's king (s) is not in check from gold (g) if moved.   
+                  ($KingCompromised (checkking s))
+                      ) 
+                  ; If move valid, proceed to create new board atom with move.
+                  (if (== $KingCompromised True)
+                      (println "Can't move there, your king would be in check.")
+                      ;else
+                      (progn 
+                      ; re-create a new board 
+                      (println "Moving your piece...")
+                      (let $provisional_board (move_piece_on_board $h $i $starting_board)
+                           (add-atom &self (board-state $provisional_board)))
+                      ; remove the old chess board
+                      (remove-atom &self (board-state $starting_board))
+                      ; display
+                      (D) 
+                      ; announce CHECK or CHECKMATE of gold player (AI)
+                      (let $Check (checkking g)
+                          (if (== $Check True)
+                              ; if the AI is in check, see if AI has any moves whatsoever left to escape
+                              (let $any_moves_left_whatsoever (collapse (any_moves_to_escape g))
+                                (if (== $any_moves_left_whatsoever ()) ;an empty list means no moves!
+                                    ; if no moves possible for AI
+                                    (progn
+                                      (println "Checkmate! You win!")
+                                      (println "Winner!  Winner!  Winner!")
+                                      (println "")
+                                      (change-game-state checkmate)
+                                    )
+                                    (println "Check! Enter g for Greedy Chess move.")))
+                              (println "Enter g for Greedy Chess move.")  ))
+                      )
                   )
               )
-          )
-          (println "Can't move piece there."))
-        ; else (moving to location with same piece or other problem)
-        (println "Invalid move.")
-      )
-      )
-      ;else (trying to move to same location)
-      (println "Invalid move.")) 
-    ; since move complete, delete any individual square atoms which only live for a single move.
-    (delete-pieces)
+              (println "Can't move piece there."))
+            ; else (moving to location with same piece or other problem)
+            (println "Invalid move.")
+          ))
+        ;else (trying to move to same location)
+        (println "Invalid move.")) 
+      ; since move complete, delete any individual square atoms which only live for a single move.
+      (progn (delete-pieces) (OK))
     )))
 
 ; AI move piece command
