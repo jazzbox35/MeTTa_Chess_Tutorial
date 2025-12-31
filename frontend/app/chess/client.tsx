@@ -1,7 +1,10 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from "react"
+import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { FRONTEND_BASE_URL } from "@/lib/constants"
+import { splitParenthesizedArray } from "@/lib/split-parenthesized-array"
 
 const pieces = {
   r: "♜",
@@ -26,6 +29,40 @@ const setup = [
 const files = ["A", "B", "C", "D", "E", "F", "G", "H"]
 
 type BoardCell = { color: "gold" | "silver"; piece: string } | null
+
+function extractBoardStateSection(state: string): string | null {
+  let depth = 0
+
+  for (let i = 0; i < state.length; i++) {
+    const ch = state[i]
+
+    if (ch === "(") {
+      if (depth === 0) {
+        const rest = state.slice(i + 1)
+        const match = rest.match(/^\s*board-state\b/)
+        if (match) {
+          let innerDepth = 0
+          for (let j = i; j < state.length; j++) {
+            const cj = state[j]
+            if (cj === "(") innerDepth++
+            if (cj === ")") {
+              innerDepth--
+              if (innerDepth === 0) {
+                return state.slice(i, j + 1)
+              }
+            }
+          }
+          return null
+        }
+      }
+      depth++
+    } else if (ch === ")") {
+      depth = Math.max(depth - 1, 0)
+    }
+  }
+
+  return null
+}
 
 function buildInitialBoard(): BoardCell[][] {
   return setup.map((row, rowIdx) =>
@@ -92,14 +129,78 @@ function parseBoardState(section: string): BoardCell[][] | null {
 export function ChessClient() {
   const [board, setBoard] = useState<BoardCell[][]>(() => buildInitialBoard())
   const [testResult, setTestResult] = useState<string | null>(null)
+  const [isWaiting, setIsWaiting] = useState(false)
   const lastTokenRef = useRef<string | null>(null)
   const alertedTokenRef = useRef<string | null>(null)
+  const waitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const runPlayChess = async (token: string) => {
+    try {
+      const atomspaceState =
+        (globalThis as any).Atomspace_state ??
+        (() => {
+          try {
+            return window.localStorage.getItem("Atomspace_state")
+          } catch {
+            return ""
+          }
+        })() ??
+        ""
+
+      const payload = atomspaceState ? `${atomspaceState}\n!(chess)` : "!(chess)"
+      const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: payload,
+      })
+
+      const fullText = await response.text()
+      const matches = fullText.match(/\[[^\]]*\]/g) || []
+      const text = matches[0] || fullText
+      setTestResult(text || null)
+
+      const second = matches[1] || null
+      if (second) {
+        try {
+          const normalizedAtomspaceState = splitParenthesizedArray(second)
+          ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
+          window.localStorage.setItem("Atomspace_state", normalizedAtomspaceState)
+          window.dispatchEvent(
+            new CustomEvent("atomspace_state_updated", { detail: normalizedAtomspaceState }),
+          )
+
+          const boardStateSection = extractBoardStateSection(normalizedAtomspaceState)
+          if (boardStateSection) {
+            window.localStorage.setItem("board_state", boardStateSection)
+            window.dispatchEvent(
+              new CustomEvent("board_state_updated", { detail: boardStateSection }),
+            )
+          }
+        } catch {
+          // ignore atomspace update errors
+        }
+      }
+    } catch (err) {
+      setTestResult(`error: ${err instanceof Error ? err.message : String(err)}`)
+    } finally {
+      setIsWaiting(false)
+      if (waitTimerRef.current) {
+        clearTimeout(waitTimerRef.current)
+        waitTimerRef.current = null
+      }
+    }
+  }
 
   useEffect(() => {
     const handleResult = (token: string | null, result: string | null) => {
       if (!token || !result) return
       if (lastTokenRef.current && lastTokenRef.current !== token) return
       setTestResult(result)
+      setIsWaiting(false)
+      if (waitTimerRef.current) {
+        clearTimeout(waitTimerRef.current)
+        waitTimerRef.current = null
+      }
       if (alertedTokenRef.current !== token) {
         alertedTokenRef.current = token
         alert(`Result: ${result}`)
@@ -117,6 +218,11 @@ export function ChessClient() {
           handleResult(parsed.token ?? null, parsed.result ?? null)
         } catch {
           // ignore malformed payload
+          setIsWaiting(false)
+          if (waitTimerRef.current) {
+            clearTimeout(waitTimerRef.current)
+            waitTimerRef.current = null
+          }
         }
       }
     }
@@ -162,6 +268,15 @@ export function ChessClient() {
     }
   }, [])
 
+  useEffect(() => {
+    return () => {
+      if (waitTimerRef.current) {
+        clearTimeout(waitTimerRef.current)
+        waitTimerRef.current = null
+      }
+    }
+  }, [])
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col gap-4 items-center justify-center px-2 sm:px-4">
       <Button
@@ -171,6 +286,13 @@ export function ChessClient() {
         onClick={() => {
           const token = `${Date.now()}:${Math.random().toString(16).slice(2)}`
           lastTokenRef.current = token
+          setIsWaiting(true)
+          if (waitTimerRef.current) clearTimeout(waitTimerRef.current)
+          waitTimerRef.current = setTimeout(() => {
+            setIsWaiting(false)
+            waitTimerRef.current = null
+          }, 15000)
+          void runPlayChess(token)
           try {
             window.localStorage.setItem("PlayChess", token)
           } catch {
@@ -183,6 +305,12 @@ export function ChessClient() {
       >
         START/RESET
       </Button>
+      {isWaiting && (
+        <div className="flex items-center gap-2 text-sm text-slate-200">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span>Waiting for PlayChess...</span>
+        </div>
+      )}
       {testResult && (
         <div className="text-sm text-slate-200">Result: {testResult}</div>
       )}

@@ -85,7 +85,7 @@ export function CodeEditor({
       if (!token) return
 
       try {
-        const code = "!(chess)"
+        const code = "!(chess) !(R)"
         const atomspaceState = (globalThis as any).Atomspace_state ?? ""
         const payloadstart = `${atomspaceState}\n${code}`
 
@@ -103,7 +103,7 @@ export function CodeEditor({
         // get atomspace
         const second = matches[1] || null
         await handleAtomspaceUpdate(second)
-        
+
         const payload = JSON.stringify({ token, text })
         try {
           window.localStorage.setItem("play_chess_response", payload)
