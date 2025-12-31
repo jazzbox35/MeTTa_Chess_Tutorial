@@ -50,12 +50,6 @@ export function CodeEditor({
       try {
         const code = "!(chess)"
         const atomspaceState = (globalThis as any).Atomspace_state ?? ""
-        // let payload
-        // if (!atomspaceState) {
-        //   payload = code
-        // } else {
-        //   payload = `${atomspaceState}\n${code}`
-        // }
         const payloadstart = `${atomspaceState}\n${code}`
 
         const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
@@ -68,12 +62,10 @@ export function CodeEditor({
         const fullText = await response.text()
         const matches = fullText.match(/\[[^\]]*\]/g) || []
         const text = matches[0] || fullText
-        //const text = fullText
-        alert("response>" + text)
 
+        // get atomspace
         const second = matches[1] || null
         await handleAtomspaceUpdate(second)
-        alert("response>" + second)
 
         const payload = JSON.stringify({ token, text })
         try {
