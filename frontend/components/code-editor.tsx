@@ -198,7 +198,15 @@ export function CodeEditor({
         ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
         const boardStateSection = extractBoardStateSection(normalizedAtomspaceState)
         if (boardStateSection) {
-          alert(boardStateSection)
+          //alert(boardStateSection)
+          try {
+            window.localStorage.setItem("board_state", boardStateSection)
+          } catch {
+            // ignore storage errors
+          }
+          window.dispatchEvent(
+            new CustomEvent("board_state_updated", { detail: boardStateSection }),
+          )
         }
       } else {
         ;(globalThis as any).Atomspace_state = null

@@ -25,7 +25,72 @@ const setup = [
 
 const files = ["A", "B", "C", "D", "E", "F", "G", "H"]
 
+type BoardCell = { color: "gold" | "silver"; piece: string } | null
+
+function buildInitialBoard(): BoardCell[][] {
+  return setup.map((row, rowIdx) =>
+    row.map((cell) => {
+      if (!cell) return null
+      const color: "gold" | "silver" = rowIdx < 2 ? "gold" : rowIdx > 5 ? "silver" : "gold"
+      return { color, piece: cell }
+    }),
+  )
+}
+
+function parseBoardState(section: string): BoardCell[][] | null {
+  const board: BoardCell[][] = Array.from({ length: 8 }, () =>
+    Array.from({ length: 8 }, () => null),
+  )
+
+  // Expect entries like (x y color piece) with optional color or piece for empties
+  const entryRegex = /\(\s*([0-9]+)\s+([0-9]+)(?:\s+([a-zA-Z]+))?(?:\s+([a-zA-Z]+))?\s*\)/g
+  let match: RegExpExecArray | null
+
+  while ((match = entryRegex.exec(section)) !== null) {
+    const x = Number.parseInt(match[1], 10)
+    const y = Number.parseInt(match[2], 10)
+    if (x < 1 || x > 8 || y < 1 || y > 8) continue
+
+    const tokenA = match[3]?.toLowerCase() ?? ""
+    const tokenB = match[4]?.toLowerCase() ?? ""
+    const tokens = [tokenA, tokenB].filter(Boolean)
+
+    if (tokens.length === 0) {
+      board[8 - y][x - 1] = null
+      continue
+    }
+
+    let color: "gold" | "silver" | null = null
+    let piece = ""
+
+    for (const token of tokens) {
+      if (!color && (token === "g" || token === "gold")) {
+        color = "gold"
+        continue
+      }
+      if (!color && (token === "s" || token === "silver")) {
+        color = "silver"
+        continue
+      }
+      if (!piece && token.length === 1) {
+        piece = token
+      }
+    }
+
+    if (!piece) continue
+    if (!color) {
+      // Fallback: top side gold, bottom side silver
+      color = y >= 5 ? "gold" : "silver"
+    }
+
+    board[8 - y][x - 1] = { color, piece }
+  }
+
+  return board
+}
+
 export function ChessClient() {
+  const [board, setBoard] = useState<BoardCell[][]>(() => buildInitialBoard())
   const [testResult, setTestResult] = useState<string | null>(null)
   const lastTokenRef = useRef<string | null>(null)
   const alertedTokenRef = useRef<string | null>(null)
@@ -60,6 +125,39 @@ export function ChessClient() {
     window.addEventListener("storage", storageHandler)
     return () => {
       window.removeEventListener("play_chess_response", customHandler as EventListener)
+      window.removeEventListener("storage", storageHandler)
+    }
+  }, [])
+
+  useEffect(() => {
+    const applyBoardState = (section: string) => {
+      const parsed = parseBoardState(section)
+      if (parsed) setBoard(parsed)
+    }
+
+    // Load any saved board state on mount
+    try {
+      const stored = window.localStorage.getItem("board_state")
+      if (stored) applyBoardState(stored)
+    } catch {
+      // ignore storage errors
+    }
+
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail ?? ""
+      if (detail) applyBoardState(detail)
+    }
+    window.addEventListener("board_state_updated", handler as EventListener)
+
+    const storageHandler = (event: StorageEvent) => {
+      if (event.key === "board_state" && event.newValue) {
+        applyBoardState(event.newValue)
+      }
+    }
+    window.addEventListener("storage", storageHandler)
+
+    return () => {
+      window.removeEventListener("board_state_updated", handler as EventListener)
       window.removeEventListener("storage", storageHandler)
     }
   }, [])
@@ -101,20 +199,19 @@ export function ChessClient() {
           <div />
 
           {/* board rows with rank labels */}
-          {setup.map((row, rowIdx) => (
+          {board.map((row, rowIdx) => (
             <React.Fragment key={`row-${rowIdx}`}>
               <div className="w-5 h-10 sm:w-6 sm:h-14 md:h-16 flex items-center justify-center text-[10px] sm:text-xs text-slate-300">
                 {8 - rowIdx}
               </div>
               {row.map((cell, colIdx) => {
                 const isDark = (rowIdx + colIdx) % 2 === 0
-                const isGoldSide = rowIdx < 2
-                const isSilverSide = rowIdx > 5
-                const colorClass = isGoldSide
-                  ? "text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]"
-                  : isSilverSide
-                    ? "text-slate-200 drop-shadow-[0_0_6px_rgba(226,232,240,0.8)]"
-                    : "text-slate-100"
+                const colorClass =
+                  cell?.color === "gold"
+                    ? "text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]"
+                    : cell?.color === "silver"
+                      ? "text-slate-200 drop-shadow-[0_0_6px_rgba(226,232,240,0.8)]"
+                      : "text-slate-100"
 
                 return (
                   <div
@@ -123,7 +220,9 @@ export function ChessClient() {
                       isDark ? "bg-slate-700" : "bg-slate-600"
                     }`}
                   >
-                    <span className={colorClass}>{cell ? pieces[cell as keyof typeof pieces] : ""}</span>
+                    <span className={colorClass}>
+                      {cell ? pieces[cell.piece as keyof typeof pieces] ?? "" : ""}
+                    </span>
                   </div>
                 )
               })}
