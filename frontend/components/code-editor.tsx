@@ -103,7 +103,7 @@ export function CodeEditor({
         // get atomspace
         const second = matches[1] || null
         await handleAtomspaceUpdate(second)
-
+        
         const payload = JSON.stringify({ token, text })
         try {
           window.localStorage.setItem("play_chess_response", payload)
@@ -121,7 +121,7 @@ export function CodeEditor({
       void PlayChess(event.detail?.token ?? null)
     }
     const storageHandler = (event: StorageEvent) => {
-      if (event.key === "test_add_request" && event.newValue) {
+      if (event.key === "PlayChess" && event.newValue) {
         void PlayChess(event.newValue)
       }
     }
@@ -198,7 +198,6 @@ export function CodeEditor({
         ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
         const boardStateSection = extractBoardStateSection(normalizedAtomspaceState)
         if (boardStateSection) {
-          //alert(boardStateSection)
           try {
             window.localStorage.setItem("board_state", boardStateSection)
           } catch {

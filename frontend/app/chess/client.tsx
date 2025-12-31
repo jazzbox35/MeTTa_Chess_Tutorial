@@ -172,12 +172,12 @@ export function ChessClient() {
           const token = `${Date.now()}:${Math.random().toString(16).slice(2)}`
           lastTokenRef.current = token
           try {
-            window.localStorage.setItem("test_add_request", token)
+            window.localStorage.setItem("PlayChess", token)
           } catch {
             // ignore storage errors
           }
           const target = window.opener && !window.opener.closed ? window.opener : window
-          target.dispatchEvent(new CustomEvent("test_add_request", { detail: { token } }))
+          target.dispatchEvent(new CustomEvent("PlayChess", { detail: { token } }))
           setTestResult(null)
         }}
       >
