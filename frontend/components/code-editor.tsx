@@ -167,13 +167,6 @@ export function CodeEditor({
       if (second !== null) {
         const normalizedAtomspaceState = splitParenthesizedArray(second)
         ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
-
-        await fetch("/api/dump-after", {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" },
-          body: normalizedAtomspaceState,
-        }) 
-
       } else {
         ;(globalThis as any).Atomspace_state = null
       }
@@ -201,17 +194,6 @@ export function CodeEditor({
         payload = `${atomspaceState}\n${code}`
       }
 
-      // DEBUG TEMP: dump payload (sent to /metta_stateless) to file before calling API
-      try {
-        await fetch("/api/dump-atomspace", {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" },
-          body: payload,
-        })
-      } catch (e) {
-        console.error("Failed to dump debug payload", e)
-      }
-
       // Submit the query along with atomspace. Server returns:
       //  [ result of query ] [ updated atomspace ]
       //
@@ -232,12 +214,7 @@ export function CodeEditor({
       // Trap for bad response code or JSON with an error message.
       if (response.status !== 200
         || fullText.includes('{"error"'))
-      {
-        await fetch("/api/dump-after", {
-              method: "POST",
-              headers: { "Content-Type": "text/plain" },
-              body: null,
-              }) 
+      { 
         // Don't delete atomspace on query fail, just exit.
         setError(`Metta query failed`)
         setIsExecuting(false)
