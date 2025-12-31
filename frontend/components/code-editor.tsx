@@ -15,6 +15,43 @@ import { useMeTTaHighlighter } from "@/hooks/useMeTTaHighlighter"
 import { FRONTEND_BASE_URL } from "@/lib/constants"
 import { splitParenthesizedArray } from "@/lib/split-parenthesized-array"
 
+// Extract the first "(board-state ...)" s-expression from the atomspace string.
+function extractBoardStateSection(state: string): string | null {
+  let depth = 0
+
+  for (let i = 0; i < state.length; i++) {
+    const ch = state[i]
+
+    if (ch === "(") {
+      // Only consider board-state at top-level (depth 0)
+      if (depth === 0) {
+        const rest = state.slice(i + 1)
+        const match = rest.match(/^\s*board-state\b/)
+        if (match) {
+          // Capture this s-expression
+          let innerDepth = 0
+          for (let j = i; j < state.length; j++) {
+            const cj = state[j]
+            if (cj === "(") innerDepth++
+            if (cj === ")") {
+              innerDepth--
+              if (innerDepth === 0) {
+                return state.slice(i, j + 1)
+              }
+            }
+          }
+          return null
+        }
+      }
+      depth++
+    } else if (ch === ")") {
+      depth = Math.max(depth - 1, 0)
+    }
+  }
+
+  return null
+}
+
 interface CodeEditorProps {
   code: string
   language: string
@@ -159,6 +196,10 @@ export function CodeEditor({
       if (second !== null) {
         const normalizedAtomspaceState = splitParenthesizedArray(second)
         ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
+        const boardStateSection = extractBoardStateSection(normalizedAtomspaceState)
+        if (boardStateSection) {
+          alert(boardStateSection)
+        }
       } else {
         ;(globalThis as any).Atomspace_state = null
       }
