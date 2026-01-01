@@ -220,7 +220,6 @@ export function CodeEditor({
         }
         if (gameStateSection) {
           try {
-            alert(gameStateSection)
             window.localStorage.setItem("game_state", gameStateSection)
           } catch {
             // ignore storage errors

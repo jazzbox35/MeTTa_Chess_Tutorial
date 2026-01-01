@@ -138,10 +138,16 @@ function parseBoardState(section: string): BoardCell[][] | null {
   return board
 }
 
+function parseGameState(section: string): string | null {
+  const match = section.match(/\(\s*game-state\s+([^)]+?)\s*\)/i)
+  return match ? match[1].trim() : null
+}
+
 export function ChessClient() {
   const [board, setBoard] = useState<BoardCell[][]>(() => buildInitialBoard())
   const [testResult, setTestResult] = useState<string | null>(null)
   const [isWaiting, setIsWaiting] = useState(false)
+  const [gameState, setGameState] = useState<string | null>(null)
   const lastTokenRef = useRef<string | null>(null)
   const alertedTokenRef = useRef<string | null>(null)
   const waitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -287,6 +293,39 @@ export function ChessClient() {
   }, [])
 
   useEffect(() => {
+    const applyGameState = (section: string) => {
+      const parsed = parseGameState(section)
+      if (parsed) setGameState(parsed)
+    }
+
+    // Load any saved game state on mount
+    try {
+      const stored = window.localStorage.getItem("game_state")
+      if (stored) applyGameState(stored)
+    } catch {
+      // ignore storage errors
+    }
+
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail ?? ""
+      if (detail) applyGameState(detail)
+    }
+    window.addEventListener("game_state_updated", handler as EventListener)
+
+    const storageHandler = (event: StorageEvent) => {
+      if (event.key === "game_state" && event.newValue) {
+        applyGameState(event.newValue)
+      }
+    }
+    window.addEventListener("storage", storageHandler)
+
+    return () => {
+      window.removeEventListener("game_state_updated", handler as EventListener)
+      window.removeEventListener("storage", storageHandler)
+    }
+  }, [])
+
+  useEffect(() => {
     return () => {
       if (waitTimerRef.current) {
         clearTimeout(waitTimerRef.current)
@@ -388,6 +427,9 @@ export function ChessClient() {
           <div />
         </div>
       </div>
+      {gameState && (
+        <div className="text-sm text-slate-200">Game state: {gameState}</div>
+      )}
     </div>
   )
 }
