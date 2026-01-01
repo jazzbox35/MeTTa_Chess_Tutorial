@@ -16,8 +16,28 @@ import { FRONTEND_BASE_URL } from "@/lib/constants"
 import { splitParenthesizedArray } from "@/lib/split-parenthesized-array"
 
 // Extract the first "(board-state ...)" s-expression from the atomspace string.
-function extractBoardStateSection(state: string): string | null {
+function extractBoardStateSection(state: string): {
+  boardStateSection: string | null
+  gameStateSection: string | null
+} {
   let depth = 0
+  let boardStateSection: string | null = null
+  let gameStateSection: string | null = null
+
+  const captureSExpression = (startIndex: number) => {
+    let innerDepth = 0
+    for (let j = startIndex; j < state.length; j++) {
+      const cj = state[j]
+      if (cj === "(") innerDepth++
+      if (cj === ")") {
+        innerDepth--
+        if (innerDepth === 0) {
+          return state.slice(startIndex, j + 1)
+        }
+      }
+    }
+    return null
+  }
 
   for (let i = 0; i < state.length; i++) {
     const ch = state[i]
@@ -26,22 +46,13 @@ function extractBoardStateSection(state: string): string | null {
       // Only consider board-state at top-level (depth 0)
       if (depth === 0) {
         const rest = state.slice(i + 1)
-        const match = rest.match(/^\s*board-state\b/)
-        if (match) {
-          // Capture this s-expression
-          let innerDepth = 0
-          for (let j = i; j < state.length; j++) {
-            const cj = state[j]
-            if (cj === "(") innerDepth++
-            if (cj === ")") {
-              innerDepth--
-              if (innerDepth === 0) {
-                return state.slice(i, j + 1)
-              }
-            }
-          }
-          return null
+        if (boardStateSection === null && /^\s*board-state\b/.test(rest)) {
+          boardStateSection = captureSExpression(i)
         }
+        if (gameStateSection === null && /^\s*game-state\b/.test(rest)) {
+          gameStateSection = captureSExpression(i)
+        }
+        if (boardStateSection && gameStateSection) break
       }
       depth++
     } else if (ch === ")") {
@@ -49,7 +60,7 @@ function extractBoardStateSection(state: string): string | null {
     }
   }
 
-  return null
+  return { boardStateSection, gameStateSection }
 }
 
 interface CodeEditorProps {
@@ -196,7 +207,7 @@ export function CodeEditor({
       if (second !== null) {
         const normalizedAtomspaceState = splitParenthesizedArray(second)
         ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
-        const boardStateSection = extractBoardStateSection(normalizedAtomspaceState)
+        const { boardStateSection, gameStateSection } = extractBoardStateSection(normalizedAtomspaceState)
         if (boardStateSection) {
           try {
             window.localStorage.setItem("board_state", boardStateSection)
@@ -205,6 +216,17 @@ export function CodeEditor({
           }
           window.dispatchEvent(
             new CustomEvent("board_state_updated", { detail: boardStateSection }),
+          )
+        }
+        if (gameStateSection) {
+          try {
+            alert(gameStateSection)
+            window.localStorage.setItem("game_state", gameStateSection)
+          } catch {
+            // ignore storage errors
+          }
+          window.dispatchEvent(
+            new CustomEvent("game_state_updated", { detail: gameStateSection }),
           )
         }
       } else {
