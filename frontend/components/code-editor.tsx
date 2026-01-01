@@ -96,7 +96,8 @@ export function CodeEditor({
       if (!token) return
 
       try {
-        const code = "!(chess) !(R)"
+        // The "S" function will either do a cold start or just reset for a new game.
+        const code = "!(S)"
         const atomspaceState = (globalThis as any).Atomspace_state ?? ""
         const payloadstart = `${atomspaceState}\n${code}`
 

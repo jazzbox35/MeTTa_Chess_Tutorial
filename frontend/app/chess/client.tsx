@@ -175,7 +175,7 @@ export function ChessClient() {
       const fullText = await response.text()
       const matches = fullText.match(/\[[^\]]*\]/g) || []
       const text = matches[0] || fullText
-      setTestResult(text || null)
+      setTestResult(text)
 
       const second = matches[1] || null
       if (second) {
@@ -217,7 +217,7 @@ export function ChessClient() {
 
   useEffect(() => {
     const handleResult = (token: string | null, result: string | null) => {
-      if (!token || !result) return
+      if (!token || result == null) return
       if (lastTokenRef.current && lastTokenRef.current !== token) return
       setTestResult(result)
       setIsWaiting(false)
@@ -368,7 +368,7 @@ export function ChessClient() {
           <span>Waiting for PlayChess...</span>
         </div>
       )}
-      {testResult && (
+      {testResult !== null && (
         <div className="text-sm text-slate-200">Result: {testResult}</div>
       )}
 

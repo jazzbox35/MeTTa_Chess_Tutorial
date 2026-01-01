@@ -2493,7 +2493,7 @@
         )
         ;
         ; display welcome messages and board
-        (welcome))
+        (initialization complete!))
     (; else if
         empty))))) 
 
@@ -2654,12 +2654,14 @@
   )
 )
 
-; The reset command will start the game over.
-;(: R (-> command))
-(= (R) 
+(= (S) 
   (progn 
-    (change-game-state restarted)
-    (chess)))
+    (match &self (game-state $msg)
+      (if (==  started   $msg) 
+        (progn 
+          (change-game-state restarted)
+          (chess))
+        (chess)))))
 
 ; The "commands" command just lists the available commands.
 ;(: C (-> command))
