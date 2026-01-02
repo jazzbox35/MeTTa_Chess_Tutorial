@@ -295,7 +295,7 @@ export function ChessClient() {
   useEffect(() => {
     const applyGameState = (section: string) => {
       const parsed = parseGameState(section)
-      if (parsed) setGameState(parsed)
+      setGameState(parsed ?? null)
     }
 
     // Load any saved game state on mount
@@ -308,7 +308,7 @@ export function ChessClient() {
 
     const handler = (event: Event) => {
       const detail = (event as CustomEvent<string>).detail ?? ""
-      if (detail) applyGameState(detail)
+      applyGameState(detail)
     }
     window.addEventListener("game_state_updated", handler as EventListener)
 
@@ -321,6 +321,33 @@ export function ChessClient() {
 
     return () => {
       window.removeEventListener("game_state_updated", handler as EventListener)
+      window.removeEventListener("storage", storageHandler)
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleReset = (value: string) => {
+      const trimmed = (value || "").trim()
+      if (!trimmed) {
+        setTestResult(null)
+        setGameState(null)
+      }
+    }
+
+    const atomspaceHandler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail ?? ""
+      handleReset(detail)
+    }
+    const storageHandler = (event: StorageEvent) => {
+      if (event.key === "Atomspace_state") {
+        handleReset(event.newValue ?? "")
+      }
+    }
+
+    window.addEventListener("atomspace_state_updated", atomspaceHandler as EventListener)
+    window.addEventListener("storage", storageHandler)
+    return () => {
+      window.removeEventListener("atomspace_state_updated", atomspaceHandler as EventListener)
       window.removeEventListener("storage", storageHandler)
     }
   }, [])
