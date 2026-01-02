@@ -521,6 +521,7 @@ export function ChessClient() {
                       const x = colIdx + 1
                       const y = 8 - rowIdx
                       if (!firstClick) {
+                        if (!cell || cell.color !== "silver") return
                         setFirstClick({ x1: x, y1: y })
                         setSecondClick(null)
                         setHighlightedSquares([{ x, y }])
