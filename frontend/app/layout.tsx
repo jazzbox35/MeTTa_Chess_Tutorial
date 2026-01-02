@@ -1,6 +1,7 @@
 import type React from "react";
 import "@/app/globals.css";
 import { Inter } from "next/font/google";
+import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { AtomspaceListener } from "@/components/atomspace-listener";
@@ -8,9 +9,14 @@ import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "MeTTa Chess Tutorial",
   description: "Learn the MeTTa chess tutorial",
+  icons: {
+    icon: "/knight.svg",
+    shortcut: "/knight.svg",
+    apple: "/knight.svg",
+  },
 };
 
 export default function RootLayout({

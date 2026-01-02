@@ -143,11 +143,18 @@ function parseGameState(section: string): string | null {
   return match ? match[1].trim() : null
 }
 
+const hasAtomspaceContent = (value: string | null | undefined): boolean => {
+  const trimmed = (value || "").trim()
+  return !!trimmed && trimmed !== "[]" && trimmed !== "()"
+}
+
 export function ChessClient() {
   const [board, setBoard] = useState<BoardCell[][]>(() => buildInitialBoard())
   const [testResult, setTestResult] = useState<string | null>(null)
   const [isWaiting, setIsWaiting] = useState(false)
   const [gameState, setGameState] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+  const [atomspacePresent, setAtomspacePresent] = useState<boolean>(false)
   const lastTokenRef = useRef<string | null>(null)
   const alertedTokenRef = useRef<string | null>(null)
   const waitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -327,8 +334,9 @@ export function ChessClient() {
 
   useEffect(() => {
     const handleReset = (value: string) => {
-      const trimmed = (value || "").trim()
-      if (!trimmed) {
+      const present = hasAtomspaceContent(value)
+      setAtomspacePresent(present)
+      if (!present) {
         setTestResult(null)
         setGameState(null)
       }
@@ -361,12 +369,28 @@ export function ChessClient() {
     }
   }, [])
 
+  useEffect(() => {
+    setMounted(true)
+    const initial =
+      (globalThis as any).Atomspace_state ??
+      (() => {
+        try {
+          return window.localStorage.getItem("Atomspace_state")
+        } catch {
+          return ""
+        }
+      })() ??
+      ""
+    setAtomspacePresent(hasAtomspaceContent(initial))
+  }, [])
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col gap-4 items-center justify-center px-2 sm:px-4">
       <Button
         size="sm"
         variant="outline"
-        className="bg-slate-800 text-slate-100 border-slate-600 hover:bg-slate-700"
+        className="bg-slate-800 text-slate-100 border-slate-600 hover:bg-slate-700 disabled:opacity-60"
+        disabled={!mounted || !atomspacePresent}
         onClick={() => {
           const token = `${Date.now()}:${Math.random().toString(16).slice(2)}`
           lastTokenRef.current = token
