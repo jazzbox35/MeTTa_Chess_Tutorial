@@ -3,6 +3,7 @@ import "@/app/globals.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
+import { AtomspaceListener } from "@/components/atomspace-listener";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -28,6 +29,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AtomspaceListener />
           <div className=" flex flex-col w-full min-h-screen ">
             <div className="px-5 ">
               <SiteHeader />

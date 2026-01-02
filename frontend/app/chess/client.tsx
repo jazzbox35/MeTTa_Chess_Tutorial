@@ -165,7 +165,7 @@ export function ChessClient() {
         })() ??
         ""
 
-      const payload = atomspaceState ? `${atomspaceState}\n!(chess)` : "!(chess)"
+      const payload = atomspaceState ? `${atomspaceState}\n!(S)` : "!(S)"
       const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
         method: "POST",
         headers: { "Content-Type": "text/plain" },
@@ -350,13 +350,6 @@ export function ChessClient() {
             waitTimerRef.current = null
           }, 15000)
           void runPlayChess(token)
-          try {
-            window.localStorage.setItem("PlayChess", token)
-          } catch {
-            // ignore storage errors
-          }
-          const target = window.opener && !window.opener.closed ? window.opener : window
-          target.dispatchEvent(new CustomEvent("PlayChess", { detail: { token } }))
           setTestResult(null)
         }}
       >

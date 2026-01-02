@@ -91,60 +91,6 @@ export function CodeEditor({
   const [isExecuting, setIsExecuting] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
   const [hasRun, setHasRun] = useState(false)
-  useEffect(() => {
-    const PlayChess = async (token: string | null) => {
-      if (!token) return
-
-      try {
-        // The "S" function will either do a cold start or just reset for a new game.
-        const code = "!(S)"
-        const atomspaceState = (globalThis as any).Atomspace_state ?? ""
-        const payloadstart = `${atomspaceState}\n${code}`
-
-        const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain",
-          },
-          body: payloadstart,
-        })
-        const fullText = await response.text()
-        const matches = fullText.match(/\[[^\]]*\]/g) || []
-        const text = matches[0] || fullText
-
-        // get atomspace
-        const second = matches[1] || null
-        await handleAtomspaceUpdate(second)
-
-        const payload = JSON.stringify({ token, text })
-        try {
-          window.localStorage.setItem("play_chess_response", payload)
-        } catch {
-          // ignore storage errors
-        }
-        window.dispatchEvent(new CustomEvent("play_chess_response", { detail: { token, text } }))
-      } catch (err) {
-        const result = `error: ${err instanceof Error ? err.message : String(err)}`
-        window.dispatchEvent(new CustomEvent("play_chess_response", { detail: { token, result } }))
-      }
-    }
-
-    const customHandler = (event: CustomEvent<{ token?: string }>) => {
-      void PlayChess(event.detail?.token ?? null)
-    }
-    const storageHandler = (event: StorageEvent) => {
-      if (event.key === "PlayChess" && event.newValue) {
-        void PlayChess(event.newValue)
-      }
-    }
-
-    window.addEventListener("PlayChess", customHandler as EventListener)
-    window.addEventListener("storage", storageHandler)
-    return () => {
-      window.removeEventListener("PlayChess", customHandler as EventListener)
-      window.removeEventListener("storage", storageHandler)
-    }
-  }, [])
 
   const codeTextareaRef = useRef<HTMLTextAreaElement>(null)
   const highlightRef = useRef<HTMLPreElement>(null)
@@ -204,9 +150,11 @@ export function CodeEditor({
       return
     }
 
+    let normalizedAtomspaceState: string | null = null
+
     try {
       if (second !== null) {
-        const normalizedAtomspaceState = splitParenthesizedArray(second)
+        normalizedAtomspaceState = splitParenthesizedArray(second)
         ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
         const { boardStateSection, gameStateSection } = extractBoardStateSection(normalizedAtomspaceState)
         if (boardStateSection) {
@@ -236,7 +184,9 @@ export function CodeEditor({
       alert("Unable to assign atomspace")
       ;(globalThis as any).Atomspace_state = null
     }
-    window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: second ?? "" }))
+    window.dispatchEvent(
+      new CustomEvent("atomspace_state_updated", { detail: normalizedAtomspaceState ?? "" }),
+    )
   }
 
   // Execute code by sending to MeTTa API
@@ -247,6 +197,7 @@ export function CodeEditor({
 
     try {
       const atomspaceState = (globalThis as any).Atomspace_state ?? ""
+
       // THIS PROGRAM RETAINS THE USER'S ATOMSPACE. THE SERVER DOES NOT RETAIN ATOMSPACE.
       // Attach the present query to the present atomspace for submission
       let payload
