@@ -6,7 +6,6 @@ import { BookOpen, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SearchBar } from "@/components/search-bar";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ResetButton } from "./reset-button";
 import { DisplayAtomspaceButton } from "./display-atomspace-button";
 import { Button } from "@/components/ui/button";
 
@@ -17,7 +16,6 @@ const INITIAL_BOARD_STATE =
 export function SiteHeader() {
   const pathname = usePathname();
   // Show header actions on all sections/pages
-  const showResetButton = true;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [atomspaceEmpty, setAtomspaceEmpty] = useState<boolean>(() => {
     const val = (globalThis as any).Atomspace_state ?? ""
@@ -116,9 +114,6 @@ export function SiteHeader() {
               Play Chess
             </Button>
             <div className="min-w-[140px] h-9">
-              <ResetButton />
-            </div>
-            <div className="min-w-[140px] h-9">
               <DisplayAtomspaceButton />
             </div>
             <Button
@@ -160,11 +155,6 @@ export function SiteHeader() {
                 <Button variant="outline" size="sm" className="text-xs w-full h-9" onClick={handlePlayChess}>
                   Play Chess
                 </Button>
-                {showResetButton && (
-                  <div className="w-full">
-                    <ResetButton />
-                  </div>
-                )}
                 <div className="w-full">
                   <DisplayAtomspaceButton />
                 </div>
