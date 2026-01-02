@@ -155,6 +155,9 @@ export function ChessClient() {
   const [gameState, setGameState] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const [atomspacePresent, setAtomspacePresent] = useState<boolean>(false)
+  const [firstClick, setFirstClick] = useState<{ x1: number; y1: number } | null>(null)
+  const [secondClick, setSecondClick] = useState<{ x2: number; y2: number } | null>(null)
+  const [highlightedSquares, setHighlightedSquares] = useState<Array<{ x: number; y: number }>>([])
   const lastTokenRef = useRef<string | null>(null)
   const alertedTokenRef = useRef<string | null>(null)
   const waitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -219,6 +222,63 @@ export function ChessClient() {
         clearTimeout(waitTimerRef.current)
         waitTimerRef.current = null
       }
+    }
+  }
+
+  const runMoveChess = async () => {
+    try {
+      const atomspaceState =
+        (globalThis as any).Atomspace_state ??
+        (() => {
+          try {
+            return window.localStorage.getItem("Atomspace_state")
+          } catch {
+            return ""
+          }
+        })() ??
+        ""
+
+      const payload = atomspaceState ? `${atomspaceState}\n!(M (1 2) (1 3)) !(G)` : "!(M (1 2) (1 3)) !(G)"
+      const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: payload,
+      })
+
+      const fullText = await response.text()
+      const matches = fullText.match(/\[[^\]]*\]/g) || []
+      const text = matches[0] || fullText
+      setTestResult(text)
+
+      const second = matches[1] || null
+      if (second) {
+        try {
+          const normalizedAtomspaceState = splitParenthesizedArray(second)
+          ;(globalThis as any).Atomspace_state = normalizedAtomspaceState
+          window.localStorage.setItem("Atomspace_state", normalizedAtomspaceState)
+          window.dispatchEvent(
+            new CustomEvent("atomspace_state_updated", { detail: normalizedAtomspaceState }),
+          )
+
+          const { boardStateSection, gameStateSection } = extractBoardStateSection(normalizedAtomspaceState)
+          if (boardStateSection) {
+            window.localStorage.setItem("board_state", boardStateSection)
+            window.dispatchEvent(
+              new CustomEvent("board_state_updated", { detail: boardStateSection }),
+            )
+          }
+          if (gameStateSection) {
+            window.localStorage.setItem("game_state", gameStateSection)
+            window.dispatchEvent(
+              new CustomEvent("game_state_updated", { detail: gameStateSection }),
+            )
+          }
+        } catch {
+          // ignore atomspace update errors
+        }
+      }
+    } catch (err) {
+      setTestResult(`error: ${err instanceof Error ? err.message : String(err)}`)
     }
   }
 
@@ -435,6 +495,9 @@ export function ChessClient() {
               </div>
               {row.map((cell, colIdx) => {
                 const isDark = (rowIdx + colIdx) % 2 === 0
+                const isHighlighted = highlightedSquares.some(
+                  (sq) => sq.x === colIdx + 1 && sq.y === 8 - rowIdx,
+                )
                 const colorClass =
                   cell?.color === "gold"
                     ? "text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]"
@@ -446,8 +509,36 @@ export function ChessClient() {
                   <div
                     key={`${rowIdx}-${colIdx}`}
                     className={`w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center text-xl sm:text-2xl md:text-3xl ${
-                      isDark ? "bg-slate-700" : "bg-slate-600"
+                      isHighlighted
+                        ? "bg-amber-400/30"
+                        : isDark
+                          ? "bg-slate-700"
+                          : "bg-slate-600"
                     }`}
+                    onClick={() => {
+                      if (!mounted || !atomspacePresent) return
+                      const x = colIdx + 1
+                      const y = 8 - rowIdx
+                      if (!firstClick) {
+                        setFirstClick({ x1: x, y1: y })
+                        setSecondClick(null)
+                        setHighlightedSquares([{ x, y }])
+                        return
+                      }
+                      if (firstClick.x1 === x && firstClick.y1 === y) return
+                      const next = { x2: x, y2: y }
+                      const highlights = [
+                        { x: firstClick.x1, y: firstClick.y1 },
+                        { x: next.x2, y: next.y2 },
+                      ]
+                      setSecondClick(next)
+                      setHighlightedSquares(highlights)
+                      void runMoveChess().finally(() => {
+                        setHighlightedSquares([])
+                        setFirstClick(null)
+                        setSecondClick(null)
+                      })
+                    }}
                   >
                     <span className={colorClass}>
                       {cell ? pieces[cell.piece as keyof typeof pieces] ?? "" : ""}
