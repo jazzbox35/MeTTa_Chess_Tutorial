@@ -225,7 +225,7 @@ export function ChessClient() {
     }
   }
 
-  const runMoveChess = async () => {
+  const runMoveChess = async (coords: { x1: number; y1: number; x2: number; y2: number }) => {
     try {
       const atomspaceState =
         (globalThis as any).Atomspace_state ??
@@ -238,7 +238,8 @@ export function ChessClient() {
         })() ??
         ""
 
-      const payload = atomspaceState ? `${atomspaceState}\n!(M (1 2) (1 3)) !(G)` : "!(M (1 2) (1 3)) !(G)"
+      const move = `!(M (${coords.x1} ${coords.y1}) (${coords.x2} ${coords.y2})) !(G)`
+      const payload = atomspaceState ? `${atomspaceState}\n${move}` : move
       const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
         method: "POST",
         headers: { "Content-Type": "text/plain" },
@@ -533,7 +534,12 @@ export function ChessClient() {
                       ]
                       setSecondClick(next)
                       setHighlightedSquares(highlights)
-                      void runMoveChess().finally(() => {
+                      void runMoveChess({
+                        x1: firstClick.x1,
+                        y1: firstClick.y1,
+                        x2: next.x2,
+                        y2: next.y2,
+                      }).finally(() => {
                         setHighlightedSquares([])
                         setFirstClick(null)
                         setSecondClick(null)
