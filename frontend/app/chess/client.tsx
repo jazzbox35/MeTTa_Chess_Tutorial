@@ -480,7 +480,7 @@ export function ChessClient() {
         </div>
       )}
       {testResult !== null && (
-        <div className="text-sm text-slate-200">Result: {testResult}</div>
+        <div className="text-sm text-slate-200">MeTTa Response&gt; {testResult}</div>
       )}
 
       <div className="bg-slate-800 p-3 sm:p-4 rounded-xl shadow-2xl shadow-black/50">

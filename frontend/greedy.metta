@@ -2576,11 +2576,14 @@
         ;else (trying to move to same location)
         (add-atom &self (bad-move (Cannot move piece there.)))) 
       ; since move complete, delete any individual square atoms which only live for a single move.
+
+      ; Check for bad human player move and if bad, don't invoke the AI move.
       (let $bad-messages (collapse (match &self (bad-move $reason) $reason))
           (if (== (size-atom $bad-messages) 0)
               (progn 
                   (delete-pieces) 
-                  ((SILVER MOVES FROM $h to $i) (G)))
+                  ; return move results. 
+                  ((Silver moves from (int_to_char (nth 1 $h)) (nth 2 $h) to (int_to_char (nth 1 $i)) (nth 2 $i)) (G)))
               (progn
                   (delete-pieces) 
                   ; don't proceed if user made invalid move, don't call (G)
@@ -2659,7 +2662,10 @@
             ;     "
           )
         )
-        (progn (delete-pieces) (GOLD MOVES FROM $start TO $destination))
+        (progn (delete-pieces) 
+               (Gold moves from  (int_to_char (nth 1 $start)) (nth 2 $start) 
+                 to (int_to_char (nth 1 $destination)) (nth 2 $destination))
+        )
       )
     )
   )
