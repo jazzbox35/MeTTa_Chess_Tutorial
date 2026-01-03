@@ -2574,7 +2574,7 @@
         ;else (trying to move to same location)
         (println "Invalid move.")) 
       ; since move complete, delete any individual square atoms which only live for a single move.
-      (progn (delete-pieces) (OK))
+      (progn (delete-pieces) (SILVER MOVES FROM $h to $i))
     )))
 
 ; AI move piece command
@@ -2648,7 +2648,7 @@
             ;     "
           )
         )
-        (progn (delete-pieces) ($start $destination $provisional_board))
+        (progn (delete-pieces) (GOLD MOVES FROM $start TO $destination))
       )
     )
   )
