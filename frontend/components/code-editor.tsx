@@ -109,6 +109,16 @@ export function CodeEditor({
     setMounted(true)
   }, [])
 
+  // Allow external triggers (e.g., after loading default program) to execute the current code
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const handler = () => {
+      void executeCode()
+    }
+    window.addEventListener("execute_code_editor", handler)
+    return () => window.removeEventListener("execute_code_editor", handler)
+  })
+
   const isDarkMode = mounted && resolvedTheme === "dark"
 
   // Reset code to initial value . only when explicitly called

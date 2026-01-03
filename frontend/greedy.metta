@@ -2474,7 +2474,7 @@
                         (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
         )
         ; display welcome messages and board
-        (initialization complete!))
+        ())
     ; elif there has already been one game played
     (if (==  restarted   $msg) ; then
       (progn 
@@ -2493,7 +2493,7 @@
         )
         ;
         ; display welcome messages and board
-        (initialization complete!))
+        ())
     (; else if
         empty))))) 
 
@@ -2655,13 +2655,12 @@
 )
 
 (= (S) 
-  (progn 
-    (match &self (game-state $msg)
+  (match &self (game-state $msg)
       (if (==  started   $msg) 
         (progn 
           (change-game-state restarted)
           (chess))
-        (chess)))))
+        (chess))))
 
 ; The "commands" command just lists the available commands.
 ;(: C (-> command))
@@ -2733,3 +2732,4 @@
     (command-loop)))  ; Enter the recursive command-processing loop until quit command 'q'
 
 
+!(S)
