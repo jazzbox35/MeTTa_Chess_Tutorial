@@ -2499,9 +2499,11 @@
 
 (= (M $f $g)  
   (if (== (game-still-playing) False)
-    (println "Game over! Please reset to play again.")
+    (Game over! Please reset to play again.)
     ; else keep playing
     (progn 
+      ; use (bad-move $msg) atoms if needed, cleanup existing first...
+      (collapse (match &self (bad-move $msg) (remove-atom &self (bad-move $msg))))
       ; get the current board
       (match &self (board-state $starting_board) $starting_board)
       ; reset, then add each piece to atomspace to work with individually with form eq '(square 1 1 s r)'
@@ -2538,7 +2540,7 @@
                       ) 
                   ; If move valid, proceed to create new board atom with move.
                   (if (== $KingCompromised True)
-                      (println "Can't move there, your king would be in check.")
+                      (add-atom &self (bad-move (Cannot move there as your king would be in check.)))  
                       ;else
                       (progn 
                       ; re-create a new board 
@@ -2567,21 +2569,30 @@
                       )
                   )
               )
-              (println "Can't move piece there."))
+              (add-atom &self (bad-move (Cannot move piece there.))))  
             ; else (moving to location with same piece or other problem)
-            (println "Invalid move.")
+            (add-atom &self (bad-move (Cannot move piece there.)))
           ))
         ;else (trying to move to same location)
-        (println "Invalid move.")) 
+        (add-atom &self (bad-move (Cannot move piece there.)))) 
       ; since move complete, delete any individual square atoms which only live for a single move.
-      (progn (delete-pieces) (SILVER MOVES FROM $h to $i))
+      (let $bad-messages (collapse (match &self (bad-move $reason) $reason))
+          (if (== (size-atom $bad-messages) 0)
+              (progn 
+                  (delete-pieces) 
+                  ((SILVER MOVES FROM $h to $i) (G)))
+              (progn
+                  (delete-pieces) 
+                  ; don't proceed if user made invalid move, don't call (G)
+                  ($bad-messages))))
+
     )))
 
 ; AI move piece command
 ;(: G (-> command))
 (= (G)  
   (match &self (game-state $msg)
-  ; check for game over...
+  ; check for game over...  
     (if (or (==  checkmate   $msg) (==  resigned $msg)) 
       ; then  
       (println "Game over. Please reset to play again (enter r).")
@@ -2656,10 +2667,14 @@
 
 (= (S) 
   (match &self (game-state $msg)
-      (if (==  started   $msg) 
+      (if (or 
+            (or (==  resigned   $msg) (==  checkmate   $msg)) 
+            (==  started   $msg))
+        ; if game has been playing
         (progn 
           (change-game-state restarted)
           (chess))
+        ; if cold start
         (chess))))
 
 ; The "commands" command just lists the available commands.

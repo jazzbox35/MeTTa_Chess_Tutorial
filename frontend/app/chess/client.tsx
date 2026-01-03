@@ -238,7 +238,7 @@ export function ChessClient() {
         })() ??
         ""
 
-      const move = `!(M (${coords.x1} ${coords.y1}) (${coords.x2} ${coords.y2})) !(G)`
+      const move = `!(M (${coords.x1} ${coords.y1}) (${coords.x2} ${coords.y2}))`
       const payload = atomspaceState ? `${atomspaceState}\n${move}` : move
       const response = await fetch(`${FRONTEND_BASE_URL}/metta_stateless`, {
         method: "POST",
