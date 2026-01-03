@@ -2499,7 +2499,7 @@
 
 (= (M $f $g)  
   (if (== (game-still-playing) False)
-    (println "Game over. Please reset to play again (enter r).")
+    (println "Game over! Please reset to play again.")
     ; else keep playing
     (progn 
       ; get the current board
