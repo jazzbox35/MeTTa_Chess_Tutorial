@@ -542,6 +542,13 @@ export function ChessClient() {
                         return
                       }
                       if (firstClick.x1 === x && firstClick.y1 === y) return
+                      // Allow changing the origin by clicking another silver piece
+                      if (cell?.color === "silver") {
+                        setFirstClick({ x1: x, y1: y })
+                        setSecondClick(null)
+                        setHighlightedSquares([{ x, y }])
+                        return
+                      }
                       const next = { x2: x, y2: y }
                       const highlights = [
                         { x: firstClick.x1, y: firstClick.y1 },
