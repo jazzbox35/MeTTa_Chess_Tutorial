@@ -445,6 +445,12 @@ export function ChessClient() {
     setAtomspacePresent(hasAtomspaceContent(initial))
   }, [])
 
+  useEffect(() => {
+    if (!atomspacePresent) {
+      setHighlightedSquares([])
+    }
+  }, [atomspacePresent])
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col gap-4 items-center justify-center px-2 sm:px-4">
       <Button
@@ -501,9 +507,13 @@ export function ChessClient() {
                 )
                 const colorClass =
                   cell?.color === "gold"
-                    ? "text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]"
+                    ? atomspacePresent
+                      ? "text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]"
+                      : "text-amber-200/70"
                     : cell?.color === "silver"
-                      ? "text-slate-200 drop-shadow-[0_0_6px_rgba(226,232,240,0.8)]"
+                      ? atomspacePresent
+                        ? "text-slate-200 drop-shadow-[0_0_6px_rgba(226,232,240,0.8)]"
+                        : "text-slate-300/70"
                       : "text-slate-100"
 
                 return (
@@ -511,13 +521,17 @@ export function ChessClient() {
                     key={`${rowIdx}-${colIdx}`}
                     className={`w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center text-xl sm:text-2xl md:text-3xl ${
                       isHighlighted
-                        ? "bg-amber-400/30"
+                        ? atomspacePresent
+                          ? "bg-amber-400/30"
+                          : "bg-slate-600"
                         : isDark
                           ? "bg-slate-700"
                           : "bg-slate-600"
                     }`}
                     onClick={() => {
                       if (!mounted || !atomspacePresent) return
+                      // Only capture moves when START/RESET is enabled (atomspace present)
+                      if (!atomspacePresent) return
                       const x = colIdx + 1
                       const y = 8 - rowIdx
                       if (!firstClick) {
