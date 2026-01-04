@@ -11,6 +11,7 @@ import { TableOfContents } from "@/components/table-of-contents"
 import { getAllTutorials, getTutorialBySlug } from "@/lib/tutorials"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { SidebarWithTutorials } from "@/components/sidebar"
+import { UploadAtomspaceButton } from "@/components/upload-atomspace-button"
 
 type Params = {
   params: {
@@ -94,13 +95,6 @@ export default async function TutorialPage({ params }: Params) {
                 </div>
               )}
 
-              {showGreedyDownload && (
-                <div className="mt-4">
-                  <Button variant="outline" asChild>
-                    <a href="/api/greedy-metta">Download greedy.metta</a>
-                  </Button>
-                </div>
-              )}
             </div>
 
 
@@ -110,6 +104,15 @@ export default async function TutorialPage({ params }: Params) {
             <div className="prose prose-gray dark:prose-invert max-w-none">
               <LatexRenderer content={filteredContent} />
             </div>
+
+            {showGreedyDownload && (
+              <div className="mt-6 flex gap-2">
+                <Button variant="outline" asChild className="text-sm">
+                  <a href="/api/greedy-metta">Download greedy.metta</a>
+                </Button>
+                <UploadAtomspaceButton />
+              </div>
+            )}
 
             {/* Navigation: Previous/Next */}
             <div className="mt-12 pt-6 border-t">
