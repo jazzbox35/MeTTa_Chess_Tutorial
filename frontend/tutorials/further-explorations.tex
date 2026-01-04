@@ -1,13 +1,25 @@
 \documentclass{article}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{graphicx}
-\usepackage{xcolor}
-\usepackage{listings}
-\usepackage{hyperref}
+% ----------- core mathematics -----------
+\usepackage{amsmath}   % align, split, cases, etc.
+\usepackage{amssymb}   % \mathbb, \mathcal, \leqslant, \geqslant ...
+\usepackage{amsfonts}  % blackboard bold, fraktur if desired
+\usepackage{graphicx}  % for future figures, even if none are included yet
+\usepackage{listings}  % for code examples
+\usepackage{hyperref}  % clickable cross-refs; load last
+\usepackage{mdframed}  % for boxed content
+
+% ----------- tables & arrays ------------
+\usepackage{array}     % extended column specifiers in tabular
+\usepackage{booktabs}  % nicer horizontal rules (optional; you may keep \hline)
+\usepackage{multirow}  % multi-row cells if you extend the tables later
+
+% ----------- layout & floats ------------
+\usepackage{geometry}  % easy margin control (defaults are fine; optional)
+\usepackage{caption}   % better caption spacing for tables/figures
+
 
 \title{Further Exploration: MettaWamJam Server}
-\order{8}
+\order{5}
 
 \begin{document}
 
@@ -17,7 +29,8 @@
 Installing MeTTa on your own machine is easy and MeTTa runs faster than over the web!
 
 Check out the MettaWamJam server. You can either use the available Docker images to set up your own MeTTa server
-or clone the repo and customize a server as you need.
+or clone the repo and customize your own server as you need. This allows you to load your own
+atomspace and run queries and updates against it.
 
 <a href="https://github.com/jazzbox35/MettaWamJam" target="_blank" rel="noreferrer"><b>MettaWamJam Server</b</a>
 

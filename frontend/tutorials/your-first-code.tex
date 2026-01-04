@@ -6,94 +6,13 @@
 \usepackage{hyperref}
 
 \title{Your Turn to Improve the Game}
-\order{6}
+\order{4}
 
 \begin{document}
 
 
 \section{Your Turn to Improve the Game}
 
-So let's use this process to actually do something!  In this section we run the Hyperon Pattern Miner end-to-end on the provided \texttt{experiments/data/sample-data.metta} dataset, using both the high-level \texttt{miner} API and the example \texttt{frequent-pattern-miner.metta} script.
-
-\subsection{Prepare the AtomSpace and Load Sample Data}
-
-\begin{verbatim}
-; Import and instantiate AtomSpace and Load the toy dataset (15 human and STV atoms)
-! (register-module! ../../../hyperon-miner)
-! (import! &dbspace hyperon-miner:experiments:data:sample-data)
-\end{verbatim}
-
-The file \texttt{experiments/data/sample.metta} defines a small population of individuals with labels such as \texttt{human}, \texttt{ugly}, and \texttt{sodadrinker}, along with STV (subjective truth value) atoms.
-
-\subsection{Run the High-Level Miner}
-
-First, import the core mining functions:
-
-\begin{verbatim}
-! (import! &self hyperon-miner:experiments:rules:build-specialization)
-! (import! &self hyperon-miner:experiments:rules:candidate-patterns)
-! (import! &self hyperon-miner:experiments:rules:conjunction-expansion)
-! (import! &self hyperon-miner:experiments:utils:common-utils)
-\end{verbatim}
-
-Then invoke the miner for patterns up to 2 clauses with minimum support 10:
-
-\begin{verbatim}
-! (frequent-pattern-miner &kb &dbspace &specspace &cndpspace &aptrnspace &conjspace 10 2)
-;; &kb your ;;knowledge base (AtomSpace)
-;; &dbspace ;;your AtomSpace database
-;; &specspace ;; space for storing specialized patterns
-;; &cndpspace ;; space for storing candidate patterns
-;; &aptrnspace ;; space for storing abstract patterns
-;; &conjspace ;; space for storing conjunctions (multi-clause patterns)
-;; 10 ;; minimum support
-;; 2 ;; maximum number of clauses per pattern
-\end{verbatim}
-
-You should see output such as:
-
-\begin{verbatim}
-Pattern: (supportOf (inherit $X human) 15)
-Pattern: (supportOf (inherit $X sodadrinker) 12)
-Pattern: (supportOf (, (inherit $X ugly) (inherit $X sodadrinker)) 8)
-...
-\end{verbatim}
-
-\subsection{Filter by few_constructs}
-
-To retain only those patterns whose I-few_constructs exceeds 0.2, call:
-
-\begin{verbatim}
-(def surp-results
-  (miner-surprising atom-space
-                    10     ;; minsup
-                    2      ;; max-clauses
-                    0.2))  ;; highsurp threshold
-(for-each surp-results
-  (lambda (c)
-    (print (get-pattern c) (get-cnt c))))
-\end{verbatim}
-
-This surfaces only patterns whose co-occurrence deviates significantly from the independence model.
-
-\subsection{Using the Provided Script}
-
-The repository includes an example pipeline in \texttt{experiments/rules/frequent-pattern-miner.metta}. From your shell, run:
-
-\begin{verbatim}
-meTTa -f experiments/rules/frequent-pattern-miner.metta
-\end{verbatim}
-
-This script will:\\
-
-\begin{enumerate}
-  \item Register the \texttt{hyperon-miner} module.
-  \item Import the \texttt{data/sample.metta} into its DB space.
-  \item Execute \texttt{(frequent-pattern-miner 5 2)} with \texttt{minsup=5} and \texttt{depth=2}.
-  \item Print all discovered 1- and 2-clause patterns to the REPL.
-\end{enumerate}
-
-With these steps you can quickly mine and inspect both frequent and surprising patterns on any AtomSpace dataset.
 
 
 \end{document}
