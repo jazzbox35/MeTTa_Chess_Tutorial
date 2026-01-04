@@ -185,6 +185,14 @@
         ("f"  6)
         ("g"  7)
         ("h"  8)
+        ("A"  1)
+        ("B"  2)
+        ("C"  3)
+        ("D"  4)
+        ("E"  5)
+        ("F"  6)
+        ("G"  7)
+        ("H"  8)
         ;otherwise
         ($_   NIL) ; <-- in case user inputs bad char, this will result in a fail.
         )))
@@ -201,14 +209,14 @@
 (= (int_to_char $int)
     (case $int
         (
-        (1 a)
-        (2 b)
-        (3 c)
-        (4 d)
-        (5 e)
-        (6 f)
-        (7 g)
-        (8 h)
+        (1 A)
+        (2 B)
+        (3 C)
+        (4 D)
+        (5 E)
+        (6 F)
+        (7 G)
+        (8 H)
         ($_ ?) ; fallback for invalid input
         )))
 
@@ -2096,7 +2104,14 @@
     ($color (nth 3 $starting_square))
     ($rank  (nth 4 $starting_square))
     ($X2  (nth 1 $target_square))
+    ($X2_char (int_to_char $X2))
     ($Y2  (nth 2 $target_square))
+    ($CapturedColor (if (> (size-atom $target_square) 2)
+                        (nth 3 $target_square)
+                        ()))
+    ($CapturedPiece (if (> (size-atom $target_square) 2)
+                        (nth 4 $target_square)
+                        ()))
     ; move piece on chessboard list
     ($new_board (replace_square_recursive $X1 $Y1 $color $rank $X2 $Y2 $current_board))
     ; messages for user
@@ -2109,7 +2124,10 @@
     ;    ($starting_square_lettered $target_square_lettered))))
     ($print1 (if (== (size-atom $target_square) 2)
              ()
-             (println "Piece captured!")))
+             (add-atom &self (game-message 
+                  ($X2_char $Y2 $CapturedColor $CapturedPiece CAPTURED!)))
+             )
+             )
     ($print2 (if (== (size-atom $target_square) 2)
              ()
              (println $target_square_lettered)))
@@ -2472,9 +2490,7 @@
                         (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
                         (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
                         (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
-        )
-        ; display welcome messages and board
-        ())
+        ))
     ; elif there has already been one game played
     (if (==  restarted   $msg) ; then
       (progn 
@@ -2490,10 +2506,7 @@
                         (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
                         (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
                         (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
-        )
-        ;
-        ; display welcome messages and board
-        ())
+        ))
     (; else if
         empty))))) 
 
@@ -2502,8 +2515,12 @@
     (Game over! Please reset to play again.)
     ; else keep playing
     (progn 
-      ; use (bad-move $msg) atoms if needed, cleanup existing first...
+      ; cleanup any game messages. 
+      (collapse (match &self (game-message $msg) (remove-atom &self (game-message $msg))))
+      ; use (bad-move $msg) atoms if needed. If a bad move is detected, we don't proceed (see below)
+      ; cleanup old bad move messages. bad-move messages are only used locally in the (M) function.
       (collapse (match &self (bad-move $msg) (remove-atom &self (bad-move $msg))))
+
       ; get the current board
       (match &self (board-state $starting_board) $starting_board)
       ; reset, then add each piece to atomspace to work with individually with form eq '(square 1 1 s r)'
@@ -2583,10 +2600,16 @@
               (progn 
                   (delete-pieces) 
                   ; return move results. 
-                  ((Silver moves from (int_to_char (nth 1 $h)) (nth 2 $h) to (int_to_char (nth 1 $i)) (nth 2 $i)) (G)))
+                  (let $msg1 (Silver moves (int_to_char (nth 1 $h)) (nth 2 $h) (nth 4 $h) 
+                                             --> (int_to_char (nth 1 $i)) (nth 2 $i)) 
+                             (add-atom &self (game-message $msg1)))
+                     
+                  (G)
+                  (collapse (match &self (game-message $gmsg) $gmsg))
+              )
               (progn
                   (delete-pieces) 
-                  ; don't proceed if user made invalid move, don't call (G)
+                  ; don't proceed if user made invalid move, don't call (G), return error message.
                   ($bad-messages))))
 
     )))
@@ -2662,9 +2685,10 @@
             ;     "
           )
         )
-        (progn (delete-pieces) 
-               (Gold moves from  (int_to_char (nth 1 $start)) (nth 2 $start) 
-                 to (int_to_char (nth 1 $destination)) (nth 2 $destination))
+        (progn (delete-pieces) ; (add-atom &self (game-message (fuck me!)))
+          (let $msgout1 (Gold moves (int_to_char (nth 1 $start)) (nth 2 $start) (nth 4 $start)
+                 --> (int_to_char (nth 1 $destination)) (nth 2 $destination))
+               (add-atom &self (game-message  $msgout1)))
         )
       )
     )
@@ -2672,16 +2696,21 @@
 )
 
 (= (S) 
-  (match &self (game-state $msg)
+  (progn
+    ; cleanup any game messages. 
+    (collapse (match &self (game-message $msg) (remove-atom &self (game-message $msg))))
+
+    (match &self (game-state $msg)
       (if (or 
             (or (==  resigned   $msg) (==  checkmate   $msg)) 
             (==  started   $msg))
         ; if game has been playing
         (progn 
           (change-game-state restarted)
-          (chess))
+          (chess)
+          )
         ; if cold start
-        (chess))))
+        (chess)))))
 
 ; The "commands" command just lists the available commands.
 ;(: C (-> command))
