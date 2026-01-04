@@ -1,16 +1,18 @@
 
 ;**********************************************************************
 ;
-;   Greedy Chess 
+;   MeTTa Greedy Chess 
 ;
-;   Mettalog Project 2024-2025
+;   Mettalog and PeTTa Projects 2024-2025-2026
 ;
 ;   Function:  Play chess (human vs MeTTa program) using a fairly simple "greedy" approach
 ;              with moves that do not project possible boards beyond the present board.
-;   Input:     User's commands and moves from console.
-;   Output:    Chess board displayed to console with computer's move.
+;   Input:     Initialization and move MeTTa commands
+;   Output:    Result of MeTTa commands and updated atomspace.
 ;
 ;   10/25      Modified for chess tutorial running under PeTTa.
+;   12/25      Converted from console use to server use. The browser is the front end.
+;              For the original console programs see the PeTTa and Mettalog repos.
 ;
 ;**********************************************************************
 ; * Redistribution and use in source and binary forms, with or without
@@ -39,7 +41,7 @@
 ; * POSSIBILITY OF SUCH DAMAGE.
 ;**********************************************************************
 ;
-;   Original author:  Mike Archbold 2024, 2025
+;   Original author:  Mike Archbold 2024, 2025, 2026
 ;
 ;   DATA STRUCTURES
 ;
@@ -102,24 +104,6 @@
 ;   4) (COMPLETED) use of the standard letters on the x axis 
 ;   5) tuning and more sophisticated moves of all types
 ;
-
-;*******************************************************
-; Global type definitions
-;*******************************************************
-
-;(: game-state (-> Expression Atom))        ; create an atom for game state (eg., "started" "checkmate")
-;(: board-state (-> Expression Atom))       ; for saving the board after each move 
-
-
-; these are used to prevent unexpected non-determinism
-;(: and1 (-> Atom Atom Bool))
-;(= (and1 $x $y)    (and  (limit 1 $x)  (limit 1 $y)))
-;(: xor1 (-> Atom Atom Bool))
-;(= (xor1 $x $y) (xor  (limit 1 $x)  (limit 1 $y)))
-;(: or1 (-> Atom Atom Bool))
-;(= (or1 $x $y) (or  (limit 1 $x)  (limit 1 $y)))
-;(: not1 (-> Atom Bool))
-;(= (not1 $x)  (not  (limit 1 $x)))
 
 
 ;*******************************************************
@@ -306,34 +290,6 @@
     (if (== $integer_list ())
         0
         (+ (car-atom $integer_list) (addit_list (cdr-atom $integer_list)))))
-
-;***************************************************************
-; Function:     progq
-; Description:  Executes a list of quoted expressions sequentially.
-;               Each expression must be wrapped in (quote (...)).
-;
-; Input:        $exp - A list of quoted expressions
-;               Example:
-;                   (progq
-;                     (
-;                       (quote (function-a))
-;                       (quote (function-b))
-;                       ...
-;                     ))
-;
-; Output:       Evaluates each expression in order for side effects.
-;               Returns () when all are processed.
-;
-; Note:         Similar to progn style but uses quotes. Does not nest.
-;***************************************************************                    
-(: (progq) (-> Expression Atom))
-(= (progq $exp) 
-      (if (== $exp ())
-            ()
-            (let $IEFBR14 (unquote (car-atom $exp)) (progq (cdr-atom $exp)))))
-;
-
-
 
 ;*******************************************************
 ; Constants 
