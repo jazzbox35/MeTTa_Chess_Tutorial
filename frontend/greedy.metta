@@ -2581,7 +2581,8 @@
                                       (println "")
                                       (change-game-state checkmate)
                                     )
-                                    (println "Check! Enter g for Greedy Chess move.")))
+                                    (add-atom &self (game-message  CHECK!))))
+                                    ;(println "Check! Enter g for Greedy Chess move.")))
                               (println "Enter g for Greedy Chess move.")  ))
                       )
                   )
@@ -2679,7 +2680,7 @@
                 ; else look for check...
                 (let $Check (checkking s)
                   (if (== $Check True)        
-                    (println "Check!")
+                    (add-atom &self (game-message  CHECK!)); (println "Check!")
                     (println "Your move.")))))
             ; since move complete, delete any individual square atoms which only live for a single move.     
             ;     "
