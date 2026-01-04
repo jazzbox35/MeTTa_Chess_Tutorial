@@ -1,7 +1,8 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { CheckCircle2 } from "lucide-react"
 
 function extractSections(state: string): { board?: string; game?: string } {
   let depth = 0
@@ -40,6 +41,7 @@ function extractSections(state: string): { board?: string; game?: string } {
 
 export function UploadAtomspaceButton() {
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const [success, setSuccess] = useState(false)
 
   const handleUpload = async (file: File) => {
     try {
@@ -68,6 +70,8 @@ export function UploadAtomspaceButton() {
         window.dispatchEvent(new CustomEvent("game_state_updated", { detail: game }))
       }
       window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: text }))
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 5000)
     } catch (err) {
       console.error("Failed to upload atomspace", err)
       alert("Failed to upload atomspace.")
@@ -98,6 +102,12 @@ export function UploadAtomspaceButton() {
       >
         Upload Chess Program
       </Button>
+      {success && (
+        <div className="flex items-center gap-1 text-xs text-green-500">
+          <CheckCircle2 className="h-4 w-4" />
+          <span>Uploaded</span>
+        </div>
+      )}
     </>
   )
 }
