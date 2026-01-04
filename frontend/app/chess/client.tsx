@@ -479,6 +479,11 @@ export function ChessClient() {
           <span>Waiting for PlayChess...</span>
         </div>
       )}
+      {gameState && gameState.toLowerCase().includes("checkmate") && (
+        <div className="w-full flex items-center justify-center py-2 rounded bg-red-600 text-white text-lg font-bold animate-pulse">
+          CHECKMATE!
+        </div>
+      )}
       {testResult !== null && (
         <div className="text-sm text-slate-200">MeTTa Response&gt; {testResult}</div>
       )}
