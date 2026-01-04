@@ -31,6 +31,8 @@ export default async function TutorialPage({ params }: Params) {
     const prevTutorial = currentIndex > 0 ? allTutorials[currentIndex - 1] : null
     const nextTutorial = currentIndex < allTutorials.length - 1 ? allTutorials[currentIndex + 1] : null
     const normalizedTitle = tutorial.title.trim().toLowerCase()
+    const showGreedyDownload =
+      tutorial.slug === "your-first-code" || normalizedTitle === "your turn to improve the game"
     let skippedTitleHeading = false
     const filteredContent = tutorial.content.filter((item) => {
       if (
@@ -89,6 +91,14 @@ export default async function TutorialPage({ params }: Params) {
                       {tag}
                     </Badge>
                   ))}
+                </div>
+              )}
+
+              {showGreedyDownload && (
+                <div className="mt-4">
+                  <Button variant="outline" asChild>
+                    <a href="/api/greedy-metta">Download greedy.metta</a>
+                  </Button>
                 </div>
               )}
             </div>
