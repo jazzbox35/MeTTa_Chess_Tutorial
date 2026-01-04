@@ -22,9 +22,6 @@ export function TutorialList({ tutorials }: TutorialListProps) {
         mx-auto sm:mx-0
       "
     >
-      <h2 className="text-lg font-semibold mb-3 text-center sm:text-left">
-        All Contents
-      </h2>
       <ScrollArea className="h-[60vh] pr-2">
         <div className="space-y-2">
           {tutorials.map((tut) => {

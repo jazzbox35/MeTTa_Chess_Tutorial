@@ -154,10 +154,10 @@ export default async function TutorialPage({ params }: Params) {
 
           {/* Right Sidebar: Table of Contents - Only visible on xl+ screens */}
           <div className="hidden xl:block">
-            <div className="sticky top-24 h-[calc(100vh-6rem)]">
+            <div className="sticky top-32 h-[calc(100vh-8rem)] pt-2">
               <Card className="p-4">
-                <h3 className="text-lg font-semibold mb-3">On This Page</h3>
-                <ScrollArea className="h-[calc(100vh-12rem)] pr-4">
+                <h3 className="text-lg font-semibold mb-3 text-foreground">On This Page</h3>
+                <ScrollArea className="h-[calc(100vh-16rem)] pr-4">
                   <TableOfContents content={filteredContent} />
                 </ScrollArea>
               </Card>

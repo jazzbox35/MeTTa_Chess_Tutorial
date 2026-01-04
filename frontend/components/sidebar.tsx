@@ -35,6 +35,7 @@ export function SidebarWithTutorials({ allTutorials }: SidebarWithTutorialsProps
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
         <div className="sticky top-24 h-[calc(100vh-6rem)]">
+          <div className="text-sm font-semibold mb-2 text-foreground">All Contents</div>
           <TutorialList tutorials={allTutorials} />
         </div>
       </div>
