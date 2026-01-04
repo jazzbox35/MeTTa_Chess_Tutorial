@@ -13,13 +13,11 @@
 
 \section{Let's Create a Simple Chess Game}
 
-Now we jump into the practical software aspect.   How does pattern mining actually work, leveraging all the contexts introduced above, in the Hyperon framework today?
-
-The Hyperon Pattern Miner is implemented entirely in MeTTa, with its core logic split between two modules:
+Now we jump into the practical software aspect. To create our chess program, we need to:
 
 \begin{itemize}
-  \item \texttt{match/MinerMatch.metta} -- orchestrates the multi-stage mining loop
-  \item \texttt{utils/MinerUtils.metta} -- provides low-level support routines (link extraction, counting, few_constructs, etc.)
+  \item \texttt{Define constants for use throughout the program's run}
+  \item \texttt{Define general functions for use throughout the program's run}
 \end{itemize}
 
 Below is a step-by-step walkthrough of how \texttt{(miner $db $ms $depth)} discovers frequent--and optionally surprising--patterns in your AtomSpace.
@@ -29,16 +27,36 @@ Below is a step-by-step walkthrough of how \texttt{(miner $db $ms $depth)} disco
 In \texttt{match/MinerMatch.metta} you will find two top-level definitions:
 
 \begin{verbatim}
-;; Return all frequent patterns up to `depth' clauses
-(= (frequency-pattern-miner $kb $dbspace $specspace $cndpspace $aptrnspace $conjspace $minsup $depth)
-    (superpose (
-            (abstract-pattern $dbspace $minsup $aptrnspace) ; prevent patterns that dont have a support from being speciallized
-            (match $aptrnspace (AbstractPattern $pattern) (build-specialization $pattern $dbspace $specspace)) ; specializa abstract patterns
-            (candidatePattern $dbspace $specspace $minsup $cndpspace); get candidate patterns
-            (match $cndpspace (CandidatePattern $pattern) (let $conj (do-conjunct $dbspace $cndpspace  $pattern $minsup (fromNumber $depth)) (if (== $conj ()) () (add-atom $conjspace $conj)))) ; store candidate patterns
-            (formatter $kb $conjspace $dbspace)
-        ))
-)
+    
+;***************************************************************
+; Function:     nth
+; Description:  Returns the N-th element from a list (1-based index).
+;
+; Input:        $n     - The position (1-based) of the element to return.
+;               $list  - A list of elements (e.g., (a b c d)).
+;
+; Output:       The atom at position $n in the list. Returns the first element if n = 1.
+;***************************************************************
+(= (nth $n $list) 
+    (if (== $n 1)
+        (car-atom $list)
+        (nth (- $n 1) (cdr-atom $list)))) ; Recursion: move to the next element (cdr-atom) and decrease n.
+
+;***************************************************************
+; Function:     contains_symbol
+; Description:  Checks whether a given symbol exists in a list.
+;
+; Input:        $list - A list of atoms (e.g., (a b c d))
+;               $sym  - A symbol to search for in the list
+;
+; Output:       True if $sym is found in $list; otherwise False
+;***************************************************************
+(= (contains_symbol $list $sym) 
+    (if (== $list ())
+        False
+        (if (== (car-atom $list) $sym)
+            True
+            (contains_symbol (cdr-atom $list) $sym))))
 
 \end{verbatim}
 
