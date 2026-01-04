@@ -2,6 +2,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{xcolor}
 \usepackage{listings}
 \usepackage{hyperref}
 
@@ -13,67 +14,12 @@
 
 \section{Further Exploration: MettaWamJam Server}
 
-You have now learned how to install and configure the Hyperon Pattern Miner, understand its core concepts, execute the full MeTTa-based mining pipeline, and explore a variety of advanced workflows.  But this of course is just the beginnng! Here are some suggestions for directions to take next:
+Installing MeTTa on your own machine is easy and MeTTa runs faster than over the web!
 
-\begin{itemize}
-  \item \textbf{Customize few_constructs Measures}\\
-    Explore \texttt{utils/MinerUtils.metta} or the \texttt{experiments/} folder to implement alternative null models.  For example, condition on node-degree distributions or integrate a Bayesian surprise metric.
-  \item \textbf{Add Domain-Specific Constraints}\\
-    Use the dependent-type framework in \texttt{dependent-types/} to enforce structural invariants.  You can also modify \texttt{combine-with} to restrict conjunctions by predicate namespace or variable type.
-  \item \textbf{Incorporate Uncertainty}\\
-    When your AtomSpace contains STV (Subjective Truth Value) atoms, apply the EMPTV rules in \texttt{experiments/rules/emp-tv.metta} to assign confidence scores to patterns.  Experiment with different lookahead parameters to adjust belief updating.
-  \item \textbf{Scale to Larger Datasets}\\
-    Replace \texttt{data/sample.metta} with real-world knowledge graphs: dialogue logs, biomedical records, or activation graphs from neural networks.  Profile AtomSpace indexing and consider sharding or parallelizing match queries for millions of atoms.
-  \item \textbf{Bridge to Vector Representations}\\
-    Convert top patterns into sparse feature vectors for downstream machine learning.  Integrate with embedding modules to link symbolic patterns to neural network representations.
-  \item \textbf{Embed in an Online Pipeline}\\
-    Integrate the miner into a live reasoning loop: re-mine patterns as new data arrives and feed high-surprise templates into inference-control heuristics or reinforcement learning policies.
-  \item \textbf{Contribute to the Project}\\
-    Browse the \texttt{hyperon-miner} GitHub issues and pull requests.  Submit your own enhancements: new scoring functions, optimized indexing strategies, or domain-specific example scripts in \texttt{experiments/}.
-  \item \textbf{Help Build AGI}\\
-    The Hyperon Pattern Miner is already powerful and becoming more so.   However, while it has significant value on its own, it's ultimately intended to be leveraged most powerfully within cognitive architectures like PRIMUS, working together with other methods to yield AGI functionality.   This is a very fast moving and intensive research area right now.    By all means bring your insights and passion and join the initiative to create beneficial decentralized AGI using the Hyperon framework!
-\end{itemize}
+Check out the MettaWamJam server. You can either use the available Docker images to set up your own MeTTa server
+or clone the repo and customize a server as you need.
 
-Happy mining!
+<a href="https://github.com/jazzbox35/MettaWamJam" target="_blank" rel="noreferrer"><b>MettaWamJam Server</b</a>
 
-
-
-\begin{thebibliography}{9}
-
-\bibitem{agrawal1994fast}
-Agrawal, R.\ and Srikant, R.,
-``Fast algorithms for mining association rules'',
-in \emph{Proc.\ 20th Int.\ Conf.\ Data Engineering}, 1994.
-
-\bibitem{han2000mining}
-Han, J., Pei, J.\ and Yin, Y.,
-``Mining frequent patterns without candidate generation:
-  A frequent-pattern tree approach'',
-\emph{Data Mining and Knowledge Discovery}, 2000.
-
-\bibitem{pei2001prefixspan}
-Pei, J., Han, J., Mortazavi-Asl, B., et al.,
-``Prefixspan: Mining sequential patterns efficiently
-  by prefix-projected pattern growth'',
-in \emph{Proc.\ 17th Int.\ Conf.\ Data Engineering}, 2001.
-
-\bibitem{yan2002gspan}
-Yan, X.\ and Han, J.,
-``gSpan: Graph-based substructure pattern mining'',
-in \emph{Proc.\ 2002 IEEE Int.\ Conf.\ Data Mining}, 2002.
-
-\bibitem{dehaspe1999frequent}
-Dehaspe, L.\ and Toivonen, H.,
-``Discovery of frequent Datalog patterns'',
-\emph{Data Mining and Knowledge Discovery}, 1999.
-
-\bibitem{srinivasan2002aleph}
-Srinivasan, A.,
-\emph{The Aleph Manual},
-University of Oxford, 2002.
-
-
-
-\end{thebibliography}
 
 \end{document}
