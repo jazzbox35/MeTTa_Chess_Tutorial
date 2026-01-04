@@ -2538,7 +2538,7 @@
                                       (change-game-state checkmate)
                                     )
                                     (add-atom &self (game-message  CHECK!))))
-                                    ;(println "Check! Enter g for Greedy Chess move.")))
+                                    
                               (println "Enter g for Greedy Chess move.")  ))
                       )
                   )
