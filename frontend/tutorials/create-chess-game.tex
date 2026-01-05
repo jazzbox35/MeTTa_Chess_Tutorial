@@ -5,26 +5,34 @@
 \usepackage{listings}
 \usepackage{hyperref}
 
-\title{Let's Create a Simple Chess Game}
+\title{Create a Simple Chess Game}
 \order{3}
 
 \begin{document}
 
 
-\section{Let's Create a Simple Chess Game}
+\section{Create a Simple Chess Game}
 
-Now we jump into the practical software aspect. To create our chess program, we need to:
+Now armed with a few MeTTa constructs, we'll jump into practical MeTTa software development. 
+
+We will be using a backend MeTTa server running in the cloud. Gameplay is handled through your browser which sends only two commands to the backend MeTTa server: M and S which handle piece (M)oving and (S)tart/reset respectively. These commands are defined in the "Command handler functions for gameplay" section below.
+
+Note that we won't be dynamically redefining functions, although it's possible in MeTTa. To create our chess program, we need to define the following:
 
 \begin{itemize}
-  \item \texttt{Define constants for use throughout the program's run}
-  \item \texttt{Define general functions for use throughout the program's run}
+  \item \texttt{Utility functions}
+  \item \texttt{Constants for use throughout the program's run}
+  \item \texttt{Chess functions}
+  \item \texttt{Command handler functions for gameplay}
 \end{itemize}
 
-Below is a step-by-step walkthrough of how \texttt{(miner $db $ms $depth)} discovers frequent--and optionally surprising--patterns in your AtomSpace.
+The chess program is stored in atomspace using your browser. 
 
-\subsection{Entry Point: frequent-pattern-miner and miner-surprising}
+If at any time you wish to reset atomspace to the default MeTTa chess program just click "Reset Atomspace" and then click "Play Chess". If "Reset Atomspace" is greyed-out, there is no need to click.
 
-In \texttt{match/MinerMatch.metta} you will find two top-level definitions:
+
+\subsection{Utility functions}
+
 
 \begin{verbatim}
     
@@ -60,198 +68,16 @@ In \texttt{match/MinerMatch.metta} you will find two top-level definitions:
 
 \end{verbatim}
 
-When you run this, it doesn't return a result, but it loads into the &self AtomSpace, which is the current working AtomSpace.
 
-Here:\\
+\subsection{Putting It All Together}
 
-\begin{itemize}
-  \item \texttt{$dbspace} your AtomSpace database
-  \item \texttt{$kb} your knowledge base (AtomSpace)
-  \item \texttt{$specspace} space for storing specialized patterns
-  \item \texttt{$cndpspace} space for storing candidate patterns
-  \item \texttt{$aptrnspace} space for storing abstract patterns
-  \item \texttt{$conjspace} space for storing conjunctions (multi-clause patterns)
-  \item \texttt{$minsup} minimum support threshold
-  \item \texttt{$depth} maximum number of clauses per pattern
-  \item \texttt{highsurp} few_constructs threshold (for \texttt{miner-surprising})
-\end{itemize}
 
-\subsection{Stage 1: Extract Abstract Patterns with abstract-pattern}
-
-Abstract patterns are the raw link atoms in your AtomSpace, each turned into a 1-clause template by adding \texttt{VariableNode}s to the link.  In \texttt{experiments/rules/frequent-pattern-miner.metta}:
 
 \begin{verbatim}
-(= (abstract-pattern $dbspace $minsup $aptrnspace)
-            (let* (
-                    ($linkunique (unique (match $dbspace ($link $x $y) $link)))
-                    ($result (sup-eval $dbspace ($linkunique $z $t) $minsup))
-                )
-            (if (== $result True)
-                (superpose (
-                        (remove-atom $aptrnspace (AbstractPattern ($linkunique Z (S Z))))
-                        (add-atom $aptrnspace (AbstractPattern ($linkunique Z (S Z))))
-                    ))
-            empty
-        )
-)
-)
+(end)
 \end{verbatim}
 
-This produces skeletons like \texttt{(drink $x $y)} or \texttt{(drink Z (S Z))}.
+Summary
 
-\subsection{Stage 2: Generate Specializations or Potential Candidates via build-specialization}
-
-The function \texttt{build-specialization} handles the specialization of the abstract patterns:
-
-\begin{verbatim}
-(= (build-specialization ($link $x $y) $dbspace $specspace) 
-            (let*
-                (
-                    ( ($link $x1 $y1) (replacev ($link $x $y)))                            ; replacev is a function that replaces index with variables
-                    ( ($subx $suby) (match $dbspace ($link $x1 $y1) ($x1 $y1)))            ; getting the substitution /valuation of the pattern
-                    ($shabx (depth-handler $subx))                                    ;handle depth in the x node
-                    ($shaby (depth-handler $suby))                                    ; handle depth in the y node
-                    ($spec1 (replace (SpecializationOf ($link $shabx $y1) ($link $x $y)))) ;build the specialization and change the variables to indexs 
-                    ($spec2 (replace (SpecializationOf ($link $x1 $shaby) ($link $x $y)))) ;build the specialization and change the variables to indexs
-                )
-            (
-                superpose (
-                    (remove-atom $specspace $spec1) ; remove the old specialization to avoid redundancy
-                    (add-atom $specspace $spec1) ; add the new specialization
-                    (remove-atom $specspace $spec2)
-                    (add-atom $specspace $spec2)
-                )
-        )
-)
-)
-\end{verbatim}
-
-\texttt{specialize} builds specializations by replacing variables with groundings.
-
-\subsection{Stage 3: Counting and Support Filtering/ Candidate Pattern}
-
-The function \texttt{candidatePattern} handles filtertion of specializations using minimum support:
-
-\begin{verbatim}
-(= (candidatePattern $dbspace $spezspace $minsup $cndpspace)
-    (match $spezspace (SpecializationOf $specialized $pattern)
-        (let* (
-                
-                ( $specializedvar (replacev $specialized))
-                ($result (sup-eval $dbspace $specializedvar $minsup))  
-            )
-        (if  $result 
-            (add-atom $cndpspace (CandidatePattern $specialized))
-            ()
-        )
-
-)
-)
-
-)
-\end{verbatim}
-
-This filters out any specializations that do not meet the minimum support threshold.
-
-\subsection{Stage 4: Conjunction Expansion via do-conjunct}
-
-The function \texttt{do-conjunct} handles the conjunction of candidate patterns:
-
-\begin{verbatim}
-(= (do-conjunct $db $cndb $pre_conjunct $ms Z)
-    (let* (
-        ($conjunct (replacev $pre_conjunct))
-        ($matches (match $cndb (CandidatePattern $pattern) (replacev $pattern)))
-        ($listconj (expand_conjunction $conjunct $matches $db $ms 2 False))
-        ($debconj (replace $listconj))
-        ($fitlered (remove_conjuncts_with_redundant_clauses $debconj))
-    )
-    $fitlered
-    )
-)
-
-(= (do-conjunct $db $cndb $pre_conjunct $ms (S $K))
-    (let* (
-        ($conjunct (replacev $pre_conjunct))
-        ($matches (match $cndb (CandidatePattern $pattern) (replacev $pattern)))
-        ($listconj (expand_conjunction $conjunct $matches $db $ms 2 False))
-        ($debconj (replace $listconj))
-        ($fitlered (remove_conjuncts_with_redundant_clauses $debconj))
-        ($varconj (replacev $fitlered))
-        ($conj (do-conjunct $db $cndb $varconj $ms $K))    
-    )
-    $conj
-    )
-)
-\end{verbatim}
-
-
-This combines candidate patterns into conjunctions recursively for any amount of required clauses if they by creating common variables between them.
-
-\subsection{Stage 5: Scoring by I-few_constructs}
-
-The few_constructs measure is implemented as:
-
-\begin{verbatim}
-(= (ifew_constructs $pattern)
-  (case $pattern
-    ;; 2-clause
-    ((candidate (, $p1 $p2) $cnt)
-     (let* (($pp1   (prob (count $p1)))
-            ($pp2   (prob (count $p2)))
-            ($exp   (* $pp1 $pp2))
-            ($obs   (prob $cnt)))
-       (// (max (- $obs $exp)
-                (- $exp $obs))
-           $obs)))
-    ;; 3-clause
-    ((candidate (, $p1 $p2 $p3) $cnt)
-     ;; compute pairwise and triple-block expectations...
-     ...)
-    ;; other arities
-    ($_ 0)))
-\end{verbatim}
-
-Here \texttt{prob} divides by \texttt{universe-size}, and the numerator measures the largest deviation from the null model.
-
-\subsection{Stage 6: Putting It All Together}
-
-A full mining call looks like:
-
-\begin{verbatim}
-;;if you encounter an import issue, it might be because you've already imported it or 
-;;created a new AtomSpace. Just restart the Atom and start by loading the frequent-miner function.
-
-! (import! &self hyperon-miner:experiments:rules:frequent-pattern-miner)
-! (import! &dbb hyperon-miner:experiments:data:small-ugly)
-! (import! &self hyperon-miner:experiments:rules:build-specialization)
-! (import! &self hyperon-miner:experiments:rules:candidate-patterns)
-! (import! &self hyperon-miner:experiments:rules:conjunction-expansion)
-! (import! &self hyperon-miner:experiments:utils:common-utils)
-! (bind! &kb (new-space))
-! (bind! &dbspace (new-space))
-! (bind! &specspace (new-space))
-! (bind! &cndpspace (new-space))
-! (bind! &conjspace (new-space))
-! (bind! &aptrnspace (new-space))
-
-!(let ($link $x $y) (get-atoms &dbb) (add-atom &dbspace ($link $x $y)))
-
-
-! (frequency-pattern-miner &kb &dbspace &specspace &cndpspace &aptrnspace &conjspace 2 0)
-!(match &kb $pattern  $pattern)
-\end{verbatim}
-
-This single invocation will:
-
-\begin{enumerate}
-  \item Initialize the miner and index link nodes
-  \item Generate and filter 1-clause candidates
-  \item Recursively expand to 2- and 3-clause patterns
-  \item Score patterns by I-few_constructs (if using \texttt{miner-surprising})
-  \item Return a stream of \texttt{(pattern, score)} entries
-\end{enumerate}
-
-With this mapping to the codebase, you can see exactly how Hyperon Pattern Miner transforms raw AtomSpace data into ranked pattern templates.
 
 \end{document}

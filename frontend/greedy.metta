@@ -2401,27 +2401,25 @@
    ) 
 )
 
-
-
 ;*******************************************************
-; Basic commands.  The game is executed using the following commands.
+; Basic commands / core processing.  
+; The game is executed using the following commands.
 ;*******************************************************
 
 ;***************************************************************
 ; Description:  Core command handlers for Greedy Chess gameplay.
-;               Enables human/AI move input, game state transitions, 
+;               Enables human/AI moves, game state transitions, 
 ;               board initialization, command help, and board display.
 ;
 ; Commands:
 ;   - (chess)   :: Initializes or restarts the board and starts the game.
-;   - (M)       :: Handles human player's move input and execution.
-;   - (G)       :: Handles AI (Greedy) move logic and execution.
-;   - (R)       :: Resets and reinitializes the game.
-;   - (C)       :: Displays the available command list.
-;   - (D)       :: Prints the current state of the board.
+;   - (M $start $destination)       
+;               :: Handles human player's move input and execution, automatically invokes (G)
+;   - (G)       :: Handles AI (Greedy) move logic and execution (can be invoked separately)
+;   - (S)       :: Start and Replay functionality
 ;
-; Input:        None (invoked interactively or from REPL).
-; Output:       Side effects on Atomspace, updates and console output.
+; Input:        To invoke a command, just use the format listed above
+; Output:       Side effects on atomspace as well as specific results returned by command.
 ;
 ; Notes:
 ;   - Internally maintains game-state using (game-state $msg).
@@ -2429,7 +2427,7 @@
 ;   - Supports in-game status updates like check, checkmate, and move feedback.
 ;***************************************************************
 
-; This command must be invoked at startup with "!(chess)"
+;  Initialization and state management
 (= (chess) 
   (match &self (game-state $msg)
     ; if first invocation, just create board
@@ -2466,6 +2464,7 @@
     (; else if
         empty))))) 
 
+; Player move command. Input start square and destination. Call the AI move with the (G) command if move valid.
 (= (M $f $g)  
   (if (== (game-still-playing) False)
     (Game over! Please reset to play again.)
@@ -2668,75 +2667,6 @@
           )
         ; if cold start
         (chess)))))
-
-; The "commands" command just lists the available commands.
-;(: C (-> command))
-(= (C) 
-  (progn 
-    (println " ") (println " ") (println " ") (println " ")
-    (println "- Your pieces are white at bottom.")
-    (println "- Please take note of the following simple commands:")
-    (println "*------- C o m m a n d s ------------*")
-    (println "MOVE YOUR PIECE USE example      ->  m <ENTER> a2a3 <ENTER>")
-    (println "   Result:  YOUR pawn in a2 moved to location a3.")
-    (println "Greedy Chess Move (AI)           ->  g")
-    (println "Reset & Replay                   ->  r")
-    (println "Commands List                    ->  c")
-    (println "Display Board                    ->  d")
-    (println "Quit                             ->  q")))
-;
-
-; The display command shows the present board.
-;(: D (-> command))
-;(= (D) (display_board (match &self (board-state $board) $board)))
-(= (D) (match &self (board-state $board) (println $board)))
-
-
-;*******************************************************
-;   M A I N   C O M M A N D   L O O P
-;*******************************************************
-
-;***************************************************************
-; Function:     main_loop / command-loop
-; Description:  Main entry point and user interaction loop for
-;               MeTTa Greedy Chess. Provides REPL-style input
-;               handling for player and AI moves, game control,
-;               and board interaction.
-;
-; Input:        None (invoked from REPL or startup script)
-;
-; Output:       Executes commands based on user input and updates
-;               Atomspace and board display accordingly.
-;
-; Notes:
-;   - Recursively loops until the user enters "q"
-;   - Uses (case ...) to map string input to handler atoms
-;***************************************************************
-
-(= (command-loop)
-  (progn 
-    (println "Please enter your command.")
-    (let $command (readln!)   ; get user command
-        (case $command
-          (
-          (m  (M))                         ; Move human piece 
-          (g  (G))                         ; AI move (Greedy)
-          (r  (R))                         ; Reset = "r"
-          (c  (C))                         ; List valid commands = "c"
-          (d  (D))                         ; Display board "d"
-          (q  (println "Quitting MeTTa Greedy Chess."))
-          ($_ (println "Invalid command, please try again or enter c for a list of commands."))
-          )))
-    (if (== $command q) 
-      ()
-      (command-loop))
-      ))
-
-;-----------;
-(= (main_loop) 
-  (progn
-    (chess)           ; Start the chess game
-    (command-loop)))  ; Enter the recursive command-processing loop until quit command 'q'
 
 
 !(S)
