@@ -36,7 +36,7 @@ Note that we won't be dynamically redefining functions, although it's possible i
   \item \texttt{Command handler functions for gameplay}
 \end{itemize}
 
-The chess program is stored in atomspace using your browser. 
+The chess program is stored in atomspace using your browser (in a format maintained by the MeTTa server). We will be covering only the most salient functions in the chess program herein. However, in addition to displaying atomspace by clicking the button above, you can download the full source code by clicking on the "Your Turn to Improve the Game" section and look for the download link. 
 
 \subsubsection{Utility Functions}
 
@@ -54,7 +54,7 @@ If length is 4, the square is occupied. If length is 2, unoccupied. x and y are 
 Piece color values are either s for silver (human) or g for gold (AI). Piece types are r, n, b, q, k, p for 
 rook, knight, bishop, queen, king, and pawn respectively.
 
-The \textbf{nth} function is used constantly in the program to extract piece details. 
+\textbf{The nth function is used constantly in the program to extract piece details.}
 
 \begin{verbatim}
 ; HIDE-RUN    
@@ -71,7 +71,20 @@ The \textbf{nth} function is used constantly in the program to extract piece det
     (if (== $n 1)
         (car-atom $list)
         (nth (- $n 1) (cdr-atom $list)))) ; Recursion: move to the next element (cdr-atom) and decrease n.
+\end{verbatim}
 
+\begin{verbatim}
+; reset chess game to initial state
+!(S)
+
+; find x axis value for this silver pawn located in square (2, 2)
+!(nth 1 (2 2 s p))   
+\end{verbatim}
+
+\textbf{Function to check for a symbol in a list and a function to add numbers.}
+
+\begin{verbatim}
+; HIDE-RUN
 ;***************************************************************
 ; Function:     contains_symbol
 ; Description:  Checks whether a given symbol exists in a list.
@@ -100,15 +113,12 @@ The \textbf{nth} function is used constantly in the program to extract piece det
     (if (== $integer_list ())
         0
         (+ (car-atom $integer_list) (addit_list (cdr-atom $integer_list)))))
-
 \end{verbatim}
 
-\begin{verbatim}
-; reset chess game to initial state
-!(S)
 
-; find x axis value for this silver pawn located in square (2, 2)
-!(nth 1 (2 2 s p))   
+
+\begin{verbatim}
+!(S)
 
 ; see if there is a gold piece in board square (1 8) 
 !(contains_symbol (1 8) g)
@@ -220,6 +230,8 @@ The following functions are used for the input of the 64-element board list and 
 atomic "square" (as above) atoms for all chess pieces. The deep searching in the program uses these 
 atomic "square" atoms for speed. There are also functions for small atom lists used for game state handling and scoring moves.
 
+\textbf{Example to add individual square atoms to atomspace}
+
 \begin{verbatim}
 ; HIDE-RUN
 ;***************************************************************
@@ -243,6 +255,29 @@ atomic "square" atoms for speed. There are also functions for small atom lists u
             )
       (add-pieces (cdr-atom $board)))))
 
+\end{verbatim}
+
+
+\begin{verbatim}
+!(S) ;reset for demo
+
+; Here we call add-pieces to create individual square atoms for each piece. Display atomspace after running this command and you should see individual atoms of the form (square x y ...)
+!(add-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
+                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                        (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
+                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))   
+  )
+\end{verbatim}
+
+\textbf{Function to reset the small 'square' atoms and refresh 'square' atoms with input-supplied chessboard}
+
+\begin{verbatim}
+; HIDE-RUN
+
 ;***************************************************************
 ; Function:     reset-pieces
 ; Description:  Clears existing board state from atomspace and
@@ -262,38 +297,30 @@ atomic "square" atoms for speed. There are also functions for small atom lists u
       ; now add the present board's squares to atomspace.
       (add-pieces $board)))
 
-;***************************************************************
-; Function:     delete-pieces
-; Description:  Removes all square-related atoms from the atomspace.
-;
-; Input:        None
-;
-; Output:       Atomspace is cleared of all `(square ...)` atoms,
-;               both occupied and empty.
-;***************************************************************
-(= (delete-pieces)
-    (progn
-      ; remove prior occupied square atoms from atomspace
-      (remove-atom &self (square $x $y $s $p))  
-      ; remove empty squares too
-      (remove-atom &self (square $x $y))  
-      ))
+\end{verbatim}
 
-;***************************************************************
-; Function:     delete-temporary-atoms
-; Description:  Removes all temporary `score` atoms used during AI move evaluation.
-;
-; Input:        None
-;
-; Output:       Cleans the atomspace of all `(score ...)` atoms,
-;               which represent scores of hypothetical evaluations of AI moves.
-;***************************************************************
-(= (delete-temporary-atoms)
-  (match &self
-    (score $X1 $Y1 $color $rank $X2 $Y2 $Opponent_hypothetical_score $AI_hypothetical_score)
-        ;($X1 $Y1 $color $rank $X2 $Y2 $Opponent_hypothetical_score $AI_hypothetical_score)))
-    (remove-atom &self 
-    (score $X1 $Y1 $color $rank $X2 $Y2 $Opponent_hypothetical_score $AI_hypothetical_score))))
+\textbf{Function to reset the small 'square' atoms and refresh 'square' atoms with a mocked up current chessboard state; note pawn defined with atom (square 4 4 s p).}  One nice thing about processing small atoms using the match
+construct is that there is a lot less LISP-ish tail recursion that is invariably harder to read and slower too.
+
+\begin{verbatim}
+; refresh the 'square' atoms using the input chessboard. Check atomspace to verify a pawn is in (4 4)
+
+!(collapse (reset-pieces
+            ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
+                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                        (1 4) (2 4) (3 4) (4 4 s p) (5 4) (6 4) (7 4) (8 4) 
+                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))))
+
+\end{verbatim}
+
+\textbf{Functions to change game state}
+
+\begin{verbatim}
+; HIDE-RUN
 
 ;***************************************************************
 ; Function:     delete-prior-game-states
@@ -322,42 +349,18 @@ atomic "square" atoms for speed. There are also functions for small atom lists u
     (delete-prior-game-states) 
     (add-atom &self (game-state $new-state))))
 
-
-
 \end{verbatim}
 
-
-\textbf{Example to add individual square atoms to atomspace}
-
 \begin{verbatim}
+
 !(S) ;reset for demo
 
-; Here we call add-pieces to create individual square atoms for each piece. Display atomspace after running this command and you should see individual atoms of the form (square x y ...)
-!(add-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))   
-  )
+; Note that delete-prior-game-states uses a 'collapse' to ensure ALL prior game state atoms are removed. After running this atomspace should show (game-state checkmate).
+
+!(change-game-state checkmate)
+
 \end{verbatim}
 
-\textbf{Remove the individual square atoms in atomspace}
-
-\begin{verbatim}
-; a call to (delete-pieces) removes all the atoms of the form (square x y ...) just added by add-pieces in the example above.
-
-!(delete-pieces)
-\end{verbatim}
-
-\begin{verbatim}
-; a call to (change-game-state) with argument 'started' wipes out all prior states and resets.
-; Display atomspace after running this and you will see (game-state started) and other game states removed.
-
-!(change-game-state started)
-\end{verbatim}
 
 \subsubsection{Putting It All Together}
 
