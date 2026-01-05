@@ -22,7 +22,7 @@ Note that we won't be dynamically redefining functions, although it's possible i
 \begin{itemize}
   \item \texttt{Utility functions}
   \item \texttt{Constants for use throughout the program's run}
-  \item \texttt{Chess functions}
+  \item \texttt{Chess related functions}
   \item \texttt{Command handler functions for gameplay}
 \end{itemize}
 
@@ -185,12 +185,154 @@ by removing and adding an atom of the form "(game-state -value-)".
 ; progn works nicely for running a sequence of expressions.
 !(match &self (game-state $state) 
     (progn 
-        (remove-atom (game-state $state))
-        (add-atom (game-state started))))
+        (remove-atom &self (game-state $state))
+        (add-atom &self (game-state started))))
 
 \end{verbatim}
 
-\subsection{Putting It All Together}
+\subsection{Chess Related Functions}
+
+Now would be a good time to click "Reset Atomspace".
+
+The program persists two major data structures between moves. One is the chessboard, the second game state:
+
+1) \textbf{(board-state (  (1 1 s r) (1 2 s n).... (4 4).... (1 8 g r)... ))} with 64 sublists
+
+2) \textbf{(game-state -value-)}
+
+The "board-state" list is not used as the data structure for searching: when the AI is experimenting with possible next moves, small standalone atoms in atomspace are created for each square of this form:
+
+\textbf{(square x y color rank) and (square x y)} to denote both occupied and unoccupied squares.
+
+The reason the longer "board-state" list of 64 elements representing all squares on the chessboard is not used for deep searches is because \textbf{METTA IS MUCH FASTER LOOKING UP INDIVIDUAL ATOMS THAN CHUGGING SEQUENTIALLY THROUGH LISTS.} A defining feature of MeTTa is random access in atomspace, not LISP-ish tail recursion search.
+
+The following functions are used for the input of the 64-element board list and output of temporary 
+atomic "square" (as above) atoms for all chess pieces. The deep searching in the program uses these 
+atomic "square" atoms for speed.
+
+\begin{verbatim}
+
+;***************************************************************
+; Function:     add-pieces
+; Description:  Converts a board representation into atomspace facts.
+;               Each square from the board list becomes a `(square ...)` atom.
+;
+; Input:        $board - A list of square definitions:
+;                        Each square is either (x y) for empty or (x y color piece) if occupied.
+;
+; Output:       Adds each square to the atomspace as a `(square ...)` atom.
+;               Returns True after processing the entire board.
+;***************************************************************
+(= (add-pieces $board)
+  (if (== $board ())
+      True
+      (let* (
+            ($next-square (car-atom $board))
+            ($next-square-atom (cons-atom square $next-square))
+            ($_ (add-atom &self $next-square-atom))
+            )
+      (add-pieces (cdr-atom $board)))))
+
+;***************************************************************
+; Function:     reset-pieces
+; Description:  Clears existing board state from atomspace and
+;               re-injects the current board list as square atoms.
+;
+; Input:        $board - The current board, as a list of square terms:
+;                        Each term is (x y) for empty, or (x y color rank) for occupied.
+;
+; Output:       Atomspace is updated with the board's square atoms.
+;***************************************************************
+(= (reset-pieces $board)
+    (progn
+      ; remove prior occupied square atoms from atomspace
+      (remove-atom &self (square $x $y $s $p))  
+      ; remove empty squares too
+      (remove-atom &self (square $x $y))  
+      ; now add the present board's squares to atomspace.
+      (add-pieces $board)))
+
+;***************************************************************
+; Function:     delete-pieces
+; Description:  Removes all square-related atoms from the atomspace.
+;
+; Input:        None
+;
+; Output:       Atomspace is cleared of all `(square ...)` atoms,
+;               both occupied and empty.
+;***************************************************************
+(= (delete-pieces)
+    (progn
+      ; remove prior occupied square atoms from atomspace
+      (remove-atom &self (square $x $y $s $p))  
+      ; remove empty squares too
+      (remove-atom &self (square $x $y))  
+      ))
+
+;***************************************************************
+; Function:     delete-temporary-atoms
+; Description:  Removes all temporary `score` atoms used during AI move evaluation.
+;
+; Input:        None
+;
+; Output:       Cleans the atomspace of all `(score ...)` atoms,
+;               which represent scores of hypothetical evaluations of AI moves.
+;***************************************************************
+(= (delete-temporary-atoms)
+  (match &self
+    (score $X1 $Y1 $color $rank $X2 $Y2 $Opponent_hypothetical_score $AI_hypothetical_score)
+        ;($X1 $Y1 $color $rank $X2 $Y2 $Opponent_hypothetical_score $AI_hypothetical_score)))
+    (remove-atom &self 
+    (score $X1 $Y1 $color $rank $X2 $Y2 $Opponent_hypothetical_score $AI_hypothetical_score))))
+
+;***************************************************************
+; Function:     delete-prior-game-states
+; Description:  Removes any existing `(game-state ...)` atoms from atomspace.
+;               Used before setting a new game state.
+;
+; Input:        None
+;
+; Output:       Atomspace no longer contains any `game-state` atoms.
+;***************************************************************
+(= (delete-prior-game-states)
+    (collapse (match &self (game-state $prior-state) (remove-atom &self (game-state $prior-state))))
+)
+
+;***************************************************************
+; Function:     change-game-state
+; Description:  Resets the current game state and sets a new one.
+;
+; Input:        $new-state - A symbol representing the new game state,
+;                            e.g., `started`, `checkmate`, `restarted`, etc.
+;
+; Output:       Replaces any existing `game-state` atom with the new one.
+;***************************************************************
+(= (change-game-state $new-state)
+  (progn
+    (delete-prior-game-states) 
+    (add-atom &self (game-state $new-state))))
+
+
+
+\end{verbatim}
+
+Example to add individual square atoms to atomspace 
+
+\begin{verbatim}
+
+; Here we call add-pieces to create individual square atoms for each piece. Display atomspace after running.
+!(add-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
+                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                        (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
+                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))   
+  )
+\end{verbatim}
+
+  \subsection{Putting It All Together}
 
 
 
