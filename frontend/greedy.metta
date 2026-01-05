@@ -142,47 +142,6 @@
             (contains_symbol (cdr-atom $list) $sym))))
 
 ;***************************************************************
-; Function:     char_to_int
-; Description:  Converts a character string "0".."9" to its corresponding integer.
-;               Will convert to standard chess x axis letters too.
-;
-; Input:        $char - A string representing a digit ("0".."9")
-;
-; Output:       Integer value 0..9 if valid; otherwise NIL
-;***************************************************************
-(= (char_to_int $char)
-    (case $char
-        (
-        ("1"  1)
-        ("2"  2)
-        ("3"  3)
-        ("4"  4)
-        ("5"  5)
-        ("6"  6)
-        ("7"  7)
-        ("8"  8)
-        ("a"  1)
-        ("b"  2)
-        ("c"  3)
-        ("d"  4)
-        ("e"  5)
-        ("f"  6)
-        ("g"  7)
-        ("h"  8)
-        ("A"  1)
-        ("B"  2)
-        ("C"  3)
-        ("D"  4)
-        ("E"  5)
-        ("F"  6)
-        ("G"  7)
-        ("H"  8)
-        ;otherwise
-        ($_   NIL) ; <-- in case user inputs bad char, this will result in a fail.
-        )))
-
-
-;***************************************************************
 ; Function:     int_to_char
 ; Description:  Converts an integer 1..8 to the corresponding incremental letter.
 ;

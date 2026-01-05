@@ -38,6 +38,18 @@ Please click "Reset Atomspace"  (if enabled) now to start with a clean slate.
 
 First we need to define a few general functions to be used by the whole program.
 
+Our first couple of functions are standard LISP-ish looking tail recursion functions. In MeTTa \textbf{car-atom} and \textbf{cdr-atom} (as well as \textbf{cons-atom}) are effectively the same as LISP but with -"atom" appended. If you need a refresher or crash course in these constructs an LLM would help. \textbf{car-atom} gives you the first symbol in a list while \textbf{cdr-atom} the rest of the list, still in parenthesis. 
+
+The chess program uses the following format for board squares:
+
+\textbf{(x y color piece)}
+
+If length is 4, the square is occupied. If length is 2, unoccupied. x and y are standard Cartesian coordinates.
+Piece color values are either s for silver (human) or g for gold (AI). Piece types are r, n, b, q, k, p for 
+rook, knight, bishop, queen, king, and pawn respectively.
+
+The \textbf{nth} function is used constantly in the program to extract piece details. 
+
 \begin{verbatim}
     
 ;***************************************************************
@@ -70,6 +82,43 @@ First we need to define a few general functions to be used by the whole program.
             True
             (contains_symbol (cdr-atom $list) $sym))))
 
+; find x axis value for this silver pawn located in square (2, 2)
+!(nth 1 (2 2 s p))   
+
+; see if there is a gold piece in board square (1 8) 
+!(contains_symbol (1 8) g)
+\end{verbatim}
+
+Just a reminder that if you seem to be getting far too many results, especially of the same value, it is because whenever you click "Run" to execute the code box MeTTa will add the functions inside the box to
+atomspace. Two versions of \textbf{nth} will give you multiple results. All you need to do is click "Reset Atomspace" regularly to avoid this problem. 
+
+Our next function \textbf{int_to_char} is a simple case statement to determine the x-axis letter that 
+corresponds to the numeric Cartesian x value. The program returns conventional letters for the chess x-axis.
+
+\begin{verbatim}
+   
+;***************************************************************
+; Function:     int_to_char
+; Description:  Converts an integer 1..8 to the corresponding incremental letter.
+;
+; Input:        $int - Integer in range 1 to 8
+;
+; Output:       Corresponding file letter "a".."h", or "?" if invalid
+;***************************************************************
+(= (int_to_char $int)
+    (case $int
+        (
+        (1 A)
+        (2 B)
+        (3 C)
+        (4 D)
+        (5 E)
+        (6 F)
+        (7 G)
+        (8 H)
+        ($_ ?) ; fallback for invalid input
+        )))
+!(int_to_char 5)
 \end{verbatim}
 
 
