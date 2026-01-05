@@ -34,11 +34,13 @@ In general, if you see unexpected results or an error, try clicking "Reset Atoms
 
 Please click "Reset Atomspace"  (if enabled) now to start with a clean slate.
 
-\subsection{Utility functions}
+\subsection{Utility Functions}
 
 First we need to define a few general functions to be used by the whole program.
 
-Our first couple of functions are standard LISP-ish looking tail recursion functions. In MeTTa \textbf{car-atom} and \textbf{cdr-atom} (as well as \textbf{cons-atom}) are effectively the same as LISP but with -"atom" appended. If you need a refresher or crash course in these constructs an LLM would help. \textbf{car-atom} gives you the first symbol in a list while \textbf{cdr-atom} the rest of the list, still in parenthesis. 
+Our first couple of functions are standard LISP-ish looking tail recursion functions. In MeTTa \textbf{car-atom} and \textbf{cdr-atom} (as well as \textbf{cons-atom}) are effectively the same as LISP but with -"atom" appended. If you need a refresher or crash course in these constructs an LLM would help. \textbf{car-atom} gives you the first symbol in a list while \textbf{cdr-atom} the rest of the list, still in parenthesis. The main trick is that you code the end boundary case and the general recursive
+case for items remaining in the list. Fortunately, you do less tail recursion searching in MeTTa than LISP but
+it is still a handy way of looping through a list.
 
 The chess program uses the following format for board squares:
 
@@ -82,11 +84,28 @@ The \textbf{nth} function is used constantly in the program to extract piece det
             True
             (contains_symbol (cdr-atom $list) $sym))))
 
+;***************************************************************
+; Function:     addit_list
+; Description:  Computes the sum of a list of integers.
+;
+; Input:        $integer_list - A list of integers (e.g., (1 2 3 4))
+;
+; Output:       The total sum of all integers in the list (e.g., 10)
+;***************************************************************
+(= (addit_list $integer_list)
+    (if (== $integer_list ())
+        0
+        (+ (car-atom $integer_list) (addit_list (cdr-atom $integer_list)))))
+
 ; find x axis value for this silver pawn located in square (2, 2)
 !(nth 1 (2 2 s p))   
 
 ; see if there is a gold piece in board square (1 8) 
 !(contains_symbol (1 8) g)
+
+; add up a list of numbers
+!(addit_list (4 7 1 20))
+
 \end{verbatim}
 
 Just a reminder that if you seem to be getting far too many results, especially of the same value, it is because whenever you click "Run" to execute the code box MeTTa will add the functions inside the box to
@@ -118,9 +137,58 @@ corresponds to the numeric Cartesian x value. The program returns conventional l
         (8 H)
         ($_ ?) ; fallback for invalid input
         )))
+
+;example look up        
 !(int_to_char 5)
 \end{verbatim}
 
+\subsection{Declaring Constants and Initialization for the Run}
+
+An easy way to define constants is just by coding them. These can be looked up in the \textbf{&self} 
+space using \textbf{match}.
+
+\begin{verbatim}
+;*******************************************************
+; Constants 
+;*******************************************************
+
+(highestrank k) 
+(highrank q) 
+(medrank r) 
+(medrank b) 
+(medrank n) 
+(lowrank p) 
+
+(rank k) 
+(rank q) 
+(rank r) 
+(rank b) 
+(rank n) 
+(rank p) 
+
+;example to return all ranks in a list. You get all ranks because MeTTa insists on giving all the results!
+!(collapse (match &self (rank $rank) $rank))
+\end{verbatim}
+
+The following expression adds an atom for game state. It's not a constant since we will be changing it later
+by removing and adding an atom of the form "(game-state -value-)".
+
+\begin{verbatim}
+
+;*******************************************************
+; Declare initializing game state
+;*******************************************************
+
+(game-state initializing)
+
+; in this example query, we look up game-state, remove it, then add a new game state.
+; progn works nicely for running a sequence of expressions.
+!(match &self (game-state $state) 
+    (progn 
+        (remove-atom (game-state $state))
+        (add-atom (game-state started))))
+
+\end{verbatim}
 
 \subsection{Putting It All Together}
 
