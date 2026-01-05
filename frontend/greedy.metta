@@ -184,7 +184,7 @@
 
 ;***************************************************************
 ; Function:     int_to_char
-; Description:  Converts an integer 1..8 to the corresponding chess file letter.
+; Description:  Converts an integer 1..8 to the corresponding incremental letter.
 ;
 ; Input:        $int - Integer in range 1 to 8
 ;
@@ -221,36 +221,6 @@
 ;***************************************************************
 (= (return_length $symbol)
   (let $list_from_symbol (stringToChars $symbol) (size-atom $list_from_symbol)))
-
-;***************************************************************
-; Function:     convert_x_letter
-; Description:  Extracts the X axis component from a chess square and converts
-;               the integer to the standard letter format
-;
-; Input:        $square - A string representing a chess square
-;
-; Output:       An expression with the converted x-coordinate (int) to a standard letter
-;     
-;***************************************************************
-(= (convert_x_letter $square)
-  (let*
-    (
-      ($x (nth 1 $square))         ; get the int x axis value
-      ($x_ltr (int_to_char $x))    ; convert to char
-      ($y (nth 2 $square))
-    )
-    (if (== (size-atom $square) 2 )
-      ($x_ltr $y)
-      (let*
-        (
-         ($color (nth 3 $square))
-         ($rank (nth 4 $square))
-        ) ;also convert to black or white color for standardization.
-        (if (== $color s) 
-            ($x_ltr $y white $rank)
-            ($x_ltr $y black $rank)
-        )))))
-
 
 ;***************************************************************
 ; Function:     concat_lists
@@ -335,6 +305,36 @@
 ;*******************************************************
 ; Code invoked by the basic commands 
 ;*******************************************************
+
+
+;***************************************************************
+; Function:     convert_x_letter
+; Description:  Extracts the X axis component from a chess square and converts
+;               the integer to the standard letter format
+;
+; Input:        $square - A string representing a chess square
+;
+; Output:       An expression with the converted x-coordinate (int) to a standard letter
+;     
+;***************************************************************
+(= (convert_x_letter $square)
+  (let*
+    (
+      ($x (nth 1 $square))         ; get the int x axis value
+      ($x_ltr (int_to_char $x))    ; convert to char
+      ($y (nth 2 $square))
+    )
+    (if (== (size-atom $square) 2 )
+      ($x_ltr $y)
+      (let*
+        (
+         ($color (nth 3 $square))
+         ($rank (nth 4 $square))
+        ) ;also convert to black or white color for standardization.
+        (if (== $color s) 
+            ($x_ltr $y white $rank)
+            ($x_ltr $y black $rank)
+        )))))
 
 ;***************************************************************
 ; Function:     add-pieces
