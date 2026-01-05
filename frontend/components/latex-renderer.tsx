@@ -166,6 +166,8 @@ export function LatexRenderer({ content }: LatexRendererProps) {
                language={item.language || "text"}
                codeId={codeId}
                cheatContent={item.cheatContent}
+               hideRun={item.hideRun}
+               readOnly={item.hideRun}
       />
     </div>
         );

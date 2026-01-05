@@ -66,6 +66,7 @@ function extractBoardStateSection(state: string): {
 interface CodeEditorProps {
   code: string
   language: string
+  hideRun?: boolean
   readOnly?: boolean
   showLineNumbers?: boolean
   className?: string
@@ -78,6 +79,7 @@ export function CodeEditor({
   code: initialCode,
   codeId,
   language = "metta",
+  hideRun = false,
   readOnly: initialReadOnly = false,
   showLineNumbers = true,
   className = "",
@@ -85,7 +87,7 @@ export function CodeEditor({
   cheatLabel = "Cheat",
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode)
-  const [readOnly, setReadOnly] = useState(initialReadOnly)
+  const [readOnly, setReadOnly] = useState(initialReadOnly || hideRun)
   const [output, setOutput] = useState<string>("")
   const [error, setError] = useState<string | null>(null)
   const [isExecuting, setIsExecuting] = useState(false)
@@ -305,6 +307,7 @@ export function CodeEditor({
 
   // Get the button based on execution state
   const getExecutionButton = () => {
+    if (hideRun) return null
     if (isExecuting) {
       return (
         <Button variant="secondary" size="sm" disabled className="flex items-center gap-2">
@@ -346,7 +349,7 @@ export function CodeEditor({
     <div className={`code-editor-container ${className}`}>
       {/* Code Editor */}
       <Card className="border rounded-md overflow-hidden mb-4">
-        <div className="group flex items-center justify-between bg-muted p-1 border-b">
+        <div className={`group flex items-center justify-between bg-muted p-1 ${hideRun ? "" : "border-b"}`}>
           <div className="flex items-center gap-2">
             <Badge variant="outline">MeTTa</Badge>
             {highlighterLoading && (
@@ -360,6 +363,7 @@ export function CodeEditor({
               </Badge>
             )}
           </div>
+          {!hideRun && (
           <div className="flex items-center gap-1">
             <TooltipProvider>
               <Tooltip>
@@ -425,6 +429,7 @@ export function CodeEditor({
               </TooltipProvider>
             )}
           </div>
+          )}
         </div>
 
         <div className="relative">
@@ -461,68 +466,70 @@ export function CodeEditor({
       </Card>
 
       {/* Result Editor */}
-      <Card className={`${hasRun ? "overflow-hidden border rounded-md" : "border-none"}`}>
-        <div className={`group flex items-center justify-between ${hasRun ? "bg-muted border-b p-2" : ""}`}>
-          <div className="flex items-center gap-2">
-            {getExecutionButton()}
-            {(output || error) && <Badge variant={error ? "destructive" : "secondary"}>{error ? "Error" : ""}</Badge>}
-          </div>
-          {(output || error) && (
-            <div className="flex items-center gap-1">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        navigator.clipboard.writeText(getResultContent())
-                        setIsCopied(true)
-                        setTimeout(() => setIsCopied(false), 2000)
-                      }}
-                    >
-                      {isCopied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Copy result</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+      {!hideRun && (
+        <Card className={`${hasRun ? "overflow-hidden border rounded-md" : "border-none"}`}>
+          <div className={`group flex items-center justify-between ${hasRun ? "bg-muted border-b p-2" : ""}`}>
+            <div className="flex items-center gap-2">
+              {getExecutionButton()}
+              {(output || error) && <Badge variant={error ? "destructive" : "secondary"}>{error ? "Error" : ""}</Badge>}
             </div>
-          )}
-        </div>
-
-        <div className="relative">
-          {!hasRun && !isExecuting ? (
-            <div className="flex items-center justify-center p-8 text-muted-foreground"></div>
-          ) : (
-            <textarea
-              ref={resultTextareaRef}
-              value={getResultContent()}
-              readOnly
-              className={`w-full font-mono text-sm p-4 resize-none focus:outline-none cursor-default bg-background ${
-                isExecuting ? "text-gray-500 dark:text-gray-400" : ""
-              }`}
-              style={{
-                lineHeight: "1.5",
-                minHeight: "40px",
-                height: "auto",
-                overflow: "hidden",
-                backgroundColor: error ? "rgba(254, 226, 226, 0.2)" : isExecuting ? "rgba(229, 231, 235, 0.2)" : "",
-              }}
-            />
-          )}
-          {isExecuting && (
-            <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-background bg-opacity-70">
-              <div className="flex flex-col items-center gap-3">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-                <span className="text-sm font-medium">Executing code...</span>
+            {(output || error) && (
+              <div className="flex items-center gap-1">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          navigator.clipboard.writeText(getResultContent())
+                          setIsCopied(true)
+                          setTimeout(() => setIsCopied(false), 2000)
+                        }}
+                      >
+                        {isCopied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Copy result</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-            </div>
-          )}
-        </div>
-      </Card>
+            )}
+          </div>
+
+          <div className="relative">
+            {!hasRun && !isExecuting ? (
+              <div className="flex items-center justify-center p-8 text-muted-foreground"></div>
+            ) : (
+              <textarea
+                ref={resultTextareaRef}
+                value={getResultContent()}
+                readOnly
+                className={`w-full font-mono text-sm p-4 resize-none focus:outline-none cursor-default bg-background ${
+                  isExecuting ? "text-gray-500 dark:text-gray-400" : ""
+                }`}
+                style={{
+                  lineHeight: "1.5",
+                  minHeight: "40px",
+                  height: "auto",
+                  overflow: "hidden",
+                  backgroundColor: error ? "rgba(254, 226, 226, 0.2)" : isExecuting ? "rgba(229, 231, 235, 0.2)" : "",
+                }}
+              />
+            )}
+            {isExecuting && (
+              <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-background bg-opacity-70">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                  <span className="text-sm font-medium">Executing code...</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
     </div>
   )
 }

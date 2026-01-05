@@ -53,7 +53,7 @@ rook, knight, bishop, queen, king, and pawn respectively.
 The \textbf{nth} function is used constantly in the program to extract piece details. 
 
 \begin{verbatim}
-    
+; HIDE-RUN    
 ;***************************************************************
 ; Function:     nth
 ; Description:  Returns the N-th element from a list (1-based index).
@@ -97,6 +97,12 @@ The \textbf{nth} function is used constantly in the program to extract piece det
         0
         (+ (car-atom $integer_list) (addit_list (cdr-atom $integer_list)))))
 
+\end{verbatim}
+
+\begin{verbatim}
+; reset chess game to initial state
+!(S)
+
 ; find x axis value for this silver pawn located in square (2, 2)
 !(nth 1 (2 2 s p))   
 
@@ -105,7 +111,6 @@ The \textbf{nth} function is used constantly in the program to extract piece det
 
 ; add up a list of numbers
 !(addit_list (4 7 1 20))
-
 \end{verbatim}
 
 Just a reminder that if you seem to be getting far too many results, especially of the same value, it is because whenever you click "Run" to execute the code box MeTTa will add the functions inside the box to

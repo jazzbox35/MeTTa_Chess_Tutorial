@@ -17,7 +17,7 @@ export type LatexContent =
   | { type: "heading"; level: number; content: string }
   | { type: "paragraph"; content: string }
   | { type: "math"; content: string }
-  | { type: "code"; language: string; content: string; cheatContent?: string }
+  | { type: "code"; language: string; content: string; cheatContent?: string; hideRun?: boolean }
   | { type: "list"; ordered: boolean; items: ListItem[] }
   | { type: "bibliography"; items: BibliographyItem[] }
   | { type: "pseudocode"; content: string };
@@ -269,6 +269,7 @@ function extractCodeContent(content: string, result: LatexContent[]): void {
   let codeContent = "";
   let language = "text";
   let cheatContent = "";
+  let hideRun = false;
 
   if (content.includes("\\begin{verbatim}")) {
     const match = content.match(
@@ -307,6 +308,10 @@ function extractCodeContent(content: string, result: LatexContent[]): void {
           : cheatMatch[1];
         continue;
       }
+      if (line.toUpperCase().includes("HIDE-RUN")) {
+        hideRun = true;
+        continue;
+      }
       codeLines.push(line);
     }
 
@@ -315,6 +320,7 @@ function extractCodeContent(content: string, result: LatexContent[]): void {
       language,
       content: codeLines.join("\n"),
       cheatContent: cheatContent || undefined,
+      hideRun: hideRun || undefined,
     });
   }
 }
