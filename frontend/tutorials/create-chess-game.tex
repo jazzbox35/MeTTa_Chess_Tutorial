@@ -201,18 +201,6 @@ by removing and adding an atom of the form "(game-state -value-)".
 
 \end{verbatim}
 
-\begin{verbatim}
-!(S) ;reset for demo
-
-; in this example query, we look up game-state, remove it, then add a new game state.
-; progn works nicely for running a sequence of expressions.
-; If you examine atomspace after running this command you should see (game-state started).
-!(match &self (game-state $state) 
-    (progn 
-        (remove-atom &self (game-state $state))
-        (add-atom &self (game-state started))))
-
-\end{verbatim}
 
 \subsubsection{Chess Related Functions}
 
@@ -230,7 +218,7 @@ The reason the longer "board-state" list of 64 elements representing all squares
 
 The following functions are used for the input of the 64-element board list and output of temporary 
 atomic "square" (as above) atoms for all chess pieces. The deep searching in the program uses these 
-atomic "square" atoms for speed.
+atomic "square" atoms for speed. There are also functions for small atom lists used for game state handling and scoring moves.
 
 \begin{verbatim}
 ; HIDE-RUN
@@ -339,12 +327,12 @@ atomic "square" atoms for speed.
 \end{verbatim}
 
 
-Example to add individual square atoms to atomspace:
+\textbf{Example to add individual square atoms to atomspace}
 
 \begin{verbatim}
 !(S) ;reset for demo
 
-; Here we call add-pieces to create individual square atoms for each piece. Display atomspace after running this command and you should see individual atoms of the form (square x y color piece)
+; Here we call add-pieces to create individual square atoms for each piece. Display atomspace after running this command and you should see individual atoms of the form (square x y ...)
 !(add-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
                         (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
                         (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
@@ -356,12 +344,27 @@ Example to add individual square atoms to atomspace:
   )
 \end{verbatim}
 
+\textbf{Remove the individual square atoms in atomspace}
+
+\begin{verbatim}
+; a call to (delete-pieces) removes all the atoms of the form (square x y ...) just added by add-pieces in the example above.
+
+!(delete-pieces)
+\end{verbatim}
+
+\begin{verbatim}
+; a call to (change-game-state) with argument 'started' wipes out all prior states and resets.
+; Display atomspace after running this and you will see (game-state started) and other game states removed.
+
+!(change-game-state started)
+\end{verbatim}
+
 \subsubsection{Putting It All Together}
 
 
 
 \begin{verbatim}
-(end)
+; ok
 \end{verbatim}
 
 Summary
