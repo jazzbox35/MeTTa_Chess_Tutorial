@@ -13,11 +13,21 @@
 
 \section{How to Create a Simple Chess Game}
 
-Now armed with a few MeTTa constructs, we'll jump into practical MeTTa software development. 
+Now armed with a few MeTTa constructs, we'll examine practical MeTTa software development. 
+
+\subsection{Reset Atomspace to Default Greedy Chess Program}
+
+For this tutorial section we will be using the default MeTTa greedy chess program. To use the default chess program \textbf{please click "Reset Atomspace" if enabled (not greyed-out) and then click "Play Chess".} If "Reset Atomspace" is greyed-out, just click "Play Chess". If you are taken to the chessboard tab, return to this tab. 
+
+In general, if you see unexpected results, simply clicking "Reset Atomspace" and then "Play Chess" will reset atomspace to the default program.
+
+\subsection{Backend MeTTa server}
 
 We will be using a backend MeTTa server running in the cloud. Gameplay is handled through your browser which sends only two commands to the backend MeTTa server: M and S which handle piece (M)oving and (S)tart/reset respectively. These commands are defined in the "Command handler functions for gameplay" section below.
 
-Note that we won't be dynamically redefining functions, although it's possible in MeTTa. To create our chess program, we need to define the following:
+\subsection{Program Components}
+
+Note that we won't be dynamically redefining functions, although it's possible in MeTTa. For our chess program, the following categories are defined:
 
 \begin{itemize}
   \item \texttt{Utility functions}
@@ -28,13 +38,7 @@ Note that we won't be dynamically redefining functions, although it's possible i
 
 The chess program is stored in atomspace using your browser. 
 
-If at any time you wish to reset atomspace to the default MeTTa chess program just click "Reset Atomspace" and then click "Play Chess". If "Reset Atomspace" is greyed-out, there is no need to click.
-
-In general, if you see unexpected results or an error, try clicking "Reset Atomspace" and proceeding with examples. 
-
-Please click "Reset Atomspace"  (if enabled) now to start with a clean slate.
-
-\subsection{Utility Functions}
+\subsubsection{Utility Functions}
 
 First we need to define a few general functions to be used by the whole program.
 
@@ -113,14 +117,11 @@ The \textbf{nth} function is used constantly in the program to extract piece det
 !(addit_list (4 7 1 20))
 \end{verbatim}
 
-Just a reminder that if you seem to be getting far too many results, especially of the same value, it is because whenever you click "Run" to execute the code box MeTTa will add the functions inside the box to
-atomspace. Two versions of \textbf{nth} will give you multiple results. All you need to do is click "Reset Atomspace" regularly to avoid this problem. 
-
 Our next function \textbf{int_to_char} is a simple case statement to determine the x-axis letter that 
 corresponds to the numeric Cartesian x value. The program returns conventional letters for the chess x-axis.
 
 \begin{verbatim}
-   
+; HIDE-RUN    
 ;***************************************************************
 ; Function:     int_to_char
 ; Description:  Converts an integer 1..8 to the corresponding incremental letter.
@@ -143,16 +144,23 @@ corresponds to the numeric Cartesian x value. The program returns conventional l
         ($_ ?) ; fallback for invalid input
         )))
 
-;example look up        
+\end{verbatim}
+
+\begin{verbatim}
+; initialize program
+!(S)
+
+;example int_to_char call        
 !(int_to_char 5)
 \end{verbatim}
 
-\subsection{Declaring Constants and Initialization for the Run}
+\subsubsection{Declaring Constants and Initialization for the Run}
 
 An easy way to define constants is just by coding them. These can be looked up in the \textbf{&self} 
 space using \textbf{match}.
 
 \begin{verbatim}
+;HIDE-RUN
 ;*******************************************************
 ; Constants 
 ;*******************************************************
@@ -171,6 +179,11 @@ space using \textbf{match}.
 (rank n) 
 (rank p) 
 
+\end{verbatim}
+
+\begin{verbatim}
+!(S) ;reset for demo
+
 ;example to return all ranks in a list. You get all ranks because MeTTa insists on giving all the results!
 !(collapse (match &self (rank $rank) $rank))
 \end{verbatim}
@@ -179,15 +192,21 @@ The following expression adds an atom for game state. It's not a constant since 
 by removing and adding an atom of the form "(game-state -value-)".
 
 \begin{verbatim}
-
+; HIDE-RUN
 ;*******************************************************
 ; Declare initializing game state
 ;*******************************************************
 
 (game-state initializing)
 
+\end{verbatim}
+
+\begin{verbatim}
+!(S) ;reset for demo
+
 ; in this example query, we look up game-state, remove it, then add a new game state.
 ; progn works nicely for running a sequence of expressions.
+; If you examine atomspace after running this command you should see (game-state started).
 !(match &self (game-state $state) 
     (progn 
         (remove-atom &self (game-state $state))
@@ -195,28 +214,26 @@ by removing and adding an atom of the form "(game-state -value-)".
 
 \end{verbatim}
 
-\subsection{Chess Related Functions}
+\subsubsection{Chess Related Functions}
 
-Now would be a good time to click "Reset Atomspace".
-
-The program persists two major data structures between moves. One is the chessboard, the second game state:
+The program persists two major data structures between moves. One is the chessboard state, the second game state:
 
 1) \textbf{(board-state (  (1 1 s r) (1 2 s n).... (4 4).... (1 8 g r)... ))} with 64 sublists
 
 2) \textbf{(game-state -value-)}
 
-The "board-state" list is not used as the data structure for searching: when the AI is experimenting with possible next moves, small standalone atoms in atomspace are created for each square of this form:
+The "board-state" list is not used as the data structure for searching. Instead, when the AI is experimenting with possible next moves, small standalone atoms in atomspace are created for each square of this form:
 
 \textbf{(square x y color rank) and (square x y)} to denote both occupied and unoccupied squares.
 
-The reason the longer "board-state" list of 64 elements representing all squares on the chessboard is not used for deep searches is because \textbf{METTA IS MUCH FASTER LOOKING UP INDIVIDUAL ATOMS THAN CHUGGING SEQUENTIALLY THROUGH LISTS.} A defining feature of MeTTa is random access in atomspace, not LISP-ish tail recursion search.
+The reason the longer "board-state" list of 64 elements representing all squares on the chessboard is \textbf{not} used for deep searches is because \textbf{METTA IS FASTER LOOKING UP INDIVIDUAL ATOMS THAN CHUGGING SEQUENTIALLY THROUGH LISTS.} A defining feature of MeTTa is random access in atomspace, not LISP-ish tail recursion search.
 
 The following functions are used for the input of the 64-element board list and output of temporary 
 atomic "square" (as above) atoms for all chess pieces. The deep searching in the program uses these 
 atomic "square" atoms for speed.
 
 \begin{verbatim}
-
+; HIDE-RUN
 ;***************************************************************
 ; Function:     add-pieces
 ; Description:  Converts a board representation into atomspace facts.
@@ -321,11 +338,13 @@ atomic "square" atoms for speed.
 
 \end{verbatim}
 
-Example to add individual square atoms to atomspace 
+
+Example to add individual square atoms to atomspace:
 
 \begin{verbatim}
+!(S) ;reset for demo
 
-; Here we call add-pieces to create individual square atoms for each piece. Display atomspace after running.
+; Here we call add-pieces to create individual square atoms for each piece. Display atomspace after running this command and you should see individual atoms of the form (square x y color piece)
 !(add-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
                         (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
                         (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
@@ -337,7 +356,7 @@ Example to add individual square atoms to atomspace
   )
 \end{verbatim}
 
-  \subsection{Putting It All Together}
+\subsubsection{Putting It All Together}
 
 
 
