@@ -403,8 +403,71 @@ friend the \textbf{collapse} encircles the match statement. The effect of this c
 
 \end{verbatim}
 
+The following function \textbf{xy_box} inputs the piece color (gold for AI, silver for player) and rank, and outputs coordinates for the location of all pieces that match. The first version is really all you need in MeTTa. The second version is what happens if you decide to loop through lists. 
+Invoke \textbf{xy_box} inside a collapse. If you see the collapse construct just think to yourself "give me the results and don't come back!" 
+
+\begin{verbatim}
+; HIDE-RUN
+;***********************************************************************
+; Function:    xy_box
+; Description: Find the coordinates of a piece on the board.
+; Input:       A piece descriptor in the form: (color rank)
+; Output:      Coordinates (x y) where the piece is located
+;***********************************************************************
+(= (xy_box ($PieceColor $PieceRank))
+       (match &self (square $x $y $PieceColor $PieceRank) ($x $y))) 
+
+;***********************************************************************
+; obsolete comparison versions...
+;
+; (xy_box_recursive)
+;     1. Searches the board for a square containing the specified piece.
+;     2. Returns the x/y coordinates of the square if a match is found.
+;
+;***********************************************************************
+(= (xy_box_recursive ($PieceColor $PieceRank) $Board)
+  (let*
+    (
+    ; assign variables for the next piece
+    ($next_square (car-atom $Board)  )
+    ($next_x (nth 1 $next_square) )
+    ($next_y (nth 2 $next_square) )
+    )
+    ; then examine next square
+    (if (== (size-atom $next_square) 2) 
+      ; empty square, skip
+      (xy_box_recursive ($PieceColor $PieceRank) (cdr-atom $Board))
+      ; else check this piece
+      (let* (
+            ($next_color (nth 3 $next_square) )
+            ($next_rank  (nth 4 $next_square) )
+            )
+            (if
+              (and (== $next_color $PieceColor)
+                   (== $next_rank $PieceRank))
+                ; return x and y of the found piece
+                ($next_x $next_y)
+                ; else keep checking the board
+                (xy_box_recursive ($PieceColor $PieceRank) (cdr-atom $Board)))))))
+\end{verbatim}
 
 
+\begin{verbatim}
+!(S) ;reset for demo
+
+!(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
+                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                        (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
+                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+
+!(collapse (xy_box (g b)))
+
+
+\end{verbatim}
 \subsubsection{Putting It All Together}
 
 
