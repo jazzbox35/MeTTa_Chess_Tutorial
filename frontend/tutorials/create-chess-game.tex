@@ -363,7 +363,7 @@ construct is that there is a lot less LISP-ish tail recursion that is invariably
 
 In the following function, (lots_of_pawns_in_home_row), there is a \textbf{match} construct used
 inside the second argument to find all AI gold pawns (designated with a 'g') in row 7, the AI home row for pawns. Notice that our
-friend the \textbf{collapse} encircles the match statement. The effect of this construct is "give me all these pawns and don't return here for more execution later." The result of the second argument, a list of 'square' atoms of the form (square x y g p) is assigned to let's variable. Then \textbf{size-atom} returns the length of the list and a Boolean check returns True or False. Again, we don't have to loop through a list searching -- we just use the formula of a \textbf{match} working on atomspace followed by a \textbf{collapse.} 
+friend the \textbf{collapse} encircles the match statement. The effect of this construct is "give me all these pawns and don't return here for more execution later." The result of the second argument, a list of 'square' atoms of the form (square x 7 g p) is assigned to let's variable. Then \textbf{size-atom} returns the length of the list and a boolean check returns true or false. Again, we don't have to loop through a list searching -- we just use the formula of a \textbf{match} working on atomspace followed by a \textbf{collapse.} 
 
 \begin{verbatim}
 ; HIDE-RUN
