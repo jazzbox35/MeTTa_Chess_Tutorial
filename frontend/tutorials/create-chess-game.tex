@@ -361,6 +361,49 @@ construct is that there is a lot less LISP-ish tail recursion that is invariably
 
 \end{verbatim}
 
+In the following function, (lots_of_pawns_in_home_row), there is a \textbf{match} construct used
+inside the second argument to find all AI gold pawns (designated with a 'g') in row 7, the AI home row for pawns. Notice that our
+friend the \textbf{collapse} encircles the match statement. The effect of this construct is "give me all these pawns and don't return here for more execution later." The result of the second argument, a list of 'square' atoms of the form (square x y g p) is assigned to let's variable. Then \textbf{size-atom} returns the length of the list and a Boolean check returns True or False. Again, we don't have to loop through a list searching -- we just use the formula of a \textbf{match} working on atomspace followed by a \textbf{collapse.} 
+
+\begin{verbatim}
+; HIDE-RUN
+;***************************************************************
+; Function:     lots_of_pawns_in_home_row
+; Description:  Checks whether more than x AI (gold) pawns are still on row 7.
+;               Used to influence early-game move strategy.
+;
+; Input:        None
+;
+; Output:       True if more than x (see below) pawns remain on row 7 (initial position);
+;               otherwise False.
+;***************************************************************
+(= (lots_of_pawns_in_home_row)
+   (let $pawns_at_home (collapse (match &self (square $x 7 g p) (square $x $y $s $p)))
+        (if (> (size-atom $pawns_at_home) 6) ; <-- set here
+          True
+          False)))
+\end{verbatim}
+
+\begin{verbatim}
+
+; We intialize the program for starting board state. Then a call to search the 'square' atoms will reveal more than 6 in the AI's starting row of pawns. If you take the "g" and "p" out of a few of the pawns designated in row 7 the function will return false.
+
+!(S) ;reset for demo
+
+!(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
+                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                        (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
+                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+
+!(lots_of_pawns_in_home_row)
+
+\end{verbatim}
+
+
 
 \subsubsection{Putting It All Together}
 
