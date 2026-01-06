@@ -490,6 +490,7 @@
 ; Output:       Console output displaying the intro text and board layout.
 ;***************************************************************
 (= (welcome)  (welcome!))
+
 ;***************************************************************
 ; Function:     identify_piece
 ; Description:  Converts a board square's full data (e.g. `(2 1 s n)`)
@@ -567,7 +568,7 @@
 ;
 ; Output:       Formatted string printed to console showing the board with chess symbols.
 ;***************************************************************
-(= (display_board $board) (println OK))
+(= (display_board $board) $board)
   
 ;***************************************************************
 ; Function:     display_board_text
