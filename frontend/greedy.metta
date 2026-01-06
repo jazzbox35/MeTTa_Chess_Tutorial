@@ -618,7 +618,7 @@
 ;
 ; Example:      Input "e2e4" ⇒ returns ((5 2) (5 4))
 ;***************************************************************
-(= (prompt-for-move) (OK))
+(= (prompt-for-move) disabled)
   
 ;***************************************************************
 ; Function:     decide_greedy_move
