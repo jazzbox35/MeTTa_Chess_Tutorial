@@ -559,7 +559,7 @@ The "clear_route" functions in the chess program are a good exercise in MeTTa's 
 ; test if king can move up one square
 !(clear_route (4 1 s k) (4 2))
 
-; test if king can move diagonally (no)
+; test if king can move diagonally a few squares like a bishop (no)
 !(clear_route (4 1 s k) (6 3))
 
 \end{verbatim}
@@ -584,7 +584,7 @@ Important to note: some of the "clear_route" functions use the above "square" at
 
 !(S) ;reset for demo
 
-; reset the "square" small atoms with a board mock up so that queen can move vertically like a rook but is blocked for a bishop type diagonal move. The board mock up is the starting board with a pawn that moved from (4 2) to (4 4) allowing a vertical path for the queen.
+; reset the "square" small atoms with a board mock up so that queen can move orthogonally like a rook but is blocked by a pawn for a bishop type diagonal move. The board mock up is the starting board with a pawn that moved from (4 2) to (4 4) allowing a straight path for the queen.
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
                         (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
@@ -595,7 +595,7 @@ Important to note: some of the "clear_route" functions use the above "square" at
                         (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
                         (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
 
-; test if queen can move vertically
+; test if queen can move orthogonally
 !(clear_route (4 1 s q) (4 2))
 
 ; test if queen can move diagonally -- no since there is a pawn in (5 2) so no clear/valid path
