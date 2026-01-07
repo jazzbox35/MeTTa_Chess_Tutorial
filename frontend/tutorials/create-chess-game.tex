@@ -369,7 +369,7 @@ After running this atomspace should show (game-state checkmate).
 
 In the following function, "lots_of_pawns_in_home_row", there is a \textbf{match} construct used
 inside the second argument of \textbf{let} to find all AI gold pawns (designated with a 'g') in row 7, the AI home row for pawns. Notice that our
-friend the \textbf{collapse} encircles the match statement, as if saying "give me all the gold pawns in row 7 and don't return here for more execution later." The result of the second argument, a list of "square" atoms of the form (square x 7 g p) is assigned to the "pawns_at_home" variable. Then \textbf{size-atom} returns the length of the list and a boolean check returns true or false. Again, we don't have to loop through a list searching for particular squares -- we just use the formula of a \textbf{match} working on atomspace within an enclosing \textbf{collapse}. 
+friend the \textbf{collapse} encircles the match statement, as if saying "give me all the gold pawns in row 7 and don't return here for more execution later." The result of the second argument, a list of "square" atoms of the form (square x 7 g p) is assigned to the "pawns_at_home" variable. Then \textbf{size-atom} returns the length of the list and a check returns true or false. Again, we don't have to loop through a list searching for particular squares -- we just use the formula of a \textbf{match} working on atomspace within an enclosing \textbf{collapse}. 
 
 
 \begin{verbatim}
@@ -523,7 +523,7 @@ In MeTTa \textbf{we can define a single function as many times in as many variat
 
 Since the king can only move one square at a time in any direction, the "clear_route" definition for the king is relatively straightforward. A "k" is hard-coded in the first input parameter list along with variables for the x-coordinate and y-coordinate, so this version of the "clear_route" function will only be invoked if indeed the starting square is occupied by a king. 
 
-The "clear_route" functions in the chess program are a good exercise in MeTTa's functional style boolean logic with the comparison operators appearing first. A code editor with colored and balanced parenthesis helps a lot to keep nesting straight.
+The "clear_route" functions in the chess program are a good exercise in MeTTa's functional style logic with the comparison operators appearing first. A code editor with colored and balanced parenthesis helps a lot to keep nesting straight.
 
 \textbf{let*} firstly creates and assigns variables for the coordinates of the destination square. The second argument of \textbf{let*} in this case is an \textbf{if} construct, and if true (ie., the king is moving one square only any direction), the \textbf{if} construct -- and thus the \textbf{let*} -- returns the symbol True, else returns the symbol False.
 
