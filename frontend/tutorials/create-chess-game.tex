@@ -411,7 +411,7 @@ friend the \textbf{collapse} encircles the match statement, as if saying "give m
 \end{verbatim}
 
 
-The following function \textbf{xy_box} is just the best (and final) illustration of the difference between using match with collapse versus ponderous old school tail recursion search. The first version inputs the piece color (gold for AI, silver for player) and rank, and outputs coordinates for the location of all pieces that match. The first version is really all you need in MeTTa. 
+The following function \textbf{xy_box} function contrast is another illustration of the difference between using match with collapse versus ponderous old school tail recursion search. The first version inputs the piece color (gold for AI, silver for player) and rank, and outputs coordinates for the location of all pieces that match. The first version is really all you need in MeTTa. 
 
 The second version displays the complexities of searching through lists with tail recursion.
 
@@ -489,10 +489,123 @@ The second version displays the complexities of searching through lists with tai
       ))
 
 \end{verbatim}
+
+\textbf{Chess Move Validation}
+
+We now turn to a single function named "clear_route", the program's core chess piece move validator. We'll take a look at definitions for just the king and queen below.
+
+\begin{verbatim}
+; -HIDE-RUN
+
+; Function:    clear_route
+; Description: Validates whether a specific chess piece can legally move from a 
+;              source square to a destination square, based on the rules of 
+;              movement for each piece type. This function ensures that:
+;              - The move adheres to each piece's geometry (e.g., bishop diagonals, rook lines).
+;              - All intermediate squares (for sliding pieces) are unoccupied.
+;              - Pawn-specific rules (direction, captures, initial two-step) are honored.
+;
+; Input:       Two expressions:
+;              1. A piece located at a specific coordinate in the form: (x y color rank)
+;              2. A destination square in the form: (x y)
+;
+; Output:      Boolean (True if the route is legal and clear; otherwise False)
+;
+; Notes:       
+;   * Before calling this function, ensure that the source and destination are distinct,
+;     and that if the destination is occupied, it contains an opponent’s piece.
+;   * This function handles routing logic only. Occupancy checks must be performed externally.
+;   * Supports: king, queen, rook, bishop, knight, pawn (both silver and gold variants).
+
+\end{verbatim}
+
+In MeTTa \textbf{we can define a single function as many times in as many variations as needed}. The simple strategy is to define one version of the "clear_route" function specifically for each piece type. A list composed of the starting square x-coordinate, y-coordinate, piece color, and piece type is the first argument. The second argument is the desired destination (x y) square, whether occupied or unoccupied. If occupied, prior to calling "clear_route" we must ensure the destination is occupied by the opponent. If the move is valid return True. If an invalid move, return False. 
+
+Since the king can only move one square at a time in any direction, the "clear_route" definition for the king is relatively straightforward. A "k" is hard-coded in the first input parameter list along with variables for the x-coordinate and y-coordinate, so this version of the "clear_route" function will only be invoked if indeed the starting square is occupied by a king. 
+
+The "clear_route" functions in the chess program are a good exercise in MeTTa's functional style boolean logic with the comparison operators appearing first. A code editor with colored and balanced parenthesis helps a lot to keep nesting straight.
+
+\textbf{let*} firstly creates and assigns variables for the coordinates of the destination square. The second argument of \textbf{let*} in this case is an \textbf{if} construct, and if true (ie., the king is moving one square only any direction), the \textbf{if} construct -- and thus the \textbf{let*} -- returns the symbol True, else returns the symbol False.
+
+\begin{verbatim}
+; HIDE-RUN
+; King: Moves one square in any direction.
+(= (clear_route ($X1 $Y1 $Color k) $destination)
+      (let*  (
+      ($X2 (nth 1 $destination) )  
+      ($Y2 (nth 2 $destination) )          
+             )
+      (if (and 
+         (or      
+          (== $X2 $X1)
+          (or 
+          (== $X2 (- $X1 1))
+          (== $X2 (+ $X1 1))
+          )) 
+         (or
+          (== $Y2 $Y1)
+          (or 
+          (== $Y2 (- $Y1 1))
+          (== $Y2 (+ $Y1 1))
+          )) 
+          )
+        True
+        False)))
+
+\end{verbatim}
+
+\begin{verbatim}
+
+; test if king can move up one square
+!(clear_route (4 1 s k) (4 2))
+
+; test if king can move diagonally (no)
+!(clear_route (4 1 s k) (6 3))
+
+\end{verbatim}
+
+The "clear_route" function for the queen is defined in terms of being able to move like both the rook or bishop, as per the rules of chess.
+
+Important to note: some of the "clear_route" functions use the above "square" atoms for speed, as described, so prior to calling "clear_route" the "reset-pieces" function must be called (it happens that the "clear_route" version for the king above does not use the "square" atoms).
+
+\begin{verbatim}
+; HIDE-RUN
+; Queen:  Either rook or bishop move works.
+(= (clear_route ($X1 $Y1 $Color q) $destination)
+      (if (or (clear_route ($X1 $Y1 $Color b) $destination)
+               (clear_route ($X1 $Y1 $Color r) $destination))
+           True
+           False))
+
+
+\end{verbatim}
+
+\begin{verbatim}
+
+!(S) ;reset for demo
+
+; reset the "square" small atoms with a board mock up so that queen can move vertically like a rook but is blocked for a bishop type diagonal move. The board mock up is the starting board with a pawn that moved from (4 2) to (4 4) allowing a vertical path for the queen.
+
+!(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
+                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                        (1 4) (2 4) (3 4) (4 4 s p) (5 4) (6 4) (7 4) (8 4) 
+                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+
+; test if queen can move vertically
+!(clear_route (4 1 s q) (4 2))
+
+; test if queen can move diagonally -- no since there is a pawn in (5 2) so no clear/valid path
+!(clear_route (4 1 s q) (8 5))
+
+\end{verbatim}
+
+
+
 \subsubsection{Putting It All Together}
-
-
-Clear Route
 
 \begin{verbatim}
 ; ok
