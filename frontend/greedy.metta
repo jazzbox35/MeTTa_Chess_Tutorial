@@ -626,8 +626,8 @@
 ;               Attempts multiple strategies:
 ;               1) Checkmate the human player
 ;               2) Capture high-value enemy piece
-;               3) Threaten a human piece position
-;               4) Defend a threatened AI piece
+;               3) Defend a threatened AI piece
+;               4) Threaten a human piece position
 ;               5) Make a legal random move
 ;               6) If everything else fails, make a desperation type of move
 ;
@@ -640,9 +640,8 @@
     ;     1) succeed and return the move, or 
     ;     2) fail and return (empty)
     
+      ; Attempt checkmate first
       (let* (
-        ;($msgd (println "Greedy Chess deliberating... please wait..."));
-        ($msg1 (println "looking for checkmate..."))
         ($checkmate (collapse 
                       (if (== (lots_of_pawns_in_home_row) True)
                           ; get pieces out at beginning of game
@@ -653,21 +652,21 @@
         (if (not (==  $checkmate ()))
           (car-atom $checkmate)
           
-          (let* (
-        ($msg2 (println "looking for capture..."))
+      ; attempt capture high value open piece
+      (let* (
         ($highest (collapse (takehighestopen_scored))))
         (if (not (==  $highest ()))
           (car-atom $highest)
 
-          (let* (
-        ($msg3 (println "looking to play defense..."))
+      ; play defensively by moving pieces out of path of human player
+      (let* (
         ($position (collapse (playdefense)))
           )
         (if (not (==  $position ()))
           (car-atom $position)
 
-          (let* (
-        ($msg4 (println "looking for threat position..."))
+      ; try to threaten a piece
+      (let* (
         ($random_threat (random-int  &rng 1 2)) ; get a random number 1 through 2
         ($threaten_position 
                 (if (> $random_threat 1)     
@@ -679,21 +678,21 @@
         (if (not (==  $threaten_position ()))
           (car-atom $threaten_position)
 
-        (let* (
-        ($msg5 (println "looking for random move..."))
+      ; try a random move
+      (let* (
         ($random_move (collapse (random_move_empty_sq)))
               )
         (if (not (==  $random_move ())) 
           (car-atom $random_move)          
 
-        (let* (
-        ($msg6 (println "looking for desperation move..."))
+      ; try a completely desperate move if that is all that's available
+      (let* (
         ($random_moveD (collapse (random_move_empty_sq_desperate))))
         (if (not (==  $random_moveD ())) 
           (car-atom $random_moveD)  
 
-          ; if everything fails including desperation move, return empty list
-          ()
+      ; if everything fails including desperation move, return empty list
+      ()
           
           )))))))))))))
 
