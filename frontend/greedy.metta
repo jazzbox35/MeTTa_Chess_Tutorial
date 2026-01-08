@@ -685,7 +685,7 @@
         (if (not (==  $random_move ())) 
           (car-atom $random_move)          
 
-      ; try a completely desperate move if that is all that's available
+      ; try a completely desperate move if that is all that's available (facing checkmate)
       (let* (
         ($random_moveD (collapse (random_move_empty_sq_desperate))))
         (if (not (==  $random_moveD ())) 
