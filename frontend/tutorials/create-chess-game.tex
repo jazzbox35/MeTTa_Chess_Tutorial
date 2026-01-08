@@ -603,6 +603,135 @@ Important to note: some of the "clear_route" functions use the above "square" at
 
 \end{verbatim}
 
+\textbf{Core Chess Piece Move Decision Function}
+
+Below is the "decide_greedy_move" function, the main decision making function. The structure is a bit unusual but you can see intuitively that the AI will try the most rewarding strategies first, starting with checkmate. 
+
+The entire decision process is contained within a single \textbf{let*} statement. If a strategy succeeds, the move is immediately returned, else another \textbf{let*} tries the next strategy in the \textbf{else} path of an \textbf{if}. (Indenting purists may argue that each strategy should be indented but it seems clear this way.)
+
+Each strategy code block calls its respective strategy function inside a \textbf{collapse} to ensure that all relevant results are returned and no further action taken by the strategy function. If the result is an empty list "()" that is deemed as a failure of the strategy. 
+
+Again, the "square" atoms, as discussed above, are used for envisioning potential moves.
+
+If all attempts fail, the AI is in a checkmate and the function simply gives up and returns "()".
+
+\begin{verbatim}
+; HIDE-RUN
+;***************************************************************
+; Function:     decide_greedy_move
+; Description:  Core decision-making logic for the AI's move.
+;               Attempts multiple strategies:
+;               1) Checkmate the human player
+;               2) Capture high-value enemy piece
+;               3) Defend a threatened AI piece
+;               4) Threaten a human piece position
+;               5) Make a legal random move
+;               6) If everything else fails, make a desperation type of move
+;
+; Input:        None (relies on current board state via atomspace "square" atoms)
+;
+; Output:       A move of the form ((x1 y1 g rank) (x2 y2)) or () if no move found.
+;***************************************************************
+(= (decide_greedy_move) 
+    ; make sure each move search call can either 
+    ;     1) succeed and return the move, or 
+    ;     2) fail and return (empty)
+    
+      ; Attempt checkmate first
+      (let* (
+        ($checkmate (collapse 
+                      (if (== (lots_of_pawns_in_home_row) True)
+                          ; get pieces out at beginning of game
+                          (empty)
+                          (attemptcheckmate))
+                    ))
+            )
+        (if (not (==  $checkmate ()))
+          (car-atom $checkmate)
+          
+      ; attempt capture high value open piece
+      (let* (
+        ($highest (collapse (takehighestopen_scored))))
+        (if (not (==  $highest ()))
+          (car-atom $highest)
+
+      ; play defensively by moving pieces out of path of human player
+      (let* (
+        ($position (collapse (playdefense)))
+          )
+        (if (not (==  $position ()))
+          (car-atom $position)
+
+      ; try to threaten a piece
+      (let* (
+        ($random_threat (random-int  &rng 1 2)) ; get a random number 1 through 2
+        ($threaten_position 
+                (if (> $random_threat 1)     
+                  (collapse (movetoposition))
+                  ; return empty parens and skip randomly
+                  ()
+                  ))
+                )
+        (if (not (==  $threaten_position ()))
+          (car-atom $threaten_position)
+
+      ; try a random move
+      (let* (
+        ($random_move (collapse (random_move_empty_sq)))
+              )
+        (if (not (==  $random_move ())) 
+          (car-atom $random_move)          
+
+      ; try a completely desperate move if that is all that's available (probably checkmate)
+      (let* (
+        ($random_moveD (collapse (random_move_empty_sq_desperate))))
+        (if (not (==  $random_moveD ())) 
+          (car-atom $random_moveD)  
+
+      ; if everything fails including desperation move, return empty list
+      ()
+          
+          )))))))))))))
+
+\end{verbatim}
+
+\begin{verbatim}
+  
+!(S) ;reset for demo
+
+; in this board mock-up, the silver queen in square (4 4) is covered by a gold rook in square (8 4), so the rook pounces.
+
+!(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8) 
+                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                        (1 4) (2 4) (3 4) (4 4 s q) (5 4) (6 4) (7 4) (8 4 g r) 
+                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+
+!(collapse (decide_greedy_move))
+
+\end{verbatim}
+
+\begin{verbatim}
+  
+!(S) ;reset for demo
+
+; in this board mock-up, the silver queen in square (4 4) is positioned to take a gold bishop in (4 5), so the bishop escapes.
+
+!(reset-pieces ((1 8 g r) (2 8 g n) (3 8) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8) 
+                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                        (1 5) (2 5) (3 5) (4 5 g b) (5 5) (6 5) (7 5) (8 5) 
+                        (1 4) (2 4) (3 4) (4 4 s q) (5 4) (6 4) (7 4) (8 4) 
+                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+
+!(collapse (decide_greedy_move))
+
+\end{verbatim}
 
 
 \subsubsection{Putting It All Together}
