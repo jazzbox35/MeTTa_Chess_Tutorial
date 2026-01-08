@@ -638,7 +638,7 @@
 (= (decide_greedy_move) 
     ; make sure each move search call can either 
     ;     1) succeed and return the move, or 
-    ;     2) fail and return (empty)
+    ;     2) fail and return ()
     
       ; Attempt checkmate first
       (let* (
