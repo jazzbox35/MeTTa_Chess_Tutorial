@@ -605,7 +605,7 @@ Important to note: some of the "clear_route" functions use the above "square" at
 
 \textbf{Core Chess Piece Move Decision Function}
 
-Below is the "decide_greedy_move" function, the main decision making function. The structure is a bit unusual but you can see intuitively that the AI will try the most rewarding strategies first, starting with checkmate. 
+Below is the "decide_greedy_move" function, the main decision making function. The structure is a bit unusual but you can see intuitively that the AI will greedily try the most rewarding strategies first, starting with checkmate. 
 
 The entire decision process is contained within a single \textbf{let*} statement. If a strategy succeeds, the move is immediately returned, else another \textbf{let*} tries the next strategy in the \textbf{else} path of an \textbf{if}. (Indenting purists may argue that each strategy should be indented but it seems clear this way.)
 
