@@ -29,7 +29,7 @@ The chess program is stored in atomspace using your browser (in a format maintai
 
 \subsubsection{Utility Functions}
 
-Our first couple of function examples, used generally throughout the program, are standard LISP-ish looking tail recursion functions. In MeTTa \textbf{car-atom} and \textbf{cdr-atom} (as well as \textbf{cons-atom}) are effectively the same as LISP but with -"atom" appended. If you need a refresher or crash course in these constructs an LLM would help. \textbf{car-atom} gives you the first symbol in a list while \textbf{cdr-atom} the rest of the list, still in parenthesis. The main trick is that you code the end boundary case and the general recursive
+General utility functions are used anywhere throughout the program. These two examples include a standard LISP-ish looking recursion function and a case function. In MeTTa \textbf{car-atom} and \textbf{cdr-atom} (as well as \textbf{cons-atom}) are effectively the same as LISP but with -"atom" appended. If you need a refresher or crash course in these constructs an LLM would help. \textbf{car-atom} gives you the first symbol in a list while \textbf{cdr-atom} the rest of the list, still in parenthesis. The main trick is that you code the end boundary case and the general recursive
 case for items remaining in the list. Fortunately, you do less tail recursion searching in MeTTa than LISP but
 it is still a handy way of looping through a list.
 
@@ -254,13 +254,13 @@ This example, the "add pieces" function, converts each square of our full 8 x 8 
 
 ; Here we call add-pieces to create individual square atoms for each piece. Display atomspace after running this command and you should see individual atoms of the form (square x y ...)
 !(add-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))   
+              (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+              (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+              (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+              (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
+              (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+              (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+              (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))   
   )
 
 ; display occupied squares
@@ -304,13 +304,13 @@ The "reset-pieces" function removes all the small "square" atoms and refreshes a
 
 !(collapse (reset-pieces
             ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4 s p) (5 4) (6 4) (7 4) (8 4) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))))
+             (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+             (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+             (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+             (1 4) (2 4) (3 4) (4 4 s p) (5 4) (6 4) (7 4) (8 4) 
+             (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+             (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+             (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))))
 ; display occupied squares
 !(collapse (match &self (square $x $y $color $piece) (square $x $y $color $piece)))
 
@@ -351,13 +351,13 @@ friend the \textbf{collapse} encircles the match statement, as if saying "give m
 ; We intialize the program for starting board state. Then a call to search the "square" atoms will reveal more than 6 in the AI's starting row of pawns. If you take the "g" and "p" out of a few of the pawns designated in row 7 the function will return false.
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+                (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
+                (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
 
 !(lots_of_pawns_in_home_row)
 
@@ -419,13 +419,13 @@ The second version displays the complexities of searching through lists with tai
 \begin{verbatim}
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+                (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
+                (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
 
 ; look for gold bishops using collapse and match
 !(collapse (xy_box (g b)))
@@ -433,13 +433,13 @@ The second version displays the complexities of searching through lists with tai
 ; look for gold bishops by search through supplied board; this version only finds 1 bishop.
 !(collapse (xy_box_recursive (g b)  
       ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))
+       (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+       (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+       (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+       (1 4) (2 4) (3 4) (4 4) (5 4) (6 4) (7 4) (8 4) 
+       (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+       (1 2 s p) (2 2 s p) (3 2 s p) (4 2 s p) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+       (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))
       ))
 
 \end{verbatim}
@@ -541,13 +541,13 @@ Important to note: some of the "clear_route" functions use the above "square" at
 ; reset the "square" small atoms with a board mock up so that queen can move orthogonally like a rook but is blocked by a pawn for a bishop type diagonal move. The board mock up is the starting board with a pawn that moved from (4 2) to (4 4) allowing a straight path for the queen.
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4 s p) (5 4) (6 4) (7 4) (8 4) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+                (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                (1 4) (2 4) (3 4) (4 4 s p) (5 4) (6 4) (7 4) (8 4) 
+                (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
 
 ; test if queen can move orthogonally
 !(clear_route (4 1 s q) (4 2))
@@ -657,13 +657,13 @@ If all attempts fail, the AI is in a checkmate and the function simply gives up 
 ; in this board mock-up, the silver queen in square (4 4) is covered by a gold rook in square (8 4), so the rook pounces.
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4 s q) (5 4) (6 4) (7 4) (8 4 g r) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+                (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                (1 4) (2 4) (3 4) (4 4 s q) (5 4) (6 4) (7 4) (8 4 g r) 
+                (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                (1 1 s r) (2 1 s n) (3 1 s b) (4 1) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
 
 !(collapse (decide_greedy_move))
 
@@ -674,13 +674,13 @@ If all attempts fail, the AI is in a checkmate and the function simply gives up 
 ; in this board mock-up, the silver queen in square (4 4) is positioned to take a gold bishop in (4 5), so the bishop escapes.
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5 g b) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4 s q) (5 4) (6 4) (7 4) (8 4) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+                (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                (1 5) (2 5) (3 5) (4 5 g b) (5 5) (6 5) (7 5) (8 5) 
+                (1 4) (2 4) (3 4) (4 4 s q) (5 4) (6 4) (7 4) (8 4) 
+                (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                (1 1 s r) (2 1 s n) (3 1 s b) (4 1) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
 
 !(collapse (decide_greedy_move))
 
@@ -775,13 +775,13 @@ This processing is really the true heart of the power of MeTTa: to be able to te
 ; in this board mock-up, the silver queen in square (4 4) is positioned to be threatened by the gold knight in home position (2 8).
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8) 
-                        (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
-                        (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
-                        (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
-                        (1 4) (2 4) (3 4) (4 4 s q) (5 4) (6 4) (7 4) (8 4) 
-                        (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
-                        (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
-                        (1 1 s r) (2 1 s n) (3 1 s b) (4 1) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
+                (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
+                (1 6) (2 6) (3 6) (4 6) (5 6) (6 6) (7 6) (8 6) 
+                (1 5) (2 5) (3 5) (4 5) (5 5) (6 5) (7 5) (8 5) 
+                (1 4) (2 4) (3 4) (4 4 s q) (5 4) (6 4) (7 4) (8 4) 
+                (1 3) (2 3) (3 3) (4 3) (5 3) (6 3) (7 3) (8 3) 
+                (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
+                (1 1 s r) (2 1 s n) (3 1 s b) (4 1) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r)))
 
 !(collapse (movetoposition_match (superpose (q r n b)) (superpose (k q r n b))))
 
