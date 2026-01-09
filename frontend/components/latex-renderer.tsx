@@ -14,14 +14,16 @@ import { PseudocodeRenderer } from "./pseudocode-renderer";
 
 interface LatexRendererProps {
   content: LatexContent[];
+  pageSlug?: string;
 }
 
 
 let globalCodeId = 1; 
 
-export function LatexRenderer({ content }: LatexRendererProps) {
+export function LatexRenderer({ content, pageSlug }: LatexRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
+  const shouldResetWithGreedy = pageSlug === "create-chess-game";
 
   // Initialize MathJax for the entire content
   useEffect(() => {
@@ -84,6 +86,7 @@ export function LatexRenderer({ content }: LatexRendererProps) {
               readOnly={true}
               showLineNumbers={false}
               codeId={globalCodeId++}
+              resetWithGreedyBeforeRun={shouldResetWithGreedy}
             />
           </div>
         )}
@@ -158,18 +161,19 @@ export function LatexRenderer({ content }: LatexRendererProps) {
         );
 
       case "code":
-     const codeId = globalCodeId++; // assign unique ID
-       return (
-         <div key={index}>
-              <CodeEditor
-               code={item?.content ?? ""}
-               language={item.language || "text"}
-               codeId={codeId}
-               cheatContent={item.cheatContent}
-               hideRun={item.hideRun}
-               readOnly={item.hideRun}
-      />
-    </div>
+        const codeId = globalCodeId++; // assign unique ID
+        return (
+          <div key={index}>
+            <CodeEditor
+              code={item?.content ?? ""}
+              language={item.language || "text"}
+              codeId={codeId}
+              cheatContent={item.cheatContent}
+              hideRun={item.hideRun}
+              readOnly={item.hideRun}
+              resetWithGreedyBeforeRun={shouldResetWithGreedy}
+            />
+          </div>
         );
       case "pseudocode":
         return (

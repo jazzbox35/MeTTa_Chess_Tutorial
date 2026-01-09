@@ -102,7 +102,7 @@ export default async function TutorialPage({ params }: Params) {
             
             {/* Tutorial Content */}
             <div className="prose prose-gray dark:prose-invert max-w-none">
-              <LatexRenderer content={filteredContent} />
+              <LatexRenderer content={filteredContent} pageSlug={slug} />
             </div>
 
             {showGreedyDownload && (

@@ -77,8 +77,6 @@ rook, knight, bishop, queen, king, and pawn respectively.
 \end{verbatim}
 
 \begin{verbatim}
-; reset chess game to initial state
-!(S)
 
 ; find x axis value for this silver pawn located in square (3, 2)
 !(nth 1 (3 2 s p))   
@@ -112,7 +110,6 @@ Below is a fairly ordinary recursive function used in the chess program which ch
 
 
 \begin{verbatim}
-!(S)
 
 ; see if there is a gold piece in board square (1 8) 
 !(contains_symbol (1 8) g)
@@ -149,8 +146,6 @@ corresponds to the numeric Cartesian x value. The program returns conventional l
 \end{verbatim}
 
 \begin{verbatim}
-; initialize program
-!(S)
 
 ;example int_to_char call        
 !(int_to_char 5)
@@ -184,7 +179,6 @@ space using \textbf{match}.
 \end{verbatim}
 
 \begin{verbatim}
-!(S) ;reset for demo
 
 ;example to return all ranks in a list. You get all ranks because MeTTa insists on giving all the results!
 !(collapse (match &self (rank $rank) $rank))
@@ -252,7 +246,6 @@ This example, the "add pieces" function, converts each square of our full 8 x 8 
 
 
 \begin{verbatim}
-!(S) ;reset for demo
 
 ; Here we call add-pieces to create individual square atoms for each piece. Display atomspace after running this command and you should see individual atoms of the form (square x y ...)
 !(add-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
@@ -361,8 +354,6 @@ After running this atomspace should show (game-state checkmate).
 
 \begin{verbatim}
 
-!(S) ;reset for demo
-
 !(change-game-state checkmate)
 
 \end{verbatim}
@@ -394,8 +385,6 @@ friend the \textbf{collapse} encircles the match statement, as if saying "give m
 \begin{verbatim}
 
 ; We intialize the program for starting board state. Then a call to search the "square" atoms will reveal more than 6 in the AI's starting row of pawns. If you take the "g" and "p" out of a few of the pawns designated in row 7 the function will return false.
-
-!(S) ;reset for demo
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
                         (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
@@ -462,7 +451,6 @@ The second version displays the complexities of searching through lists with tai
 
 
 \begin{verbatim}
-!(S) ;reset for demo
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
                         (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
@@ -582,8 +570,6 @@ Important to note: some of the "clear_route" functions use the above "square" at
 
 \begin{verbatim}
 
-!(S) ;reset for demo
-
 ; reset the "square" small atoms with a board mock up so that queen can move orthogonally like a rook but is blocked by a pawn for a bishop type diagonal move. The board mock up is the starting board with a pawn that moved from (4 2) to (4 4) allowing a straight path for the queen.
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8 g r) 
@@ -696,8 +682,6 @@ If all attempts fail, the AI is in a checkmate and the function simply gives up 
 \end{verbatim}
 
 \begin{verbatim}
-  
-!(S) ;reset for demo
 
 ; in this board mock-up, the silver queen in square (4 4) is covered by a gold rook in square (8 4), so the rook pounces.
 
@@ -715,8 +699,6 @@ If all attempts fail, the AI is in a checkmate and the function simply gives up 
 \end{verbatim}
 
 \begin{verbatim}
-  
-!(S) ;reset for demo
 
 ; in this board mock-up, the silver queen in square (4 4) is positioned to take a gold bishop in (4 5), so the bishop escapes.
 
@@ -817,8 +799,6 @@ This processing is really the true heart of the power of MeTTa: to be able to te
 \end{verbatim}
 
 \begin{verbatim}
-  
-!(S) ;reset for demo
 
 ; in this board mock-up, the silver queen in square (4 4) is positioned to be threatened. 
 
