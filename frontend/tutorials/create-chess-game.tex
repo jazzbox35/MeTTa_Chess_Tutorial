@@ -17,7 +17,7 @@ Now armed with a few MeTTa constructs, we'll examine practical MeTTa software de
 
 \subsection{Atomspace Will Reset Automatically to the Greedy Chess Program}
 
-Just on this page, "How to Create a Simple Chess Game," whenever you click the "Run" button in a code experiment box the default chess program will re-initialize. This is just to make sure that the examples are consistent. You will notice an extra initialization result included in your code box results. This can be safely ignored.
+On this tutorial section page only, "MeTTa Components for a Simple Chess Game," whenever you click the "Run" button in a code experiment box the default chess program will re-initialize, wiping out your private atomspace and loading the chess program. This is just to make sure that the examples are consistent. You will notice an extra initialization result included in your MeTTa code box results. This can be safely ignored.
 
 \subsection{Backend MeTTa server}
 
@@ -25,22 +25,11 @@ We will be using a backend MeTTa server running in the cloud. Gameplay is handle
 
 \subsection{Program Components}
 
-Note that we won't be dynamically redefining functions, although it's possible in MeTTa. For our chess program, the following categories are defined:
-
-\begin{itemize}
-  \item \texttt{Utility functions}
-  \item \texttt{Constants for use throughout the program's run}
-  \item \texttt{Chess related functions}
-  \item \texttt{Command handler functions for gameplay}
-\end{itemize}
-
-The chess program is stored in atomspace using your browser (in a format maintained by the MeTTa server). We will be covering only the most salient functions in the chess program herein. However, in addition to displaying atomspace by clicking the button above, you can download the full source code by clicking on the "Your Turn to Improve the Game" section and look for the download link. 
+The chess program is stored in atomspace using your browser (in a format maintained by the MeTTa server). We won't review all functions in the game, but rather only the most salient examples in the chess program that illustrate core programming ideas. However, in addition to displaying atomspace by clicking the button above, you can download the full source code by clicking on the "Your Turn to Improve the Game" section and look for the download link. 
 
 \subsubsection{Utility Functions}
 
-First we need to define a few general functions to be used by the whole program.
-
-Our first couple of functions are standard LISP-ish looking tail recursion functions. In MeTTa \textbf{car-atom} and \textbf{cdr-atom} (as well as \textbf{cons-atom}) are effectively the same as LISP but with -"atom" appended. If you need a refresher or crash course in these constructs an LLM would help. \textbf{car-atom} gives you the first symbol in a list while \textbf{cdr-atom} the rest of the list, still in parenthesis. The main trick is that you code the end boundary case and the general recursive
+Our first couple of function examples, used generally throughout the program, are standard LISP-ish looking tail recursion functions. In MeTTa \textbf{car-atom} and \textbf{cdr-atom} (as well as \textbf{cons-atom}) are effectively the same as LISP but with -"atom" appended. If you need a refresher or crash course in these constructs an LLM would help. \textbf{car-atom} gives you the first symbol in a list while \textbf{cdr-atom} the rest of the list, still in parenthesis. The main trick is that you code the end boundary case and the general recursive
 case for items remaining in the list. Fortunately, you do less tail recursion searching in MeTTa than LISP but
 it is still a handy way of looping through a list.
 
@@ -83,41 +72,11 @@ rook, knight, bishop, queen, king, and pawn respectively.
 !(nth 4 (3 2 s p))   
 \end{verbatim}
 
-Below is a fairly ordinary recursive function used in the chess program which checks for a given symbol in a provided list.
-
-\begin{verbatim}
-; HIDE-RUN
-;***************************************************************
-; Function:     contains_symbol
-; Description:  Checks whether a given symbol exists in a list.
-;
-; Input:        $list - A list of atoms (e.g., (a b c d))
-;               $sym  - A symbol to search for in the list
-;
-; Output:       True if $sym is found in $list; otherwise False
-;***************************************************************
-(= (contains_symbol $list $sym) 
-    (if (== $list ())
-        False
-        (if (== (car-atom $list) $sym)
-            True
-            (contains_symbol (cdr-atom $list) $sym))))
-
-\end{verbatim}
-
-
+The next example function, \textbf{int_to_char}, is a simple case statement to determine the x-axis letter that 
+corresponds to the numeric Cartesian x value. The program returns conventional letters for the chess x-axis to be displayed in the browser. Note that we can't use letters within the chess game for move computation -- only standard Cartesian (x y) coordinates are used.
 
 \begin{verbatim}
 
-; see if there is a gold piece in board square (1 8) 
-!(contains_symbol (1 8) g)
-
-\end{verbatim}
-
-Our next function \textbf{int_to_char} is a simple case statement to determine the x-axis letter that 
-corresponds to the numeric Cartesian x value. The program returns conventional letters for the chess x-axis.
-
-\begin{verbatim}
 ; HIDE-RUN    
 ;***************************************************************
 ; Function:     int_to_char
@@ -149,7 +108,7 @@ corresponds to the numeric Cartesian x value. The program returns conventional l
 !(int_to_char 5)
 \end{verbatim}
 
-\subsubsection{Declaring Constants and Initialization for the Run}
+\subsubsection{Constants}
 
 An easy way to define constants is just by coding them. These can be looked up in the \textbf{&self} 
 space using \textbf{match}.
@@ -182,8 +141,9 @@ space using \textbf{match}.
 !(collapse (match &self (rank $rank) $rank))
 \end{verbatim}
 
-The following expression adds an atom for game state. Technically it's not a constant since we will be changing it later
-by removing and adding an atom of the form "(game-state -value-)". So you can basically slip \textbf{de facto global variables} into your program just by declaration with the first symbol acting as the variable name and the second its value. In order to change its value you just remove the entire two symbol atom list and add back to atomspace with a different second symbol value. This is shown further below.
+\subsubsection{Global Variables}
+
+The following expression adds an atom for game state. You can basically slip \textbf{de facto global variables} into your program just by declaration with the first symbol acting as the variable name and the second its value. In order to change its value you just remove the entire two symbol atom list and add back to atomspace with a different second symbol value. This is shown further below.
 
 \begin{verbatim}
 ; HIDE-RUN
@@ -197,7 +157,7 @@ by removing and adding an atom of the form "(game-state -value-)". So you can ba
 \end{verbatim}
 
 
-\subsubsection{Chess Related Functions}
+\subsubsection{Creating Atoms for Fast Manipulation}
 
 The program persists two major data structures between moves. One is the chessboard state, the second game state:
 
@@ -216,6 +176,7 @@ corresponding atomic "square" (as above) atoms for all chess pieces. The deep se
 atomic "square" atoms for random access speed. 
 
 This example, the "add pieces" function, converts each square of our full 8 x 8 chessboard state list into individual atoms for quick lookup. Here we use the \textbf{let*} construct. Note that \textbf{cons-atom} inserts "square" into the individual, atomic square list. The third variable is a dummy variable, unused.
+
 
 \begin{verbatim}
 ; HIDE-RUN
@@ -257,10 +218,10 @@ This example, the "add pieces" function, converts each square of our full 8 x 8 
   )
 
 ; display occupied squares
-!(collapse (match &self (square $x $y $color $piece) ($x $y $color $piece)))
+!(collapse (match &self (square $x $y $color $piece) (square $x $y $color $piece)))
 
 ; display unoccupied squares
-!(collapse (match &self (square $x $y) ($x $y)))
+!(collapse (match &self (square $x $y) (square $x $y)))
 \end{verbatim}
 
 The "reset-pieces" function removes all the small "square" atoms and refreshes atomspace with a new set of "square" atoms using "add-pieces" and an input-supplied chessboard state.
@@ -305,12 +266,14 @@ The "reset-pieces" function removes all the small "square" atoms and refreshes a
                         (1 2 s p) (2 2 s p) (3 2 s p) (4 2) (5 2 s p) (6 2 s p) (7 2 s p) (8 2 s p) 
                         (1 1 s r) (2 1 s n) (3 1 s b) (4 1 s q) (5 1 s k) (6 1 s b) (7 1 s n) (8 1 s r))))
 ; display occupied squares
-!(collapse (match &self (square $x $y $color $piece) ($x $y $color $piece)))
+!(collapse (match &self (square $x $y $color $piece) (square $x $y $color $piece)))
 
 ; display unoccupied squares
-!(collapse (match &self (square $x $y) ($x $y)))
+!(collapse (match &self (square $x $y) (square $x $y)))
 
 \end{verbatim}
+
+\subsubsection{Reset Game State}
 
 The following two functions can be used to reset the value of our de facto global "game-state" variable.
 
@@ -348,7 +311,7 @@ The following two functions can be used to reset the value of our de facto globa
 
 Note that "delete-prior-game-states" above uses a \textbf{collapse} to ensure ALL prior game state atoms are removed. Think of \textbf{collapse} as your means to force MeTTa to evaluate what is enclosed within its expression for all possible results. If MeTTa returns all possible results, it will be satisifed and not try to back up later and find some other variation that was missed.
 
-After running this atomspace should show (game-state checkmate).
+After running this atomspace should show (game-state checkmate), and if you have your "Play Chess" tab open it should indicate.
 
 \begin{verbatim}
 
@@ -356,7 +319,9 @@ After running this atomspace should show (game-state checkmate).
 
 \end{verbatim}
 
-In the following function, "lots_of_pawns_in_home_row", there is a \textbf{match} construct used
+\subsubsection{Retrieving Atoms Using Match and Collapse}
+
+In the following example function, "lots_of_pawns_in_home_row", there is a \textbf{match} construct used
 inside the second argument of \textbf{let} to find all AI gold pawns (designated with a 'g') in row 7, the AI home row for pawns. Notice that our
 friend the \textbf{collapse} encircles the match statement, as if saying "give me all the gold pawns in row 7 and don't return here for more execution later." The result of the second argument, a list of "square" atoms of the form (square x 7 g p) is assigned to the "pawns_at_home" variable. Then \textbf{size-atom} returns the length of the list and a check returns true or false. Again, we don't have to loop through a list searching for particular squares -- we just use the formula of a \textbf{match} working on atomspace within an enclosing \textbf{collapse}. 
 
@@ -396,6 +361,8 @@ friend the \textbf{collapse} encircles the match statement, as if saying "give m
 !(lots_of_pawns_in_home_row)
 
 \end{verbatim}
+
+\subsubsection{Use Match Not Ponderous Tail Recursion Wherever Possible!}
 
 
 The following function \textbf{xy_box} function contrast is another illustration of the difference between using match with collapse versus ponderous old school tail recursion search. The first version inputs the piece color (gold for AI, silver for player) and rank, and outputs coordinates for the location of all pieces that match. The first version is really all you need in MeTTa. 
@@ -476,9 +443,11 @@ The second version displays the complexities of searching through lists with tai
 
 \end{verbatim}
 
+\subsubsection{The Same Function in Many Variations}
+
 \textbf{Chess Move Validation}
 
-We now turn to a single function named "clear_route", the program's core chess piece move validator. We'll take a look at definitions for just the king and queen below.
+We now turn to a single function named "clear_route", the program's core chess piece move validator. We'll take a look at definitions for just the king and queen below (the remainder can be viewed in the program).
 
 \begin{verbatim}
 ; -HIDE-RUN
@@ -587,6 +556,8 @@ Important to note: some of the "clear_route" functions use the above "square" at
 
 \end{verbatim}
 
+\subsubsection{Decision Algorithm}
+
 \textbf{Core Chess Piece Move Decision Function}
 
 Below is the "decide_greedy_move" function, the main decision making function. The structure is a bit unusual but you can see intuitively that the AI will greedily try the most rewarding strategies first, starting with checkmate. 
@@ -598,6 +569,7 @@ Each strategy code block calls its respective strategy function inside a \textbf
 Again, the "square" atoms, as discussed above, are used for envisioning potential moves.
 
 If all attempts fail, the AI is in a checkmate and the function simply gives up and returns "()".
+
 
 \begin{verbatim}
 ; HIDE-RUN
@@ -713,11 +685,13 @@ If all attempts fail, the AI is in a checkmate and the function simply gives up 
 
 \end{verbatim}
 
+\subsubsection{Containing Combinatorial Explosion}
+
 \textbf{Superpose -- Match -- Collapse}
 
-The following is a fairly in depth look at MeTTa's ability to deal with lots of combinations.
+The following is a fairly in depth example showing MeTTa's ability to deal with lots of chess piece combinations.
 
-The "movetoposition_match" function is called from the function that threatens the silver (human) chess pieces. It is invoked in this fashion:
+This function looks for a move that will threaten a silver piece (called via the decision algorithm above). It is invoked in this fashion:
 
 \textbf{!(collapse (movetoposition_match (superpose (q r n b p)) (superpose (k q r n b))))}
 
@@ -786,8 +760,7 @@ This processing is really the true heart of the power of MeTTa: to be able to te
                           (if (and (== $exposed False) (== $king_status False))
                             ; success!
                             (($x1 $y1 g $AI_rank) ($x2 $y2))
-                            ; whoops, the piece is exposed to capture
-                            (empty)))
+                            (empty)))         ; empty cases return nothing
                     (empty)
               )
             )
@@ -798,7 +771,7 @@ This processing is really the true heart of the power of MeTTa: to be able to te
 
 \begin{verbatim}
 
-; in this board mock-up, the silver queen in square (4 4) is positioned to be threatened. 
+; in this board mock-up, the silver queen in square (4 4) is positioned to be threatened by the gold knight in home position (2 8).
 
 !(reset-pieces ((1 8 g r) (2 8 g n) (3 8 g b) (4 8 g q) (5 8 g k) (6 8 g b) (7 8 g n) (8 8) 
                         (1 7 g p) (2 7 g p) (3 7 g p) (4 7 g p) (5 7 g p) (6 7 g p) (7 7 g p) (8 7 g p) 
