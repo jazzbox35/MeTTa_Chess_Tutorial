@@ -156,6 +156,52 @@ The following expression adds an atom for game state. You can basically slip \te
 
 \end{verbatim}
 
+\subsubsection{Reset Game State}
+
+The following two functions can be used to reset the value of our de facto global "game-state" variable.
+
+\begin{verbatim}
+; HIDE-RUN
+
+;***************************************************************
+; Function:     delete-prior-game-states
+; Description:  Removes any existing `(game-state ...)` atoms from atomspace.
+;               Used before setting a new game state.
+;
+; Input:        None
+;
+; Output:       Atomspace no longer contains any `game-state` atoms.
+;***************************************************************
+(= (delete-prior-game-states)
+    (collapse (match &self (game-state $prior-state) (remove-atom &self (game-state $prior-state))))
+)
+
+;***************************************************************
+; Function:     change-game-state
+; Description:  Resets the current game state and sets a new one.
+;
+; Input:        $new-state - A symbol representing the new game state,
+;                            e.g., `started`, `checkmate`, `restarted`, etc.
+;
+; Output:       Replaces any existing `game-state` atom with the new one.
+;***************************************************************
+(= (change-game-state $new-state)
+  (progn
+    (delete-prior-game-states) 
+    (add-atom &self (game-state $new-state))))
+
+\end{verbatim}
+
+Note that "delete-prior-game-states" above uses a \textbf{collapse} to ensure ALL prior game state atoms are removed. Think of \textbf{collapse} as your means to force MeTTa to evaluate what is enclosed within its expression for all possible results. If MeTTa returns all possible results, it will be satisifed and not try to back up later and find some other variation that was missed.
+
+After running this atomspace should show (game-state checkmate), and if you have your "Play Chess" tab open it should indicate.
+
+\begin{verbatim}
+
+!(change-game-state checkmate)
+
+\end{verbatim}
+
 
 \subsubsection{Creating Atoms for Fast Manipulation}
 
@@ -273,51 +319,6 @@ The "reset-pieces" function removes all the small "square" atoms and refreshes a
 
 \end{verbatim}
 
-\subsubsection{Reset Game State}
-
-The following two functions can be used to reset the value of our de facto global "game-state" variable.
-
-\begin{verbatim}
-; HIDE-RUN
-
-;***************************************************************
-; Function:     delete-prior-game-states
-; Description:  Removes any existing `(game-state ...)` atoms from atomspace.
-;               Used before setting a new game state.
-;
-; Input:        None
-;
-; Output:       Atomspace no longer contains any `game-state` atoms.
-;***************************************************************
-(= (delete-prior-game-states)
-    (collapse (match &self (game-state $prior-state) (remove-atom &self (game-state $prior-state))))
-)
-
-;***************************************************************
-; Function:     change-game-state
-; Description:  Resets the current game state and sets a new one.
-;
-; Input:        $new-state - A symbol representing the new game state,
-;                            e.g., `started`, `checkmate`, `restarted`, etc.
-;
-; Output:       Replaces any existing `game-state` atom with the new one.
-;***************************************************************
-(= (change-game-state $new-state)
-  (progn
-    (delete-prior-game-states) 
-    (add-atom &self (game-state $new-state))))
-
-\end{verbatim}
-
-Note that "delete-prior-game-states" above uses a \textbf{collapse} to ensure ALL prior game state atoms are removed. Think of \textbf{collapse} as your means to force MeTTa to evaluate what is enclosed within its expression for all possible results. If MeTTa returns all possible results, it will be satisifed and not try to back up later and find some other variation that was missed.
-
-After running this atomspace should show (game-state checkmate), and if you have your "Play Chess" tab open it should indicate.
-
-\begin{verbatim}
-
-!(change-game-state checkmate)
-
-\end{verbatim}
 
 \subsubsection{Retrieving Atoms Using Match and Collapse}
 
