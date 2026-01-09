@@ -4,6 +4,8 @@ import { useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2 } from "lucide-react"
 
+const AUTO_START_KEY = "auto_start_chess"
+
 function extractSections(state: string): { board?: string; game?: string } {
   let depth = 0
   let board: string | undefined
@@ -70,6 +72,24 @@ export function UploadAtomspaceButton() {
         window.dispatchEvent(new CustomEvent("game_state_updated", { detail: game }))
       }
       window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: text }))
+
+      // Trigger auto-start on the chess page (in any tab)
+      const token = `${Date.now()}:${Math.random().toString(16).slice(2)}`
+      try {
+        window.localStorage.setItem(AUTO_START_KEY, token)
+      } catch {
+        // ignore storage errors
+      }
+      window.dispatchEvent(new CustomEvent(AUTO_START_KEY, { detail: token }))
+
+      // Open or focus the chess tab and let it auto-start
+      const chessWin = window.open("/chess", "metta-chess-tab")
+      try {
+        chessWin?.focus()
+      } catch {
+        // ignore focus errors
+      }
+
       setSuccess(true)
       setTimeout(() => setSuccess(false), 5000)
     } catch (err) {

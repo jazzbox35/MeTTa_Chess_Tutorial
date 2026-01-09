@@ -161,6 +161,20 @@ export function ChessClient() {
   const lastTokenRef = useRef<string | null>(null)
   const alertedTokenRef = useRef<string | null>(null)
   const waitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastAutoStartTokenRef = useRef<string | null>(null)
+
+  const startReset = (token?: string) => {
+    const tok = token ?? `${Date.now()}:${Math.random().toString(16).slice(2)}`
+    lastTokenRef.current = tok
+    setIsWaiting(true)
+    if (waitTimerRef.current) clearTimeout(waitTimerRef.current)
+    waitTimerRef.current = setTimeout(() => {
+      setIsWaiting(false)
+      waitTimerRef.current = null
+    }, 15000)
+    void runPlayChess(tok)
+    setTestResult(null)
+  }
 
   const runPlayChess = async (token: string) => {
     try {
@@ -451,6 +465,45 @@ export function ChessClient() {
     }
   }, [atomspacePresent])
 
+  useEffect(() => {
+    const AUTO_START_KEY = "auto_start_chess"
+    const consumeToken = (token: string | null | undefined) => {
+      if (!token || token === lastAutoStartTokenRef.current) return
+      lastAutoStartTokenRef.current = token
+      try {
+        window.localStorage.removeItem(AUTO_START_KEY)
+      } catch {
+        // ignore storage errors
+      }
+      startReset(token)
+    }
+
+    // Check for a pending token on mount
+    try {
+      const existing = window.localStorage.getItem(AUTO_START_KEY)
+      if (existing) consumeToken(existing)
+    } catch {
+      // ignore storage errors
+    }
+
+    const storageHandler = (event: StorageEvent) => {
+      if (event.key === AUTO_START_KEY && event.newValue) {
+        consumeToken(event.newValue)
+      }
+    }
+    const customHandler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail ?? ""
+      consumeToken(detail)
+    }
+
+    window.addEventListener("storage", storageHandler)
+    window.addEventListener(AUTO_START_KEY, customHandler as EventListener)
+    return () => {
+      window.removeEventListener("storage", storageHandler)
+      window.removeEventListener(AUTO_START_KEY, customHandler as EventListener)
+    }
+  }, [])
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col gap-4 items-center justify-center px-2 sm:px-4">
       <Button
@@ -458,18 +511,7 @@ export function ChessClient() {
         variant="outline"
         className="bg-slate-800 text-slate-100 border-slate-600 hover:bg-slate-700 disabled:opacity-60"
         disabled={!mounted || !atomspacePresent}
-        onClick={() => {
-          const token = `${Date.now()}:${Math.random().toString(16).slice(2)}`
-          lastTokenRef.current = token
-          setIsWaiting(true)
-          if (waitTimerRef.current) clearTimeout(waitTimerRef.current)
-          waitTimerRef.current = setTimeout(() => {
-            setIsWaiting(false)
-            waitTimerRef.current = null
-          }, 15000)
-          void runPlayChess(token)
-          setTestResult(null)
-        }}
+        onClick={() => startReset()}
       >
         START/RESET
       </Button>
