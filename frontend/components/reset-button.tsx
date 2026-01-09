@@ -28,9 +28,6 @@ export function ResetButton() {
         window.dispatchEvent(new CustomEvent("board_state_updated", { detail: INITIAL_BOARD_STATE }))
       }
       alert("Now running default MeTTa chess program.")
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("execute_code_editor"))
-      }
     } catch (err) {
       console.error(err)
       alert("Failed to load default program.")
