@@ -457,6 +457,24 @@ export function ChessClient() {
       })() ??
       ""
     setAtomspacePresent(hasAtomspaceContent(initial))
+    try {
+      window.localStorage.setItem("chess_tab_open", Date.now().toString())
+    } catch {
+      // ignore storage errors
+    }
+
+    const clearFlag = () => {
+      try {
+        window.localStorage.removeItem("chess_tab_open")
+      } catch {
+        // ignore storage errors
+      }
+    }
+    window.addEventListener("beforeunload", clearFlag)
+    return () => {
+      window.removeEventListener("beforeunload", clearFlag)
+      clearFlag()
+    }
   }, [])
 
   useEffect(() => {

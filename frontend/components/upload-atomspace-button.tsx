@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle2 } from "lucide-react"
 
 const AUTO_START_KEY = "auto_start_chess"
+const CHESS_OPEN_KEY = "chess_tab_open"
 
 function extractSections(state: string): { board?: string; game?: string } {
   let depth = 0
@@ -49,45 +50,58 @@ export function UploadAtomspaceButton() {
     try {
       const text = await file.text()
       ;(globalThis as any).Atomspace_state = text
+      const chessTabOpen = (() => {
+        try {
+          return !!window.localStorage.getItem(CHESS_OPEN_KEY)
+        } catch {
+          return false
+        }
+      })()
+
+      // Always update atomspace itself
       try {
         window.localStorage.setItem("Atomspace_state", text)
       } catch {
         // ignore storage errors
       }
-      const { board, game } = extractSections(text)
-      if (board) {
-        try {
-          window.localStorage.setItem("board_state", board)
-        } catch {
-          // ignore storage errors
-        }
-        window.dispatchEvent(new CustomEvent("board_state_updated", { detail: board }))
-      }
-      if (game) {
-        try {
-          window.localStorage.setItem("game_state", game)
-        } catch {
-          // ignore storage errors
-        }
-        window.dispatchEvent(new CustomEvent("game_state_updated", { detail: game }))
-      }
       window.dispatchEvent(new CustomEvent("atomspace_state_updated", { detail: text }))
 
-      // Trigger auto-start on the chess page (in any tab)
-      const token = `${Date.now()}:${Math.random().toString(16).slice(2)}`
-      try {
-        window.localStorage.setItem(AUTO_START_KEY, token)
-      } catch {
-        // ignore storage errors
-      }
-      window.dispatchEvent(new CustomEvent(AUTO_START_KEY, { detail: token }))
+      // If chess tab is not open, we can safely update board/game state and auto-start
+      if (!chessTabOpen) {
+        const { board, game } = extractSections(text)
+        if (board) {
+          try {
+            window.localStorage.setItem("board_state", board)
+          } catch {
+            // ignore storage errors
+          }
+          window.dispatchEvent(new CustomEvent("board_state_updated", { detail: board }))
+        }
+        if (game) {
+          try {
+            window.localStorage.setItem("game_state", game)
+          } catch {
+            // ignore storage errors
+          }
+          window.dispatchEvent(new CustomEvent("game_state_updated", { detail: game }))
+        }
 
-      // Open or focus the chess tab and let it auto-start
-      const chessWin = window.open("/chess", "metta-chess-tab")
-      try {
-        chessWin?.focus()
-      } catch {
-        // ignore focus errors
+        // Trigger auto-start on the chess page (in any tab)
+        const token = `${Date.now()}:${Math.random().toString(16).slice(2)}`
+        try {
+          window.localStorage.setItem(AUTO_START_KEY, token)
+        } catch {
+          // ignore storage errors
+        }
+        window.dispatchEvent(new CustomEvent(AUTO_START_KEY, { detail: token }))
+
+        // Open or focus the chess tab and let it auto-start
+        const chessWin = window.open("/chess", "metta-chess-tab")
+        try {
+          chessWin?.focus()
+        } catch {
+          // ignore focus errors
+        }
       }
 
       setSuccess(true)
