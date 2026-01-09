@@ -52,7 +52,7 @@ export default async function TutorialPage({ params }: Params) {
       <div className=" py-8">
 
         {/* Responsive Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] xl:grid-cols-[280px_1fr_320px] gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] xl:grid-cols-[280px_1fr_212px] gap-6">
           
        <SidebarWithTutorials allTutorials={allTutorials}/>
           {/* Main Content - Always visible, adjusts width based on screen size */}
