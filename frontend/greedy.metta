@@ -2604,7 +2604,7 @@
             ;     "
           )
         )
-        (progn (delete-pieces) ; (add-atom &self (game-message (fuck me!)))
+        (progn (delete-pieces) 
           (let $msgout1 (Gold moves (int_to_char (nth 1 $start)) (nth 2 $start) (nth 4 $start)
                  --> (int_to_char (nth 1 $destination)) (nth 2 $destination))
                (add-atom &self (game-message  $msgout1)))
