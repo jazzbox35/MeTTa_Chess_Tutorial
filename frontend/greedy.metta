@@ -2598,7 +2598,7 @@
                 ; else look for check...
                 (let $Check (checkking s)
                   (if (== $Check True)        
-                    (add-atom &self (game-message  CHECK!)); (println "Check!")
+                    (add-atom &self (game-message  CHECK!))
                     (println "Your move.")))))
             ; since move complete, delete any individual square atoms which only live for a single move.     
             ;     "
